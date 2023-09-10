@@ -77,3 +77,65 @@ createQuestionBtn.addEventListener("click", () => {
   }
   showSection("create-question-section");
 });
+
+// Add an event lister to all the back buttons
+for (let i = 0; i < backToMainBtns.length; i++) {
+  backToMainBtns[i].addEventListener("click", () => {
+    showMainSection();
+  });
+}
+
+// Add an event listener to the confirm button
+createConfirmBtn.addEventListener("click", (event) => {
+  event.preventDefault(); // Prevent the default form submission behavior
+
+  // Get values from form fields
+  const title = document.getElementById("create-question-title").value.trim();
+  const description = document
+    .getElementById("create-question-description")
+    .value.trim();
+  const category = document
+    .getElementById("create-question-category")
+    .value.trim();
+  const complexity = document.getElementById(
+    "create-question-complexity"
+  ).value;
+
+  // Basic validation, ensure title is not empty
+  if (!title || !category || !complexity) {
+    alert(
+      "Title / Category / Complexity for the question is missing. Make sure to enter these required fields."
+    );
+    return;
+  }
+
+  createQuestion(title, description, category, complexity);
+
+  showMainSection();
+});
+
+// Function to create a question
+function createQuestion(title, description, category, complexity) {
+  // Create a new question object
+  const newQuestion = {
+    questionId: generateQuestionId(), // You need to implement this function
+    questionTitle: title,
+    questionDescription: description,
+    questionCategory: category,
+    questionComplexity: complexity,
+  };
+
+  // Add the new question to the array or storage
+  questions.push(newQuestion); // Assuming you have an array named "questions"
+
+  // Save the updated questions to local storage (or perform any other desired storage operation)
+  localStorage.setItem("questions", JSON.stringify(questions));
+
+  // Optionally, show a success message or toast
+  alert("Question added successfully.");
+}
+
+// Function to generate a unique question ID (you can customize this as needed)
+function generateQuestionId() {
+  return new Date().getTime().toString();
+}

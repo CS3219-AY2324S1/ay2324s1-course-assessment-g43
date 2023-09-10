@@ -168,3 +168,109 @@ updateQuestionBtn.addEventListener("click", (event) => {
   updateConfirmBtn.setAttribute("data-id", questionId);
   showSection("update-question-section");
 });
+
+updateQuestionBtn.addEventListener("click", (event) => {
+  const questionId = event.target.dataset.id;
+  populateFormWithQuestionDetails(questionId);
+  backToViewBtn.setAttribute("data-id", questionId);
+  updateConfirmBtn.setAttribute("data-id", questionId);
+  showSection("update-question-section");
+});
+
+deleteQuestionBtn.addEventListener("click", (event) => {
+  event.preventDefault();
+  const questionId = event.target.dataset.id;
+
+  // Prompt the user for confirmation (you can implement the delete logic here)
+  const confirmDelete = confirm(
+    "Are you sure you want to delete this question?"
+  );
+
+  if (confirmDelete) {
+    // Find the index of the question with the specified questionId
+    const index = questions.findIndex((q) => q.questionId === questionId);
+
+    if (index !== -1) {
+      // Remove the question from the questions array
+      questions.splice(index, 1);
+
+      // Save the updated questions back to local storage
+      localStorage.setItem("questions", JSON.stringify(questions));
+
+      // Display a success message
+      alert("Question deleted successfully.");
+
+      showMainSection();
+    } else {
+      // Handle the case where the question with the specified ID was not found
+      alert("Question not found.");
+    }
+  }
+});
+
+// Function to populate the form with the current question details
+function populateFormWithQuestionDetails(questionId) {
+  // Find the question with the specified questionId
+  const question = questions.find((q) => q.questionId === questionId);
+
+  if (question) {
+    // Populate the form fields with the current question details
+    document.getElementById("update-question-title").value =
+      question.questionTitle;
+    document.getElementById("update-question-description").value =
+      question.questionDescription;
+    document.getElementById("update-question-category").value =
+      question.questionCategory;
+    document.getElementById("update-question-complexity").value =
+      question.questionComplexity;
+  } else {
+    // Handle the case where the question with the specified ID was not found
+    alert("Question not found.");
+  }
+}
+
+// Add an event listener to the update button
+updateConfirmBtn.addEventListener("click", (event) => {
+  event.preventDefault();
+  const questionId = event.target.dataset.id;
+
+  // Get the updated question details from the form
+  const updatedQuestion = {
+    questionTitle: document
+      .getElementById("update-question-title")
+      .value.trim(),
+    questionDescription: document
+      .getElementById("update-question-description")
+      .value.trim(),
+    questionCategory: document
+      .getElementById("update-question-category")
+      .value.trim(),
+    questionComplexity: document.getElementById("update-question-complexity")
+      .value,
+  };
+
+  // Find the question with the specified questionId
+  const index = questions.findIndex((q) => q.questionId === questionId);
+
+  if (index !== -1) {
+    // Update the question in the questions array
+    questions[index] = { ...questions[index], ...updatedQuestion };
+
+    // Save the updated questions back to local storage
+    localStorage.setItem("questions", JSON.stringify(questions));
+
+    alert("Question updated successfully.");
+    viewDetails(questionId);
+  } else {
+    // Handle the case where the question with the specified ID was not found
+    alert("Question not found.");
+  }
+});
+
+backToViewBtn.addEventListener("click", (event) => {
+  const questionId = event.target.dataset.id;
+  viewDetails(questionId);
+});
+
+// Initialize the application by displaying questions
+displayQuestions();

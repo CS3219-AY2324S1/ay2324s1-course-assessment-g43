@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>PeerPrep</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
   </head>
   <body>
     <main>
-        <h1>Welcome to PeerPrep</h1>  
+      <div id="main-section" class="section visible">
+        <h1>Welcome to PeerPrep</h1>
+        <button id="create-question-btn">Create Question</button>
+        <div id="question-list">
+          <!-- Display questions here -->
+        </div>
+      </div>
     </main>
-	<script src="index.js"></script>
+    <script src="./src/index.js"></script>
   </body>
 </html>

@@ -139,3 +139,32 @@ function createQuestion(title, description, category, complexity) {
 function generateQuestionId() {
   return new Date().getTime().toString();
 }
+
+// Function to load and display question details by question ID
+function loadQuestionDetails(questionId) {
+  // Find the question with the specified questionId
+  const question = questions.find((q) => q.questionId === questionId);
+
+  if (question) {
+    // Populate the question details on the page
+    document.getElementById("view-question-title").textContent =
+      question.questionTitle;
+    document.getElementById("view-question-description").textContent =
+      question.questionDescription;
+    document.getElementById("view-question-category").textContent =
+      question.questionCategory;
+    document.getElementById("view-question-complexity").textContent =
+      question.questionComplexity;
+  } else {
+    // Handle the case where the question with the specified ID was not found
+    alert("Question not found.");
+  }
+}
+
+updateQuestionBtn.addEventListener("click", (event) => {
+  const questionId = event.target.dataset.id;
+  populateFormWithQuestionDetails(questionId);
+  backToViewBtn.setAttribute("data-id", questionId);
+  updateConfirmBtn.setAttribute("data-id", questionId);
+  showSection("update-question-section");
+});

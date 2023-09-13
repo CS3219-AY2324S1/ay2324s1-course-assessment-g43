@@ -7,10 +7,11 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react'
 
-export const RegisterUser = () => {
+
+export const LoginUser = () => {
   return <div>
     <NavBar />
-    Register user page
+    Login user page
     </div>;
 };
 
@@ -35,7 +36,7 @@ const NavBar = () => {
             fontFamily={'heading'}
             color={useColorModeValue('gray.800', 'white')}
             variant={'link'}
-            href={'./'}>
+            href={"/"}>
             PeerPrep
             </Button>
           </Flex>
@@ -50,7 +51,7 @@ const NavBar = () => {
             fontSize={'sm'}
             fontWeight={600}
             display={{ base: 'none', md: 'inline-flex' }}>
-              Already have an account?
+              No account yet?
             </a>
             <Button
             as={'a'}
@@ -59,11 +60,11 @@ const NavBar = () => {
             fontWeight={600}
             color={'white'}
             bg={'pink.400'}
-            href={'./LoginUser'}
+            href={'./RegisterUser'}
             _hover={{
                 bg: 'pink.300',
             }}>
-            Login
+            Register
             </Button>
           </Stack>
         </Flex>

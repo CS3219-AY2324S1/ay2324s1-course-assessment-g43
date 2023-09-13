@@ -1,20 +1,22 @@
 import {
   Box,
   Flex,
+  Text,
   Button,
   Stack,
   useColorModeValue,
   useBreakpointValue,
 } from '@chakra-ui/react'
 
-export const RegisterUser = () => {
-  return <div>
-    <NavBar />
-    Register user page
-    </div>;
+export const LandingPage = () => {
+  return (<div>
+    <Navbar />
+  <div>hehhhllo world</div>
+  </div>
+  )
 };
 
-const NavBar = () => {
+const Navbar = () => {
   return (
       <Box position={'static'}>
         <Flex
@@ -30,28 +32,23 @@ const NavBar = () => {
         align={'center'}
         justify = {{ base: 'none', md: 'flex'}}>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Button
+            <Text
             textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
             fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}
-            variant={'link'}
-            href={'./'}>
+            color={useColorModeValue('gray.800', 'white')}>
             PeerPrep
-            </Button>
+            </Text>
           </Flex>
           
           <Stack
             flex={{ base: 1, md: 0 }}
             justify={'flex-end'}
             direction={'row'}
-            spacing={6}
-            whiteSpace={'nowrap'}>
-            <a
-            fontSize={'sm'}
-            fontWeight={600}
-            display={{ base: 'none', md: 'inline-flex' }}>
-              Already have an account?
-            </a>
+            spacing={6}>
+            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'./LoginUser'}>
+            Login
+            </Button>
+            
             <Button
             as={'a'}
             display={{ base: 'none', md: 'inline-flex' }}
@@ -59,11 +56,11 @@ const NavBar = () => {
             fontWeight={600}
             color={'white'}
             bg={'pink.400'}
-            href={'./LoginUser'}
+            href={'./RegisterUser'}
             _hover={{
                 bg: 'pink.300',
             }}>
-            Login
+            Register
             </Button>
           </Stack>
         </Flex>

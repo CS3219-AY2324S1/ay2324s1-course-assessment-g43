@@ -10,13 +10,17 @@ import {
 } from "@chakra-ui/react";
 import { updateUserStore } from "../stores/updateUserStore";
 import { observer } from "mobx-react";
+import { useNavigate } from "react-router-dom";
 
 const UpdateUser = observer(() => {
+  const navigate = useNavigate();
   const state = updateUserStore.state;
+
   const updateUser = (e) => {
     e.preventDefault();
     console.log(state);
   };
+
   return (
     <Flex
       minH={"100vh"}
@@ -97,6 +101,9 @@ const UpdateUser = observer(() => {
             w="full"
             _hover={{
               bg: "red.500",
+            }}
+            onClick={() => {
+              navigate(-1);
             }}
           >
             Cancel

@@ -8,8 +8,15 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { updateUserStore } from "../stores/updatetUserStore";
+import { observer } from "mobx-react";
 
-export default function UpdateUser() {
+const UpdateUser = observer(() => {
+  const state = updateUserStore.state;
+  const updateUser = (e) => {
+    e.preventDefault();
+    console.log(state);
+  };
   return (
     <Flex
       minH={"100vh"}
@@ -20,7 +27,7 @@ export default function UpdateUser() {
       <Stack
         spacing={4}
         w={"full"}
-        maxW={"md"}
+        maxW={"lg"}
         bg={useColorModeValue("white", "gray.700")}
         rounded={"xl"}
         boxShadow={"lg"}
@@ -30,8 +37,7 @@ export default function UpdateUser() {
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
           User Profile Edit
         </Heading>
-        <form onSubmit={() => {}}>
-          {/* <FormControl id="userIcon">
+        {/* <FormControl id="userIcon">
           <FormLabel>User Icon</FormLabel>
           <Stack direction={["column", "row"]} spacing={6}>
             <Center>
@@ -52,55 +58,64 @@ export default function UpdateUser() {
             </Center>
           </Stack>
         </FormControl> */}
-          <FormControl id="userName" isRequired>
-            <FormLabel>User name</FormLabel>
-            <Input
-              placeholder="UserName"
-              _placeholder={{ color: "gray.500" }}
-              type="text"
-            />
-          </FormControl>
-          <FormControl id="email" isRequired>
-            <FormLabel>Email address</FormLabel>
-            <Input
-              placeholder="your-email@example.com"
-              _placeholder={{ color: "gray.500" }}
-              type="email"
-            />
-          </FormControl>
-          <FormControl id="password" isRequired>
+        <FormControl id="userName" isRequired>
+          <FormLabel>User name</FormLabel>
+          <Input
+            placeholder="UserName"
+            _placeholder={{ color: "gray.500" }}
+            type="text"
+            value={state.username}
+            onChange={(e) => {
+              updateUserStore.setUsername(e.target.value);
+            }}
+          />
+        </FormControl>
+        <FormControl id="email" isRequired>
+          <FormLabel>Email address</FormLabel>
+          <Input
+            placeholder="your-email@example.com"
+            _placeholder={{ color: "gray.500" }}
+            type="email"
+            value={state.email}
+            onChange={(e) => {
+              updateUserStore.setEmail(e.target.value);
+            }}
+          />
+        </FormControl>
+        {/* <FormControl id="password" isRequired>
             <FormLabel>Password</FormLabel>
             <Input
               placeholder="password"
               _placeholder={{ color: "gray.500" }}
               type="password"
             />
-          </FormControl>
-          <Stack spacing={6} direction={["column", "row"]}>
-            <Button
-              bg={"red.400"}
-              color={"white"}
-              w="full"
-              _hover={{
-                bg: "red.500",
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              bg={"blue.400"}
-              color={"white"}
-              w="full"
-              _hover={{
-                bg: "blue.500",
-              }}
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Stack>
-        </form>
+          </FormControl> */}
+        <Stack spacing={6} direction={["column", "row"]}>
+          <Button
+            bg={"red.400"}
+            color={"white"}
+            w="full"
+            _hover={{
+              bg: "red.500",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            bg={"blue.400"}
+            color={"white"}
+            w="full"
+            _hover={{
+              bg: "blue.500",
+            }}
+            onClick={(e) => updateUser(e)}
+          >
+            Submit
+          </Button>
+        </Stack>
       </Stack>
     </Flex>
   );
-}
+});
+
+export default UpdateUser;

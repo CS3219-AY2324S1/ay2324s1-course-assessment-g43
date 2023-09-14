@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable, action } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 class UpdateUserStore {
   state = {
@@ -7,11 +7,7 @@ class UpdateUserStore {
   };
 
   constructor() {
-    makeAutoObservable(this, {
-      state: observable,
-      setUsername: action,
-      setEmail: action,
-    });
+    makeAutoObservable(this);
   }
 
   setUsername(username) {

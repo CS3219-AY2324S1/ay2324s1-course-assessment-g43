@@ -11,6 +11,7 @@ import {
 import { updateUserStore } from "../stores/updateUserStore";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const UpdateUser = observer(() => {
   const navigate = useNavigate();
@@ -18,8 +19,12 @@ const UpdateUser = observer(() => {
 
   const updateUser = (e) => {
     e.preventDefault();
-    console.log(state);
+    updateUserStore.updateUser("1"); // passing in temp id of 1
   };
+
+  useEffect(async () => {
+    await updateUserStore.getInitialState("1"); // same passing in temp id of 1 because we don't know how we are going to pass an id in just yet.
+  }, []);
 
   return (
     <Flex

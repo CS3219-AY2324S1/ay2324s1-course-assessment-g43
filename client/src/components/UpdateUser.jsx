@@ -8,7 +8,7 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { updateUserStore } from "../stores/updatetUserStore";
+import { updateUserStore } from "../stores/updateUserStore";
 import { observer } from "mobx-react";
 
 const UpdateUser = observer(() => {

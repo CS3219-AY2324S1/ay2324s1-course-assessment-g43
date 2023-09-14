@@ -17,9 +17,9 @@ const UpdateUser = observer(() => {
   const navigate = useNavigate();
   const state = updateUserStore.state;
 
-  const updateUser = (e) => {
+  const updateUser = async (e) => {
     e.preventDefault();
-    updateUserStore.updateUser("1"); // passing in temp id of 1
+    await updateUserStore.updateUser("1"); // passing in temp id of 1
   };
 
   useEffect(async () => {
@@ -120,7 +120,7 @@ const UpdateUser = observer(() => {
             _hover={{
               bg: "blue.500",
             }}
-            onClick={(e) => updateUser(e)}
+            onClick={async (e) => await updateUser(e)}
           >
             Submit
           </Button>

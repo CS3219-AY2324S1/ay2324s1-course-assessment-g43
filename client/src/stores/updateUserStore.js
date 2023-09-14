@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { deleteUser, getUserById, updateUser } from "../services/userService";
+import { getUserById, updateUser } from "../services/userService";
 
 class UpdateUserStore {
   state = {
@@ -33,11 +33,6 @@ class UpdateUserStore {
 
   async updateUser(id) {
     const res = await updateUser(id, this.state);
-    console.log(res);
-  }
-
-  async deleteUser(id) {
-    const res = await deleteUser(id);
     console.log(res);
   }
 }

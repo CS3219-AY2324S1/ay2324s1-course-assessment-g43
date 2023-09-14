@@ -9,23 +9,29 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-// import { viewUserStore } from "../stores/viewUserStore";
+import { viewUserStore } from "../stores/viewUserStore";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { deleteUser } from "../services/userService";
 
 const ViewUser = observer(() => {
   const navigate = useNavigate();
 
-  // this value should be taken from the store, I am putting a placeholder here first
-  const keyValuePairs = [
-    // might want to rename this something else
-    { key: "Username", value: "John Doe" },
-    { key: "Email", value: "abc@email.com" },
-  ];
+  const state = viewUserStore.state;
 
   const redirectToUpdateUserPage = () => {
     navigate("/update-user");
   };
+
+  const deleteUser = async (e) => {
+    e.preventDefault();
+    await viewUserStore.deleteUser("1");
+  };
+
+  useEffect(async () => {
+    await viewUserStore.getInitialState("1");
+  }, []);
 
   return (
     <Flex
@@ -56,7 +62,7 @@ const ViewUser = observer(() => {
           User Profile Details
         </Heading>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-          {keyValuePairs.map((item, index) => (
+          {Object.entries(state).map((item, index) => (
             <>
               <Text fontWeight="bold">{item.key}:</Text>
               <Text>{item.value}</Text>
@@ -71,6 +77,7 @@ const ViewUser = observer(() => {
             _hover={{
               bg: "red.500",
             }}
+            onClick={async (e) => await deleteUser(e)}
           >
             Delete your profile
           </Button>

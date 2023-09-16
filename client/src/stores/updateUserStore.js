@@ -5,7 +5,7 @@ class UpdateUserStore {
   state = {
     username: "",
     email: "",
-    password: "",
+    pass: "",
   };
 
   constructor() {
@@ -16,7 +16,7 @@ class UpdateUserStore {
     const user = await getUserById(id);
     this.state.username = user.username;
     this.state.email = user.email;
-    this.state.password = user.password;
+    this.state.pass = user.pass;
   }
 
   setUsername(username) {
@@ -28,7 +28,7 @@ class UpdateUserStore {
   }
 
   setPassword(password) {
-    this.state.password = password;
+    this.state.pass = password;
   }
 
   async updateUser(id) {

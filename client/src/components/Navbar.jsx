@@ -80,7 +80,7 @@ const Navbar = () => {
             variant={"link"}
             href={"/login-user"}
           >
-            Sign In
+            Log In
           </Button>
           <Button
             as={"a"}
@@ -94,7 +94,7 @@ const Navbar = () => {
               bg: "pink.300",
             }}
           >
-            Sign Up
+            Register
           </Button>
         </Stack>
       </Flex>

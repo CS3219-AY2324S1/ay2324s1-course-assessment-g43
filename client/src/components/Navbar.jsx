@@ -56,8 +56,10 @@ const Navbar = () => {
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
             fontFamily={"heading"}
             color={useColorModeValue("gray.800", "white")}
+            as={"a"}
+            href="/"
           >
-            Logo
+            PeerPrep
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
@@ -76,7 +78,7 @@ const Navbar = () => {
             fontSize={"sm"}
             fontWeight={400}
             variant={"link"}
-            href={"#"}
+            href={"/login-user"}
           >
             Sign In
           </Button>
@@ -87,7 +89,7 @@ const Navbar = () => {
             fontWeight={600}
             color={"white"}
             bg={"pink.400"}
-            href={"#"}
+            href={"/register-user"}
             _hover={{
               bg: "pink.300",
             }}
@@ -261,42 +263,23 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
   {
-    label: "Inspiration",
+    label: "Questions",
     children: [
       {
-        label: "Explore Design Work",
-        subLabel: "Trending Design to inspire you",
-        href: "#",
+        label: "Browse",
+        subLabel: "Browse all questions",
+        href: "/view-questions",
       },
       {
-        label: "New & Noteworthy",
-        subLabel: "Up-and-coming Designers",
-        href: "#",
+        label: "Create",
+        subLabel: "Create new questions",
+        href: "/create-question",
       },
     ],
   },
   {
-    label: "Find Work",
-    children: [
-      {
-        label: "Job Board",
-        subLabel: "Find your dream design job",
-        href: "#",
-      },
-      {
-        label: "Freelance Projects",
-        subLabel: "An exclusive list for contract work",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Learn Design",
-    href: "#",
-  },
-  {
-    label: "Hire Designers",
-    href: "#",
+    label: "My Profile",
+    href: "/me",
   },
 ];
 

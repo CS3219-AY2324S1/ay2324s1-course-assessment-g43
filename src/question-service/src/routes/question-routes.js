@@ -65,6 +65,7 @@ router.post("/questions", questionController.createQuestion);
  * @summary Gets a question.
  * @param {integer} questionId.path.required - The `questionId`
  * @return {QuestionPayload} 200 - success response - application/json
+ * @return {ErrorResponse} 404 - not found response - application/json
  * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
  * {
@@ -77,6 +78,10 @@ router.post("/questions", questionController.createQuestion);
  *   ],
  *   "complexity": "easy",
  *   "__v": 0
+ * }
+ * @example response - 404 - example 404 response
+ * {
+ *  "error": "Question not found"
  * }
  * @example response - 500 - example 500 response
  * {

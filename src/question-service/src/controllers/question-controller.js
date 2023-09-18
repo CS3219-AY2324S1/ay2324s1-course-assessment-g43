@@ -17,11 +17,12 @@ exports.createQuestion = async (req, res) => {
       complexity,
     });
 
+    await question.validate();
     await question.save();
-    res.status(201).json(question);
+    return res.status(201).json(question);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ error: "Error creating question" });
+    return res.status(400).json({ error: "Error creating question" });
   }
 };
 
@@ -29,18 +30,24 @@ exports.getQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
     const question = await Question.findOne({ questionId });
-    res.json(question);
+    return question
+      ? res.status(200).json(question)
+      : res.status(404).json({ error: "Question not found" });
   } catch (err) {
-    res.status(500).json({ error: "Error fetching question" });
+    console.log(err);
+    return res.status(500).json({ error: "Error fetching question" });
   }
 };
 
 exports.getAllQuestions = async (req, res) => {
   try {
     const questions = await Question.find();
-    res.json(questions);
+    return questions
+      ? res.status(200).json(questions)
+      : res.status(200).json([]);
   } catch (err) {
-    res.status(500).json({ error: "Error fetching questions" });
+    console.log(err);
+    return res.status(500).json({ error: "Error fetching questions" });
   }
 };
 
@@ -51,8 +58,7 @@ exports.updateQuestion = async (req, res) => {
     const question = await Question.findOne({ questionId });
 
     if (!question) {
-      res.status(404).json({ error: "Question not found" });
-      return;
+      return res.status(404).json({ error: "Question not found" });
     }
 
     if (title) {
@@ -70,10 +76,10 @@ exports.updateQuestion = async (req, res) => {
 
     await question.validate();
     await question.save();
-    res.status(200).json(question);
+    return res.status(200).json(question);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ error: "Error updating question" });
+    return res.status(400).json({ error: "Error updating question" });
   }
 };
 
@@ -81,13 +87,11 @@ exports.deleteQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
     const deletedDoc = await Question.findOneAndDelete({ questionId });
-    if (deletedDoc) {
-      res.status(200).json(deletedDoc);
-    } else {
-      res.status(404).json({ error: "Question not found" });
-    }
+    return deletedDoc
+      ? res.status(200).json(deletedDoc)
+      : res.status(404).json({ error: "Question not found" });
   } catch (err) {
     console.log(err);
-    res.status(400).json({ error: "Error deleting question" });
+    return res.status(400).json({ error: "Error deleting question" });
   }
 };

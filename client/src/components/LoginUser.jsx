@@ -5,7 +5,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
   Button,
   Heading,
@@ -13,6 +12,7 @@ import {
   useColorModeValue,
   InputGroup,
   InputRightElement,
+  Link,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
@@ -81,6 +81,11 @@ export const LoginUser = () => {
             </Stack>
           </Stack>
         </Box>
+        <Stack pt={6}>
+          <Text align={"center"}>
+            No account yet? <Link color={"blue.400"} href={"/register-user"}>Register</Link>
+          </Text>
+        </Stack>
       </Stack>
     </Flex>
   );

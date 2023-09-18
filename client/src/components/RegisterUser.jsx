@@ -5,7 +5,6 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  HStack,
   InputRightElement,
   Stack,
   Button,
@@ -15,7 +14,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { registerUserStore } from "../stores/RegisterUserStore";
+import { registerUserStore } from "../stores/registerUserStore";
 
 export const RegisterUser = () => {
   const state = registerUserStore.state;
@@ -96,7 +95,7 @@ export const RegisterUser = () => {
             </Stack>
             <Stack pt={6}>
               <Text align={"center"}>
-                Already a user? <Link color={"blue.400"}>Log In</Link>
+                Already a user? <Link color={"blue.400"} href={"/login-user"}>Log In</Link>
               </Text>
             </Stack>
           </Stack>

@@ -1,11 +1,11 @@
 import { Box, Text, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
-import background from '../media/pic1.png';
+import background from '../media/pic4.jpg';
 
 export const LandingPage = () => {
   return (
   <Box
     align={'center'}>
-    <img src={background} alt="PeerPrep" style={{width: "100%", height: 450}} />
+    <img src={background} alt="PeerPrep" style={{width: "100%", height: "60vh"}} />
     <Text
       textAlign={useBreakpointValue({ base: "center", md: "center" })}
       fontFamily={'initial'}

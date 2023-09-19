@@ -7,11 +7,11 @@ const user = process.env.PSQL_USER;
 const database = process.env.PSQL_DATABASE;
 
 const pool = new Pool({
-    user: user,
-    password: password,
-    host: host,
+    user,
+    password,
+    host,
     port: 5432,
-    database: database
+    database
 });
 
 module.exports = pool;

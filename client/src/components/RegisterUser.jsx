@@ -15,8 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { registerUserStore } from "../stores/registerUserStore";
+import { observer } from "mobx-react";
 
-export const RegisterUser = () => {
+export const RegisterUser = observer(() => {
   const state = registerUserStore.state;
 
   return (
@@ -73,7 +74,7 @@ export const RegisterUser = () => {
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
-                    onClick={() => registerUserStore.toggleShowPassword}
+                    onClick={() => registerUserStore.toggleShowPassword()}
                   >
                     {state.showPassword ? <ViewIcon /> : <ViewOffIcon />}
                   </Button>
@@ -89,13 +90,17 @@ export const RegisterUser = () => {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={(e) => registerUserStore.register()}
               >
                 Register
               </Button>
             </Stack>
             <Stack pt={6}>
               <Text align={"center"}>
-                Already a user? <Link color={"blue.400"} href={"/login-user"}>Log In</Link>
+                Already a user?{" "}
+                <Link color={"blue.400"} href={"/login-user"}>
+                  Log In
+                </Link>
               </Text>
             </Stack>
           </Stack>
@@ -103,4 +108,4 @@ export const RegisterUser = () => {
       </Stack>
     </Flex>
   );
-};
+});

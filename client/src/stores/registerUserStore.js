@@ -29,8 +29,8 @@ class RegisterUserStore {
     this.state.showPassword = !this.state.showPassword;
   }
 
-  async register(id) {
-    const res = await register(id, this.state);
+  async register() {
+    const res = await register(this.state);
     console.log(res);
   }
 }

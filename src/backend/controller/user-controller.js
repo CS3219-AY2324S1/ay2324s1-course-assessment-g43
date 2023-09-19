@@ -148,7 +148,7 @@ exports.updateProfile = async (req, res) => {
     }
 
     let updatedUser = await pool.query(
-      'UPDATE Users SET username = $1, email = $2, password = $3 WHERE uid = $4',
+      'UPDATE Users SET username = $1, email = $2, password = $3 WHERE uid = $4 RETURNING *',
       [username, email, password, id],
     );
 
@@ -172,7 +172,6 @@ exports.deleteProfile = async (req, res) => {
 
   try {
     const result = await pool.query('SELECT * FROM Users WHERE uid = $1', [id]);
-    
     if (result.rows.length === 0) {
       return res.status(401).json({ 
         message: `User with ID: ${id} does not exist`,
@@ -180,7 +179,7 @@ exports.deleteProfile = async (req, res) => {
       })
     }
 
-    const deletedUser = await pool.query('DELETE FROM Users WHERE uid = $1', [id]);
+    const deletedUser = await pool.query('DELETE FROM Users WHERE uid = $1 RETURNING *', [id]);
 
     return res.status(200).send({
       message: `User deleted with ID: ${id}`,

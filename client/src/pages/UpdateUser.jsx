@@ -1,6 +1,5 @@
 import {
   Button,
-  Flex,
   FormControl,
   FormLabel,
   Heading,
@@ -12,6 +11,7 @@ import { updateUserStore } from "../stores/updateUserStore";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { PageContainer } from "../components/PageContainer";
 
 const UpdateUser = observer(() => {
   const navigate = useNavigate();
@@ -27,12 +27,7 @@ const UpdateUser = observer(() => {
   }, []);
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"flex-start"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
+    <PageContainer>
       <Stack
         spacing={4}
         w={"full"}
@@ -126,7 +121,7 @@ const UpdateUser = observer(() => {
           </Button>
         </Stack>
       </Stack>
-    </Flex>
+    </PageContainer>
   );
 });
 

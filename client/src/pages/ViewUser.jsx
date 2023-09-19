@@ -1,6 +1,5 @@
 import {
   Button,
-  Flex,
   Heading,
   Stack,
   useColorModeValue,
@@ -14,6 +13,7 @@ import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { deleteUser } from "../services/userService";
+import { PageContainer } from "../components/PageContainer";
 
 const ViewUser = observer(() => {
   const navigate = useNavigate();
@@ -34,14 +34,7 @@ const ViewUser = observer(() => {
   }, []);
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"flex-start"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-      px={6}
-      py={12}
-    >
+    <PageContainer>
       <IconButton
         icon={<ArrowBackIcon />}
         bg={"transparent"}
@@ -94,7 +87,7 @@ const ViewUser = observer(() => {
           </Button>
         </Stack>
       </Stack>
-    </Flex>
+    </PageContainer>
   );
 });
 

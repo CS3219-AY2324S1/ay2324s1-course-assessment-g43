@@ -20,6 +20,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
+import { PropTypes } from "prop-types";
 
 const NavbarUser = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -194,6 +195,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   );
 };
 
+DesktopSubNav.propTypes = {
+  label: PropTypes.string,
+  href: PropTypes.href,
+  subLabel: PropTypes.string,
+};
+
 const MobileNav = () => {
   return (
     <Stack
@@ -259,6 +266,12 @@ const MobileNavItem = ({ label, children, href }) => {
       </Collapse>
     </Stack>
   );
+};
+
+MobileNavItem.propTypes = {
+  label: PropTypes.string,
+  children: PropTypes.children,
+  href: PropTypes.href,
 };
 
 const NAV_ITEMS = [

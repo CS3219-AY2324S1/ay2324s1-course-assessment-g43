@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const basePath = "/api";
+const basePath = "http://localhost:5000/api";
 
 export const getUserById = async (id) => {
   try {

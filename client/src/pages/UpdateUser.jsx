@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { PageContainer } from "../components/PageContainer";
 
-const UpdateUser = observer(() => {
+export const UpdateUser = observer(() => {
   const navigate = useNavigate();
   const state = updateUserStore.state;
 
@@ -124,5 +124,3 @@ const UpdateUser = observer(() => {
     </PageContainer>
   );
 });
-
-export default UpdateUser;

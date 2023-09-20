@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import { deleteUser } from "../services/userService";
 import { PageContainer } from "../components/PageContainer";
 
-const ViewUser = observer(() => {
+export const ViewUser = observer(() => {
   const navigate = useNavigate();
 
   const state = viewUserStore.state;
@@ -90,5 +90,3 @@ const ViewUser = observer(() => {
     </PageContainer>
   );
 });
-
-export default ViewUser;

@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginUser } from "./pages/LoginUser";
 import { RegisterUser } from "./pages/RegisterUser";
-import UpdateUser from "./pages/UpdateUser";
-import Navbar from "./components/Navbar";
-import ViewUser from "./pages/ViewUser";
+import { UpdateUser } from "./pages/UpdateUser";
+import { ViewUser } from "./pages/ViewUser";
 import { ViewQuestions } from "./pages/ViewQuestions";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (

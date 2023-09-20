@@ -5,6 +5,7 @@ import { RegisterUser } from "./pages/RegisterUser";
 import UpdateUser from "./pages/UpdateUser";
 import Navbar from "./components/Navbar";
 import ViewUser from "./pages/ViewUser";
+import { ViewQuestions } from "./pages/ViewQuestions";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/register-user" exact={true} Component={RegisterUser} />
           <Route path="/update-user" exact={true} Component={UpdateUser} />
           <Route path="/me" exact={true} Component={ViewUser} />
+          <Route path="/browse" exact={true} Component={ViewQuestions} />
         </Routes>
       </BrowserRouter>
     </>

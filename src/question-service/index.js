@@ -1,11 +1,13 @@
 require("dotenv").config();
 
+const cors = require("cors");
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -13,7 +15,7 @@ const options = {
   info: {
     version: "1.0.0",
     title: "PeerPrep Questions Service API",
-    description: "The REST API endpoints for the PeerPrep Questions Service."
+    description: "The REST API endpoints for the PeerPrep Questions Service.",
   },
   baseDir: __dirname,
   // Glob pattern to find your jsdoc files (multiple patterns can be added in an array)

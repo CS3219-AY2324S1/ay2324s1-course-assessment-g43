@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { login } from "../services/userService";
+import { useNavigate } from "react-router-dom";
 
 class LoginUserStore {
   state = {
@@ -28,6 +29,7 @@ class LoginUserStore {
     const res = await login(this.state);
     if (res.message == "User logged in" && !!res.data) {
       localStorage.setItem("user", res.data.user);
+      useNavigate("/");
     }
   }
 }

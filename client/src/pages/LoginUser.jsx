@@ -13,9 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { PageContainer } from "../components/PageContainer";
+import { loginUserStore } from "../stores/loginUserStore";
+import { observer } from "mobx-react";
 
-export const LoginUser = () => {
-  const [showPassword, setShowPassword] = useState(false);
+export const LoginUser = observer(() => {
+  const store = loginUserStore;
+  const state = store.state;
 
   return (
     <PageContainer>
@@ -29,20 +32,28 @@ export const LoginUser = () => {
         <Stack spacing={4}>
           <FormControl id="email">
             <FormLabel>Email address</FormLabel>
-            <Input type="email" />
+            <Input
+              type="email"
+              value={state.email}
+              onChange={(e) => {
+                store.setEmail(e.target.value);
+              }}
+            />
           </FormControl>
           <FormControl id="password" isRequired>
             <FormLabel>Password</FormLabel>
             <InputGroup>
-              <Input type={showPassword ? "text" : "password"} />
+              <Input
+                type={state.showPassword ? "text" : "password"}
+                value={state.password}
+                onChange={(e) => store.setPassword(e.target.value)}
+              />
               <InputRightElement h={"full"}>
                 <Button
                   variant={"ghost"}
-                  onClick={() =>
-                    setShowPassword((showPassword) => !showPassword)
-                  }
+                  onClick={() => store.toggleShowPassword}
                 >
-                  {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  {state.showPassword ? <ViewIcon /> : <ViewOffIcon />}
                 </Button>
               </InputRightElement>
             </InputGroup>
@@ -78,4 +89,4 @@ export const LoginUser = () => {
       </Stack>
     </PageContainer>
   );
-};
+});

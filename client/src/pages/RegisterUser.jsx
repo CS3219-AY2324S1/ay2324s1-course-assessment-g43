@@ -20,16 +20,14 @@ export const RegisterUser = observer(() => {
 
   return (
     <PageContainer>
-      <Stack spacing={8} maxW={"lg"} p={6} align={"center"}>
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"} textAlign={"center"}>
-            Register an account
-          </Heading>
+      <Stack spacing={8} w={"100%"} maxW={"lg"} p={6}>
+        <Stack w={"100%"} align={"center"}>
+          <Heading fontSize={"4xl"}>Register an account</Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
-        <Stack spacing={4}>
+        <Stack spacing={4} w={"100%"}>
           <FormControl id="username" isRequired>
             <FormLabel>Username</FormLabel>
             <Input

@@ -29,8 +29,13 @@ class UpdateQuestionStore {
   }
 
   async updateQuestionById(id) {
-    const res = await updateQuestionById(id, this.state);
-    console.log(res);
+    try {
+      const res = await updateQuestionById(id, this.state);
+      console.log(res);
+      return res;
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 

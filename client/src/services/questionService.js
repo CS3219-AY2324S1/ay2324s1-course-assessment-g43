@@ -13,13 +13,9 @@ export const createQuestion = async (req) => {
 };
 
 export const getAllQuestions = async () => {
-  try {
-    const res = await axios.get(`${basePath}`);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.get(`${basePath}`);
+  console.log(res);
+  return res;
 };
 
 export const getQuestionById = async (id) => {
@@ -33,13 +29,9 @@ export const getQuestionById = async (id) => {
 };
 
 export const updateQuestionById = async (id, req) => {
-  try {
-    const res = await axios.put(`${basePath}/${id}`, req);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.put(`${basePath}/${id}`, req);
+  console.log(res);
+  return res;
 };
 
 export const deleteQuestionById = async (id) => {

@@ -34,4 +34,4 @@ class UpdateQuestionStore {
   }
 }
 
-export const UpdateQuestionStore = new UpdateQuestionStore();
+export const updateQuestionStore = new UpdateQuestionStore();

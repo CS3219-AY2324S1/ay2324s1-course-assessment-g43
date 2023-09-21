@@ -6,7 +6,7 @@ const port = 5000;
 const cors = require("cors");
 const pool = require("./db.js");
 
-const userRouter = require("./routes/user-route.js");
+const userRouter = require("../user-service/routes/user-route.js");
 
 const options = {
   info: {
@@ -29,7 +29,6 @@ const options = {
 
 expressJSDocSwagger(app)(options);
 
-
 app.use(cors());
 app.use(express.json());
 
@@ -37,7 +36,7 @@ app.use(express.json());
 app.use("/api", userRouter);
 
 app.get("/api/hello", (req, res) => {
-    res.send("Hello world");
-  });
+  res.send("Hello world");
+});
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

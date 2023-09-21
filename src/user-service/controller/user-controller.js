@@ -2,36 +2,36 @@ const pool = require("../db.js");
 const validator = require("../utils/validator.js");
 
 exports.createUser = async (req, res) => {
-    const { username, email, password } = req.body
+  const { username, email, password } = req.body
 
-    try {
-      const userExists = await validator.checkIfNameOrEmailExists(username, email);
-
-      if (userExists) {
-        return res.status(401).json({ 
-          message: 'Username or email already exists',
-          data: {} 
-        })
-      }
-
-      let newUser = await pool.query(
-        'INSERT INTO Users (username, email, password) VALUES ($1, $2, $3) RETURNING *', 
-        [username, email, password]
-      );
-
-      return res.status(201).send({ 
-          message: `User added with ID: ${newUser.rows[0].uid}`,
-          data: { user: newUser.rows[0] } 
-        })
-
-    } catch (error) {
-      console.error(error.message);
-      
-      return res.status(500).send({
-        message: 'Server error' + error.message,
+  try {
+    const userExists = await validator.checkIfNameOrEmailExists(username, email);
+    
+    if (userExists) {
+      return res.status(401).json({ 
+        message: 'Username or email already exists',
         data: {} 
-      });
+      })
     }
+    
+    let newUser = await pool.query(
+      'INSERT INTO Users (username, email, password) VALUES ($1, $2, $3) RETURNING *', 
+      [username, email, password]
+    );
+    
+    return res.status(201).send({ 
+      message: `User added with ID: ${newUser.rows[0].uid}`,
+      data: { user: newUser.rows[0] } 
+    })
+
+  } catch (error) {
+    console.error(error.message);
+      
+    return res.status(500).send({
+      message: 'Server error' + error.message,
+      data: {} 
+    });
+  }
 }
 
 exports.getUsers = async (req, res) => {

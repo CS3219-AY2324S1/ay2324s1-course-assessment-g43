@@ -5,7 +5,7 @@ import { RegisterUser } from "./pages/RegisterUser";
 import { UpdateUser } from "./pages/UpdateUser";
 import { ViewUser } from "./pages/ViewUser";
 import { ViewQuestions } from "./pages/ViewQuestions";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 
 function App() {
   return (

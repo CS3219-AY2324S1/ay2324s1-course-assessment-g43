@@ -6,7 +6,10 @@ import {
   HStack,
   Text,
   Stack,
+  IconButton,
+  Input,
 } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { useEffect } from "react";
@@ -23,6 +26,15 @@ export const ViewQuestions = observer(() => {
   return (
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"}>
+        <HStack justifyContent={"space-between"}>
+          <Text fontSize="40px" align={"start"}>
+            Questions
+          </Text>
+          <HStack>
+            <Input variant="outline" placeholder="Search" width="400px" />
+            <IconButton aria-label="Search database" icon={<SearchIcon />} />
+          </HStack>
+        </HStack>
         <Flex justifyContent={"space-between"} px={6}>
           <HStack>
             <Text fontWeight="bold">ID</Text>

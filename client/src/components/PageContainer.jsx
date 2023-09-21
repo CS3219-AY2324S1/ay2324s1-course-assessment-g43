@@ -27,4 +27,5 @@ export const PageContainer = ({ children, w }) => {
 
 PageContainer.propTypes = {
   children: PropTypes.children,
+  w: PropTypes.w,
 };

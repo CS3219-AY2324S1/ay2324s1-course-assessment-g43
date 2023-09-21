@@ -8,8 +8,9 @@ import {
   Stack,
   IconButton,
   Input,
+  ButtonGroup,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { useEffect } from "react";
@@ -35,6 +36,10 @@ export const ViewQuestions = observer(() => {
             <IconButton aria-label="Search database" icon={<SearchIcon />} />
           </HStack>
         </HStack>
+        <ButtonGroup size="sm" isAttached variant="outline">
+          <Button>Create new question </Button>
+          <IconButton aria-label="Add to friends" icon={<AddIcon />} />
+        </ButtonGroup>
         <Flex justifyContent={"space-between"} px={6}>
           <HStack>
             <Text fontWeight="bold">ID</Text>
@@ -45,7 +50,7 @@ export const ViewQuestions = observer(() => {
         {!!state.questions ? (
           state.questions.map((question) => {
             return (
-              <Card>
+              <Card key="">
                 <CardBody>
                   <Flex justifyContent={"space-between"}>
                     <HStack>
@@ -63,6 +68,7 @@ export const ViewQuestions = observer(() => {
         ) : (
           <Card>
             <CardBody>
+              {/* eslint-disable-next-line react/no-unescaped-entities*/}
               <Text>Can't seem to find any questions.</Text>
             </CardBody>
           </Card>

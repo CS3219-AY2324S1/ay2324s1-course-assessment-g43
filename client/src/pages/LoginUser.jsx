@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FormControl,
   FormLabel,
@@ -10,15 +9,46 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { PageContainer } from "../components/PageContainer";
 import { loginUserStore } from "../stores/loginUserStore";
 import { observer } from "mobx-react";
+import { useNavigate } from "react-router-dom";
 
 export const LoginUser = observer(() => {
   const store = loginUserStore;
   const state = store.state;
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const onLogin = () => {
+    toast.promise(store.login(), {
+      success: (user) => {
+        if (!!user) navigate("/");
+        return {
+          title: "Successfully logged in.",
+          description:
+            "You've successfully logged in! Enjoy our amazing features!",
+          duration: 3000,
+          isClosable: true,
+        };
+      },
+      error: (error) => ({
+        title: "An error occurred.",
+        description: error.response.data.message || "Unknown error occurred.",
+        duration: 3000,
+        isClosable: true,
+      }),
+      loading: {
+        title: "Logging in.",
+        description: "Please give us some time to authenticate your account.",
+        duration: 3000,
+        isClosable: true,
+      },
+    });
+  };
 
   return (
     <PageContainer>
@@ -51,7 +81,7 @@ export const LoginUser = observer(() => {
               <InputRightElement h={"full"}>
                 <Button
                   variant={"ghost"}
-                  onClick={() => store.toggleShowPassword}
+                  onClick={() => store.toggleShowPassword()}
                 >
                   {state.showPassword ? <ViewIcon /> : <ViewOffIcon />}
                 </Button>
@@ -73,6 +103,7 @@ export const LoginUser = observer(() => {
               _hover={{
                 bg: "blue.500",
               }}
+              onClick={onLogin}
             >
               Log In
             </Button>

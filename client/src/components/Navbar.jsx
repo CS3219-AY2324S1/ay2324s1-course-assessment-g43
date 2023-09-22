@@ -274,28 +274,30 @@ MobileNavItem.propTypes = {
   href: PropTypes.href,
 };
 
-const NAV_ITEMS = !!localStorage.getItem("user")
-  ? [
-      {
-        label: "Questions",
-        children: [
-          {
-            label: "Browse",
-            subLabel: "Browse all questions",
-            href: "/view-questions",
-          },
-          {
-            label: "Create",
-            subLabel: "Create new questions",
-            href: "/create-question",
-          },
-        ],
-      },
-      {
-        label: "My Profile",
-        href: "/me",
-      },
-    ]
-  : [];
+const currUser = localStorage.getItem("user");
+const NAV_ITEMS =
+  !!currUser && currUser != "undefined"
+    ? [
+        {
+          label: "Questions",
+          children: [
+            {
+              label: "Browse",
+              subLabel: "Browse all questions",
+              href: "/view-questions",
+            },
+            {
+              label: "Create",
+              subLabel: "Create new questions",
+              href: "/create-question",
+            },
+          ],
+        },
+        {
+          label: "My Profile",
+          href: "/me",
+        },
+      ]
+    : [];
 
 export default Navbar;

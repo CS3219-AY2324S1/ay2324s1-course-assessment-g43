@@ -23,13 +23,9 @@ export const getAllUsers = async () => {
 };
 
 export const register = async (req) => {
-  try {
-    const res = await axios.post(`${basePath}/register`, req);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.post(`${basePath}/register`, req);
+  console.log(res);
+  return res;
 };
 
 export const login = async (req) => {

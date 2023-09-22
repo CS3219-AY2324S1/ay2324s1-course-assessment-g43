@@ -5,7 +5,7 @@ class RegisterUserStore {
   state = {
     username: "",
     email: "",
-    pass: "",
+    password: "",
     showPassword: false,
   };
 
@@ -22,7 +22,7 @@ class RegisterUserStore {
   }
 
   setPassword(password) {
-    this.state.pass = password;
+    this.state.password = password;
   }
 
   toggleShowPassword() {
@@ -30,8 +30,14 @@ class RegisterUserStore {
   }
 
   async register() {
-    const res = await register(this.state);
-    console.log(res);
+    try {
+      const res = await register(this.state);
+      console.log(res);
+      return res;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }
 

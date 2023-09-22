@@ -9,6 +9,7 @@ import {
   Heading,
   Text,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { registerUserStore } from "../stores/registerUserStore";
@@ -17,6 +18,31 @@ import { PageContainer } from "../components/PageContainer";
 
 export const RegisterUser = observer(() => {
   const state = registerUserStore.state;
+  const toast = useToast();
+
+  const onRegister = () => {
+    toast.promise(registerUserStore.register(), {
+      success: {
+        title: "Account registered.",
+        description:
+          "We've registered an account for you! Log in to use our amazing features!",
+        duration: 3000,
+        isClosable: true,
+      },
+      error: (error) => ({
+        title: "An error occurred.",
+        description: error.response.data.message || "Unknown error occurred.",
+        duration: 3000,
+        isClosable: true,
+      }),
+      loading: {
+        title: "Registering account.",
+        description: "Please give us some time to register your account.",
+        duration: 3000,
+        isClosable: true,
+      },
+    });
+  };
 
   return (
     <PageContainer>
@@ -49,7 +75,7 @@ export const RegisterUser = observer(() => {
             <InputGroup>
               <Input
                 type={state.showPassword ? "text" : "password"}
-                value={state.pass}
+                value={state.password}
                 onChange={(e) => registerUserStore.setPassword(e.target.value)}
               />
               <InputRightElement h={"full"}>
@@ -71,7 +97,7 @@ export const RegisterUser = observer(() => {
               _hover={{
                 bg: "blue.500",
               }}
-              onClick={(e) => registerUserStore.register()}
+              onClick={onRegister}
             >
               Register
             </Button>

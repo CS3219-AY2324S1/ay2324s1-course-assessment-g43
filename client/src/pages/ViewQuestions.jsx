@@ -9,16 +9,37 @@ import {
   IconButton,
   Input,
   ButtonGroup,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 
 export const ViewQuestions = observer(() => {
+  const navigate = useNavigate();
+
   const store = viewQuestionsStore;
   const state = store.state;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const redirectToUpdateQuestionPage = () => {
+    navigate("/update-question");
+  };
+
+  const deleteQuestion = async (e) => {
+    e.preventDefault();
+    await viewQuestionsStore.deleteQuestion("1");
+  };
 
   useEffect(() => {
     viewQuestionsStore.getAllQuestions();
@@ -59,7 +80,34 @@ export const ViewQuestions = observer(() => {
                         {question.title}
                       </Text>
                     </HStack>
-                    <Button>View Details</Button>
+                    <Button onClick={onOpen}>View Details</Button>
+                    <Modal isOpen={isOpen} onClose={onClose}>
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader>{question.title}</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                          <Text>{question.description}</Text>
+                        </ModalBody>
+
+                        <ModalFooter>
+                          <Button
+                            colorScheme="blue"
+                            mr={3}
+                            onClick={redirectToUpdateQuestionPage}
+                          >
+                            Update Question
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            colorScheme="red"
+                            onClick={async (e) => await deleteQuestion(e)}
+                          >
+                            Delete Question
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
                   </Flex>
                 </CardBody>
               </Card>

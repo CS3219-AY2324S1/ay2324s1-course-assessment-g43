@@ -1,12 +1,12 @@
 import {
   Stack,
   Heading,
-  useColorModeValue,
   FormControl,
   FormLabel,
   Input,
   Button,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { updateQuestionStore } from "../stores/updateQuestionStore";
 import { observer } from "mobx-react";
@@ -17,21 +17,44 @@ import { useEffect } from "react";
 export const UpdateQuestion = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
   const store = updateQuestionStore;
   const state = store.state;
 
-  const updateQuestion = async (e) => {
-    e.preventDefault();
-    await updateQuestionStore.updateQuestionById("1"); //passing in temp id of 1, #TODO is it supposed to be e?
+  const updateQuestion = () => {
+    toast.promise(store.updateQuestionById(), {
+      success: () => {
+        navigate("/browse");
+        return {
+          title: "Successfully updated.",
+          description: "You've successfully updated the question!",
+          duration: 3000,
+          isClosable: true,
+        };
+      },
+      error: (error) => ({
+        title: "An error occurred.",
+        description: error.response.data.message || "Unknown error occurred.",
+        duration: 3000,
+        isClosable: true,
+      }),
+      loading: {
+        title: "Updating question.",
+        description: "Please give us some time to update the question.",
+        duration: 3000,
+        isClosable: true,
+      },
+    });
   };
 
   useEffect(() => {
     const selectedQuestion = JSON.parse(location.state.selectedQuestion);
+    store.setQuestionId(selectedQuestion.questionId);
     store.setTitle(selectedQuestion.title);
     store.setDescription(selectedQuestion.description);
     store.setCategory(selectedQuestion.category);
     store.setComplexity(selectedQuestion.complexity);
-  });
+  }, []);
 
   return (
     <PageContainer w={"100%"}>
@@ -47,7 +70,7 @@ export const UpdateQuestion = observer(() => {
             type="text"
             value={state.title}
             onChange={(e) => {
-              updateQuestionStore.setTitle(e.target.value);
+              store.setTitle(e.target.value);
             }}
           />
         </FormControl>
@@ -58,7 +81,7 @@ export const UpdateQuestion = observer(() => {
             _placeholder={{ color: "gray.500" }}
             value={state.description}
             onChange={(e) => {
-              updateQuestionStore.setDescription(e.target.value);
+              store.setDescription(e.target.value);
             }}
           />
         </FormControl>

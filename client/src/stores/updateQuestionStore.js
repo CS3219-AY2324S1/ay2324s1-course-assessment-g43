@@ -1,11 +1,9 @@
 import { makeAutoObservable } from "mobx";
-import {
-  getQuestionById,
-  updateQuestionById,
-} from "../services/questionService";
+import { updateQuestionById } from "../services/questionService";
 
 class UpdateQuestionStore {
   state = {
+    questionId: -1,
     title: "",
     description: "",
     category: [],
@@ -16,11 +14,8 @@ class UpdateQuestionStore {
     makeAutoObservable(this);
   }
 
-  async getQuestionById(id) {
-    const qn = await getQuestionById(id);
-    this.state.title = qn.title;
-    this.state.description = qn.description;
-    this.state.tag = qn.tag;
+  setQuestionId(questionId) {
+    this.state.questionId = questionId;
   }
 
   setTitle(title) {
@@ -39,9 +34,9 @@ class UpdateQuestionStore {
     this.state.complexity = complexity;
   }
 
-  async updateQuestionById(id) {
+  async updateQuestionById() {
     try {
-      const res = await updateQuestionById(id, this.state);
+      const res = await updateQuestionById(this.state.questionId, this.state);
       console.log(res);
       return res;
     } catch (err) {

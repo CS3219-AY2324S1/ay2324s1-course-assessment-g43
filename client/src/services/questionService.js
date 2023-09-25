@@ -35,11 +35,7 @@ export const updateQuestionById = async (id, req) => {
 };
 
 export const deleteQuestionById = async (id) => {
-  try {
-    const res = await axios.delete(`${basePath}/${id}`);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.delete(`${basePath}/${id}`);
+  console.log(res);
+  return res;
 };

@@ -42,7 +42,8 @@ export const ViewQuestions = observer(() => {
     window.confirm("Delete this question? This action is irreversible.");
     toast.promise(store.deleteQuestion(id), {
       success: () => {
-        onClose;
+        onClose();
+        store.getAllQuestions();
         return {
           title: "Successfully deleted question.",
           description: "You've successfully deleted this question!",
@@ -148,7 +149,9 @@ export const ViewQuestions = observer(() => {
                   <Button
                     variant="ghost"
                     colorScheme="red"
-                    onClick={async (e) => await deleteQuestion(e)}
+                    onClick={() =>
+                      deleteQuestion(state.selectedQuestion.questionId)
+                    }
                   >
                     Delete Question
                   </Button>

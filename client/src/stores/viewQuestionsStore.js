@@ -7,6 +7,7 @@ import {
 class ViewQuestionsStore {
   state = {
     questions: [],
+    selectedQuestion: {},
   };
 
   constructor() {
@@ -26,6 +27,10 @@ class ViewQuestionsStore {
 
   setQuestions(questions) {
     this.state.questions = questions;
+  }
+
+  setSelectedQuestion(selectedQuestion) {
+    this.state.selectedQuestion = selectedQuestion;
   }
 
   async deleteQuestion(id) {

@@ -65,6 +65,11 @@ export const ViewQuestions = observer(() => {
     });
   };
 
+  const handleOpenModal = (question) => {
+    store.setSelectedQuestion(question);
+    onOpen();
+  };
+
   useEffect(() => {
     store.getAllQuestions();
   }, []);
@@ -93,9 +98,9 @@ export const ViewQuestions = observer(() => {
           <Text fontWeight="bold">Actions</Text>
         </Flex>
         {!!state.questions ? (
-          state.questions.map((question) => {
+          state.questions.map((question, index) => {
             return (
-              <Card key="">
+              <Card key={index}>
                 <CardBody>
                   <Flex justifyContent={"space-between"}>
                     <HStack>
@@ -104,44 +109,9 @@ export const ViewQuestions = observer(() => {
                         {question.title}
                       </Text>
                     </HStack>
-                    <Button onClick={onOpen}>View Details</Button>
-                    <Modal
-                      isOpen={isOpen}
-                      onClose={onClose}
-                      isCentered
-                      size={"xl"}
-                    >
-                      <ModalOverlay
-                        bg="none"
-                        backdropFilter="auto"
-                        backdropBlur="1px"
-                      />
-                      <ModalContent>
-                        <ModalHeader>{question.title}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                          <Text>{question.description}</Text>
-                          {/*more details to be added here*/}
-                        </ModalBody>
-
-                        <ModalFooter>
-                          <Button
-                            colorScheme="blue"
-                            mr={3}
-                            onClick={redirectToUpdateQuestionPage}
-                          >
-                            Update Question
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            colorScheme="red"
-                            onClick={async (e) => await deleteQuestion(e)}
-                          >
-                            Delete Question
-                          </Button>
-                        </ModalFooter>
-                      </ModalContent>
-                    </Modal>
+                    <Button onClick={() => handleOpenModal(question)}>
+                      View Details
+                    </Button>
                   </Flex>
                 </CardBody>
               </Card>
@@ -154,6 +124,40 @@ export const ViewQuestions = observer(() => {
               <Text>Can't seem to find any questions.</Text>
             </CardBody>
           </Card>
+        )}
+        {!!state.selectedQuestion ? (
+          <>
+            <Modal isOpen={isOpen} onClose={onClose} isCentered size={"xl"}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>{state.selectedQuestion.title}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Text>{state.selectedQuestion.description}</Text>
+                  {/*more details to be added here*/}
+                </ModalBody>
+
+                <ModalFooter>
+                  <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={redirectToUpdateQuestionPage}
+                  >
+                    Update Question
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    colorScheme="red"
+                    onClick={async (e) => await deleteQuestion(e)}
+                  >
+                    Delete Question
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </>
+        ) : (
+          <></>
         )}
       </Stack>
     </PageContainer>

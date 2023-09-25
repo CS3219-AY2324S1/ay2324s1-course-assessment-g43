@@ -6,7 +6,7 @@ import { UpdateUser } from "./pages/UpdateUser";
 import { ViewUser } from "./pages/ViewUser";
 import { ViewQuestions } from "./pages/ViewQuestions";
 import { UpdateQuestion } from "./pages/UpdateQuestion";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (

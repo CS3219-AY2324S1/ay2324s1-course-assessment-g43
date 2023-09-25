@@ -21,9 +21,52 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
+  const [localStorageUser, setLocalStorageUser] = useState(
+    localStorage.getItem("user")
+  );
+
+  useEffect(() => {
+    const handleLocalStorageChange = () => {
+      setLocalStorageUser(localStorage.getItem("user"));
+    };
+
+    // Add an event listener for the 'storage' event to detect changes in localStorage.
+    window.addEventListener("storage", handleLocalStorageChange);
+
+    // Clean up the event listener when the component unmounts.
+    return () => {
+      window.removeEventListener("storage", handleLocalStorageChange);
+    };
+  }, []);
+
+  const navItems =
+    !!localStorageUser && localStorageUser != "undefined"
+      ? [
+          {
+            label: "Questions",
+            children: [
+              {
+                label: "Browse",
+                subLabel: "Browse all questions",
+                href: "/view-questions",
+              },
+              {
+                label: "Create",
+                subLabel: "Create new questions",
+                href: "/create-question",
+              },
+            ],
+          },
+          {
+            label: "My Profile",
+            href: "/me",
+          },
+        ]
+      : [];
 
   return (
     <Box>
@@ -64,7 +107,7 @@ const Navbar = () => {
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav />
+            <DesktopNav navItems={navItems} />
           </Flex>
         </Flex>
 
@@ -74,47 +117,55 @@ const Navbar = () => {
           direction={"row"}
           spacing={6}
         >
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            href={"/login-user"}
-          >
-            Log In
-          </Button>
-          <Button
-            as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"pink.400"}
-            href={"/register-user"}
-            _hover={{
-              bg: "pink.300",
-            }}
-          >
-            Register
-          </Button>
+          {localStorageUser ? (
+            <Button as={"a"} fontSize={"sm"} fontWeight={400} variant={"link"}>
+              Log Out
+            </Button>
+          ) : (
+            <>
+              <Button
+                as={"a"}
+                fontSize={"sm"}
+                fontWeight={400}
+                variant={"link"}
+                href={"/login-user"}
+              >
+                Log In
+              </Button>
+              <Button
+                as={"a"}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"pink.400"}
+                href={"/register-user"}
+                _hover={{
+                  bg: "pink.300",
+                }}
+              >
+                Register
+              </Button>
+            </>
+          )}
         </Stack>
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav navItems={navItems} />
       </Collapse>
     </Box>
   );
 };
 
-const DesktopNav = () => {
+const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
     <Stack direction={"row"} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
@@ -195,20 +246,14 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   );
 };
 
-DesktopSubNav.propTypes = {
-  label: PropTypes.string,
-  href: PropTypes.href,
-  subLabel: PropTypes.string,
-};
-
-const MobileNav = () => {
+const MobileNav = ({ navItems }) => {
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -268,36 +313,16 @@ const MobileNavItem = ({ label, children, href }) => {
   );
 };
 
+DesktopSubNav.propTypes = {
+  label: PropTypes.string,
+  href: PropTypes.href,
+  subLabel: PropTypes.string,
+};
+
 MobileNavItem.propTypes = {
   label: PropTypes.string,
   children: PropTypes.children,
   href: PropTypes.href,
 };
-
-const currUser = localStorage.getItem("user");
-const NAV_ITEMS =
-  !!currUser && currUser != "undefined"
-    ? [
-        {
-          label: "Questions",
-          children: [
-            {
-              label: "Browse",
-              subLabel: "Browse all questions",
-              href: "/view-questions",
-            },
-            {
-              label: "Create",
-              subLabel: "Create new questions",
-              href: "/create-question",
-            },
-          ],
-        },
-        {
-          label: "My Profile",
-          href: "/me",
-        },
-      ]
-    : [];
 
 export default Navbar;

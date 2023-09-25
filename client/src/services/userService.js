@@ -32,13 +32,9 @@ export const logout = async (req) => {
 };
 
 export const updateUser = async (id, req) => {
-  try {
-    const res = await axios.put(`${basePath}/update/${id}`, req);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.put(`${basePath}/update/${id}`, req);
+  console.log(res);
+  return res;
 };
 
 export const deleteUser = async (id) => {

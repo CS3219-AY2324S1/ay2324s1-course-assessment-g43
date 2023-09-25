@@ -5,20 +5,22 @@ class UpdateUserStore {
   state = {
     username: "",
     email: "",
-    pass: "",
   };
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  async getInitialState(id) {
-    const user = await getUserById(id);
-    this.state.username = user.username;
-    this.state.email = user.email;
-    this.state.pass = user.pass;
+  async populateStateWithUserById(id) {
+    try {
+      const data = await getUserById(id);
+      this.setUsername(data.user.username);
+      this.setEmail(data.user.email);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
-
   setUsername(username) {
     this.state.username = username;
   }
@@ -27,13 +29,14 @@ class UpdateUserStore {
     this.state.email = email;
   }
 
-  setPassword(password) {
-    this.state.pass = password;
-  }
-
   async updateUser(id) {
-    const res = await updateUser(id, this.state);
-    console.log(res);
+    try {
+      const res = await updateUser(id, this.state);
+      return res;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }
 

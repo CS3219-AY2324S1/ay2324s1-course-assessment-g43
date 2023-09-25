@@ -2,7 +2,6 @@ import {
   Button,
   Heading,
   Stack,
-  useColorModeValue,
   Text,
   SimpleGrid,
   IconButton,
@@ -26,7 +25,7 @@ export const ViewUser = observer(() => {
     navigate("/update-user");
   };
 
-  const deleteUser = async () => {
+  const deleteUser = () => {
     window.confirm(
       "Are you sure you want to delete your account? This action is irreversible."
     );

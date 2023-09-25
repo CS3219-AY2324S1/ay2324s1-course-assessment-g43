@@ -6,6 +6,7 @@ import {
   Input,
   Stack,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { updateUserStore } from "../stores/updateUserStore";
 import { observer } from "mobx-react";
@@ -15,29 +16,44 @@ import { PageContainer } from "../components/PageContainer";
 
 export const UpdateUser = observer(() => {
   const navigate = useNavigate();
-  const state = updateUserStore.state;
+  const toast = useToast();
+  const store = updateUserStore;
+  const state = store.state;
+  const userId = JSON.parse(localStorage.getItem("user")).uid;
 
-  const updateUser = async (e) => {
-    e.preventDefault();
-    await updateUserStore.updateUser("1"); // passing in temp id of 1
+  const updateUser = () => {
+    toast.promise(store.updateUser(userId), {
+      success: () => {
+        navigate("/me");
+        return {
+          title: "Successfully updated account.",
+          description: "You've successfully updated your account!",
+          duration: 3000,
+          isClosable: true,
+        };
+      },
+      error: (error) => ({
+        title: "An error occurred.",
+        description: error.response.data.message || "Unknown error occurred.",
+        duration: 3000,
+        isClosable: true,
+      }),
+      loading: {
+        title: "Updating Account.",
+        description: "Please give us some time to update your account.",
+        duration: 3000,
+        isClosable: true,
+      },
+    });
   };
 
-  useEffect(async () => {
-    await updateUserStore.getInitialState("1"); // same passing in temp id of 1 because we don't know how we are going to pass an id in just yet.
+  useEffect(() => {
+    store.populateStateWithUserById(userId);
   }, []);
 
   return (
     <PageContainer>
-      <Stack
-        spacing={4}
-        w={"full"}
-        maxW={"lg"}
-        bg={useColorModeValue("white", "gray.700")}
-        rounded={"xl"}
-        boxShadow={"lg"}
-        p={6}
-        my={12}
-      >
+      <Stack spacing={8} maxW={"lg"} p={6}>
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
           User Profile Edit
         </Heading>

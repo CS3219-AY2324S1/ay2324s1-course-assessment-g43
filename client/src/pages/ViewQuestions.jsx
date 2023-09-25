@@ -43,7 +43,7 @@ export const ViewQuestions = observer(() => {
 
   useEffect(() => {
     viewQuestionsStore.getAllQuestions();
-  }, [viewQuestionsStore]);
+  }, []);
 
   return (
     <PageContainer w={"100%"}>
@@ -81,8 +81,17 @@ export const ViewQuestions = observer(() => {
                       </Text>
                     </HStack>
                     <Button onClick={onOpen}>View Details</Button>
-                    <Modal isOpen={isOpen} onClose={onClose}>
-                      <ModalOverlay />
+                    <Modal
+                      isOpen={isOpen}
+                      onClose={onClose}
+                      isCentered
+                      size={"xl"}
+                    >
+                      <ModalOverlay
+                        bg="none"
+                        backdropFilter="auto"
+                        backdropBlur="1px"
+                      />
                       <ModalContent>
                         <ModalHeader>{question.title}</ModalHeader>
                         <ModalCloseButton />

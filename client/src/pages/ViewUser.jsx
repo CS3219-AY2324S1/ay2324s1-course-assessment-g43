@@ -6,31 +6,58 @@ import {
   Text,
   SimpleGrid,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { viewUserStore } from "../stores/viewUserStore";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { deleteUser } from "../services/userService";
 import { PageContainer } from "../components/PageContainer";
 
 export const ViewUser = observer(() => {
   const navigate = useNavigate();
-
-  const state = viewUserStore.state;
+  const toast = useToast();
+  const store = viewUserStore;
+  const state = store.state;
+  const userId = JSON.parse(localStorage.getItem("user")).uid;
 
   const redirectToUpdateUserPage = () => {
     navigate("/update-user");
   };
 
-  const deleteUser = async (e) => {
-    e.preventDefault();
-    await viewUserStore.deleteUser("1");
+  const deleteUser = async () => {
+    window.confirm(
+      "Are you sure you want to delete your account? This action is irreversible."
+    );
+    toast.promise(store.deleteUser(userId), {
+      success: () => {
+        localStorage.removeItem("user");
+        navigate("/");
+        return {
+          title: "Successfully deleted account.",
+          description: "You've successfully deleted your account!",
+          duration: 3000,
+          isClosable: true,
+        };
+      },
+      error: (error) => ({
+        title: "An error occurred.",
+        description: error.response.data.message || "Unknown error occurred.",
+        duration: 3000,
+        isClosable: true,
+      }),
+      loading: {
+        title: "Deleting Account.",
+        description: "Please give us some time to delete your account.",
+        duration: 3000,
+        isClosable: true,
+      },
+    });
   };
 
-  useEffect(async () => {
-    await viewUserStore.getInitialState("1");
+  useEffect(() => {
+    store.populateStateWithUserById(userId);
   }, []);
 
   return (
@@ -42,23 +69,15 @@ export const ViewUser = observer(() => {
           navigate(-1);
         }}
       />
-      <Stack
-        spacing={4}
-        w={"full"}
-        maxW={"lg"}
-        bg={useColorModeValue("white", "gray.700")}
-        rounded={"xl"}
-        boxShadow={"lg"}
-        p={6}
-      >
+      <Stack spacing={4} w={"full"} maxW={"lg"}>
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
           User Profile Details
         </Heading>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           {Object.entries(state).map((item, index) => (
             <>
-              <Text fontWeight="bold">{item.key}:</Text>
-              <Text>{item.value}</Text>
+              <Text fontWeight="bold">{item[0]}:</Text>
+              <Text>{item[1]}</Text>
             </>
           ))}
         </SimpleGrid>
@@ -70,7 +89,7 @@ export const ViewUser = observer(() => {
             _hover={{
               bg: "red.500",
             }}
-            onClick={async (e) => await deleteUser(e)}
+            onClick={deleteUser}
           >
             Delete your profile
           </Button>

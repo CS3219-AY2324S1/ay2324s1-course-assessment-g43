@@ -3,23 +3,14 @@ import axios from "axios";
 const basePath = "http://localhost:5000/api";
 
 export const getUserById = async (id) => {
-  try {
-    const res = await axios.get(`${basePath}/getUsers/${id}`);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.get(`${basePath}/getUsers/${id}`);
+  return res.data.data;
 };
 
 export const getAllUsers = async () => {
-  try {
-    const res = await axios.get(`${basePath}/getUsers`);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.get(`${basePath}/getUsers`);
+  console.log(res);
+  return res;
 };
 
 export const register = async (req) => {
@@ -35,13 +26,9 @@ export const login = async (req) => {
 };
 
 export const logout = async (req) => {
-  try {
-    const res = await axios.post(`${basePath}/logout`, req);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.post(`${basePath}/logout`, req);
+  console.log(res);
+  return res;
 };
 
 export const updateUser = async (id, req) => {
@@ -55,11 +42,6 @@ export const updateUser = async (id, req) => {
 };
 
 export const deleteUser = async (id) => {
-  try {
-    const res = await axios.delete(`${basePath}/delete/${id}`);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.delete(`${basePath}/delete/${id}`);
+  return res;
 };

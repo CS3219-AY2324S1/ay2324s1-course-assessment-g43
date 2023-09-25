@@ -14,6 +14,7 @@ class ViewQuestionsStore {
     try {
       const res = await getAllQuestions();
       console.log(res);
+      this.setQuestions(res.data);
       return res;
     } catch (err) {
       console.log(err);

@@ -8,7 +8,6 @@ import {
   Stack,
   IconButton,
   Input,
-  ButtonGroup,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -16,54 +15,17 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
-  useToast,
 } from "@chakra-ui/react";
-import { SearchIcon, AddIcon } from "@chakra-ui/icons";
+import { SearchIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 
 export const ViewQuestions = observer(() => {
-  const navigate = useNavigate();
-
-  const toast = useToast();
   const store = viewQuestionsStore;
   const state = store.state;
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const redirectToUpdateQuestionPage = () => {
-    navigate("/update-question");
-  };
-
-  const deleteQuestion = (id) => {
-    window.confirm("Delete this question? This action is irreversible.");
-    toast.promise(store.deleteQuestion(id), {
-      success: () => {
-        onClose;
-        return {
-          title: "Successfully deleted question.",
-          description: "You've successfully deleted this question!",
-          duration: 3000,
-          isClosable: true,
-        };
-      },
-      error: (error) => ({
-        title: "An error occurred.",
-        description: error.response.data.message || "Unknown error occurred.",
-        duration: 3000,
-        isClosable: true,
-      }),
-      loading: {
-        title: "Deleting Question.",
-        description: "Please give us some time to delete this question.",
-        duration: 3000,
-        isClosable: true,
-      },
-    });
-  };
 
   useEffect(() => {
     store.getAllQuestions();
@@ -81,10 +43,6 @@ export const ViewQuestions = observer(() => {
             <IconButton aria-label="Search database" icon={<SearchIcon />} />
           </HStack>
         </HStack>
-        <ButtonGroup size="sm" isAttached variant="outline">
-          <Button>Create new question </Button>
-          <IconButton aria-label="Add to friends" icon={<AddIcon />} />
-        </ButtonGroup>
         <Flex justifyContent={"space-between"} px={6}>
           <HStack>
             <Text fontWeight="bold">ID</Text>
@@ -123,23 +81,6 @@ export const ViewQuestions = observer(() => {
                           <Text>{question.description}</Text>
                           {/*more details to be added here*/}
                         </ModalBody>
-
-                        <ModalFooter>
-                          <Button
-                            colorScheme="blue"
-                            mr={3}
-                            onClick={redirectToUpdateQuestionPage}
-                          >
-                            Update Question
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            colorScheme="red"
-                            onClick={async (e) => await deleteQuestion(e)}
-                          >
-                            Delete Question
-                          </Button>
-                        </ModalFooter>
                       </ModalContent>
                     </Modal>
                   </Flex>

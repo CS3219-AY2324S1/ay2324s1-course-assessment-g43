@@ -6,40 +6,38 @@ import {
   FormLabel,
   Input,
   Button,
+  Textarea,
 } from "@chakra-ui/react";
 import { updateQuestionStore } from "../stores/updateQuestionStore";
 import { observer } from "mobx-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { useEffect } from "react";
 
 export const UpdateQuestion = observer(() => {
   const navigate = useNavigate();
-  const state = updateQuestionStore.state;
+  const location = useLocation();
+  const store = updateQuestionStore;
+  const state = store.state;
 
   const updateQuestion = async (e) => {
     e.preventDefault();
     await updateQuestionStore.updateQuestionById("1"); //passing in temp id of 1, #TODO is it supposed to be e?
   };
 
-  useEffect(async () => {
-    await updateQuestionStore.getQuestionById("1"); // same passing in temp id of 1 because we don't know how we are going to pass an id in just yet.
-  }, []);
+  useEffect(() => {
+    const selectedQuestion = JSON.parse(location.state.selectedQuestion);
+    store.setTitle(selectedQuestion.title);
+    store.setDescription(selectedQuestion.description);
+    store.setCategory(selectedQuestion.category);
+    store.setComplexity(selectedQuestion.complexity);
+  });
 
   return (
-    <PageContainer>
-      <Stack
-        spacing={4}
-        w={"full"}
-        maxW={"lg"}
-        bg={useColorModeValue("white", "gray.700")}
-        rounded={"xl"}
-        boxShadow={"lg"}
-        p={6}
-        my={12}
-      >
+    <PageContainer w={"100%"}>
+      <Stack spacing={4} w={"100%"} p={6}>
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
-          Question Edit
+          Update Question
         </Heading>
         <FormControl id="title" isRequired>
           <FormLabel>Title</FormLabel>
@@ -55,10 +53,9 @@ export const UpdateQuestion = observer(() => {
         </FormControl>
         <FormControl id="description" isRequired>
           <FormLabel>Description</FormLabel>
-          <Input
+          <Textarea
             placeholder="Question description"
             _placeholder={{ color: "gray.500" }}
-            type="text"
             value={state.description}
             onChange={(e) => {
               updateQuestionStore.setDescription(e.target.value);

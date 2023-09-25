@@ -6,7 +6,10 @@ import {
 
 class UpdateQuestionStore {
   state = {
-    questions: [],
+    title: "",
+    description: "",
+    category: [],
+    complexity: "",
   };
 
   constructor() {
@@ -26,6 +29,14 @@ class UpdateQuestionStore {
 
   setDescription(description) {
     this.state.description = description;
+  }
+
+  setCategory(category) {
+    this.state.category = category;
+  }
+
+  setComplexity(complexity) {
+    this.state.complexity = complexity;
   }
 
   async updateQuestionById(id) {

@@ -34,8 +34,10 @@ export const ViewQuestions = observer(() => {
   const state = store.state;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const redirectToUpdateQuestionPage = () => {
-    navigate("/update-question");
+  const redirectToUpdateQuestionPage = (selectedQuestion) => {
+    navigate("/update-question", {
+      state: { selectedQuestion: JSON.stringify(selectedQuestion) },
+    });
   };
 
   const deleteQuestion = (id) => {
@@ -142,7 +144,9 @@ export const ViewQuestions = observer(() => {
                   <Button
                     colorScheme="blue"
                     mr={3}
-                    onClick={redirectToUpdateQuestionPage}
+                    onClick={() =>
+                      redirectToUpdateQuestionPage(state.selectedQuestion)
+                    }
                   >
                     Update Question
                   </Button>

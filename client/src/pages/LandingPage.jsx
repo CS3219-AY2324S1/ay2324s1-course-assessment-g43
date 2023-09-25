@@ -5,7 +5,7 @@ import { PageContainer } from "../components/PageContainer";
 export const LandingPage = () => {
   return (
     <PageContainer w={"100%"}>
-      <Stack>
+      <Stack align={"center"}>
         <img
           src={background}
           alt="PeerPrep"

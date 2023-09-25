@@ -42,7 +42,7 @@ const Navbar = () => {
               {
                 label: "Browse",
                 subLabel: "Browse all questions",
-                href: "/view-questions",
+                href: "/browse",
               },
               {
                 label: "Create",

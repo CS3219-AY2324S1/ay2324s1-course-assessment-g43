@@ -1,5 +1,8 @@
 import { makeAutoObservable } from "mobx";
-import { getAllQuestions } from "../services/questionService";
+import {
+  getAllQuestions,
+  deleteQuestionById,
+} from "../services/questionService";
 
 class ViewQuestionsStore {
   state = {
@@ -23,6 +26,16 @@ class ViewQuestionsStore {
 
   setQuestions(questions) {
     this.state.questions = questions;
+  }
+
+  async deleteQuestion(id) {
+    try {
+      const res = deleteQuestionById(id);
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }
 

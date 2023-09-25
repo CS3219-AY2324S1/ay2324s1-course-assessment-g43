@@ -6,28 +6,24 @@ import { UpdateUser } from "./pages/UpdateUser";
 import { ViewUser } from "./pages/ViewUser";
 import { ViewQuestions } from "./pages/ViewQuestions";
 import { UpdateQuestion } from "./pages/UpdateQuestion";
-import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" exact={true} Component={LandingPage} />
-          <Route path="/login-user" exact={true} Component={LoginUser} />
-          <Route path="/register-user" exact={true} Component={RegisterUser} />
-          <Route path="/update-user" exact={true} Component={UpdateUser} />
-          <Route path="/me" exact={true} Component={ViewUser} />
-          <Route path="/browse" exact={true} Component={ViewQuestions} />
-          <Route
-            path="/update-question"
-            exact={true}
-            Component={UpdateQuestion}
-          />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" exact={true} Component={LandingPage} />
+        <Route path="/login-user" exact={true} Component={LoginUser} />
+        <Route path="/register-user" exact={true} Component={RegisterUser} />
+        <Route path="/update-user" exact={true} Component={UpdateUser} />
+        <Route path="/me" exact={true} Component={ViewUser} />
+        <Route path="/browse" exact={true} Component={ViewQuestions} />
+        <Route
+          path="/update-question"
+          exact={true}
+          Component={UpdateQuestion}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

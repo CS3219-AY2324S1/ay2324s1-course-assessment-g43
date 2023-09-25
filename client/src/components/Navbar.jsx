@@ -21,52 +21,9 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
-import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
-  const [localStorageUser, setLocalStorageUser] = useState(
-    localStorage.getItem("user")
-  );
-
-  useEffect(() => {
-    const handleLocalStorageChange = () => {
-      setLocalStorageUser(localStorage.getItem("user"));
-    };
-
-    // Add an event listener for the 'storage' event to detect changes in localStorage.
-    window.addEventListener("storage", handleLocalStorageChange);
-
-    // Clean up the event listener when the component unmounts.
-    return () => {
-      window.removeEventListener("storage", handleLocalStorageChange);
-    };
-  }, []);
-
-  const navItems =
-    !!localStorageUser && localStorageUser != "undefined"
-      ? [
-          {
-            label: "Questions",
-            children: [
-              {
-                label: "Browse",
-                subLabel: "Browse all questions",
-                href: "/view-questions",
-              },
-              {
-                label: "Create",
-                subLabel: "Create new questions",
-                href: "/create-question",
-              },
-            ],
-          },
-          {
-            label: "My Profile",
-            href: "/me",
-          },
-        ]
-      : [];
 
   return (
     <Box>
@@ -107,7 +64,7 @@ const Navbar = () => {
           </Text>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav navItems={navItems} />
+            <DesktopNav />
           </Flex>
         </Flex>
 
@@ -152,20 +109,20 @@ const Navbar = () => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav navItems={navItems} />
+        <MobileNav />
       </Collapse>
     </Box>
   );
 };
 
-const DesktopNav = ({ navItems }) => {
+const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
     <Stack direction={"row"} spacing={4}>
-      {navItems.map((navItem) => (
+      {NAV_ITEMS.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
@@ -246,14 +203,14 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   );
 };
 
-const MobileNav = ({ navItems }) => {
+const MobileNav = () => {
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
     >
-      {navItems.map((navItem) => (
+      {NAV_ITEMS.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -312,6 +269,32 @@ const MobileNavItem = ({ label, children, href }) => {
     </Stack>
   );
 };
+
+const localStorageUser = localStorage.getItem("user");
+const NAV_ITEMS =
+  !!localStorageUser && localStorageUser != "undefined"
+    ? [
+        {
+          label: "Questions",
+          children: [
+            {
+              label: "Browse",
+              subLabel: "Browse all questions",
+              href: "/view-questions",
+            },
+            {
+              label: "Create",
+              subLabel: "Create new questions",
+              href: "/create-question",
+            },
+          ],
+        },
+        {
+          label: "My Profile",
+          href: "/me",
+        },
+      ]
+    : [];
 
 DesktopSubNav.propTypes = {
   label: PropTypes.string,

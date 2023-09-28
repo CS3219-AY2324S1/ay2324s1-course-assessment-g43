@@ -210,7 +210,7 @@ export const ViewQuestions = observer(() => {
                       <IconButton
                         aria-label="Create category"
                         icon={<AddIcon />}
-                        variant={"ghost"}
+                        variant={"unstyled"}
                         onClick={() => createStore.addCategory()}
                       />
                     </InputRightElement>
@@ -220,7 +220,7 @@ export const ViewQuestions = observer(() => {
                   <FormLabel>Complexity</FormLabel>
                   <Select
                     placeholder="Select complexity"
-                    value={state.description}
+                    value={state.complexity}
                     onChange={(e) => {
                       createStore.setComplexity(e.target.value);
                     }}

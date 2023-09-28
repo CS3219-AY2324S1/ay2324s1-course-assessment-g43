@@ -6,6 +6,7 @@ class UpdateQuestionStore {
     questionId: -1,
     title: "",
     description: "",
+    updatingCat: "",
     category: [],
     complexity: "",
   };
@@ -28,6 +29,22 @@ class UpdateQuestionStore {
 
   setCategory(category) {
     this.state.category = category;
+  }
+
+  setUpdatingCat(cat) {
+    this.state.updatingCat = cat;
+  }
+
+  addCategory() {
+    if (this.state.updatingCat != "") {
+      this.state.category.push(this.state.updatingCat);
+      this.setUpdatingCat("");
+    }
+  }
+
+  removeCategory(category) {
+    const index = this.state.category.indexOf(category);
+    this.state.category.splice(index, 1);
   }
 
   setComplexity(complexity) {

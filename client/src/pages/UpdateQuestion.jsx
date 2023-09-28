@@ -7,7 +7,16 @@ import {
   Button,
   Textarea,
   useToast,
+  HStack,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+  Select,
 } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import { updateQuestionStore } from "../stores/updateQuestionStore";
 import { observer } from "mobx-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -84,6 +93,50 @@ export const UpdateQuestion = observer(() => {
               store.setDescription(e.target.value);
             }}
           />
+        </FormControl>
+        <FormControl id="category" isRequired>
+          <FormLabel>Category</FormLabel>
+          <HStack spacing={4} paddingBottom={1}>
+            {state.category?.map((category) => (
+              <Tag key={category} borderRadius="full" variant="solid">
+                <TagLabel>{category}</TagLabel>
+                <TagCloseButton
+                  onClick={() => store.removeCategory(category)}
+                />
+              </Tag>
+            ))}
+          </HStack>
+          <InputGroup>
+            <Input
+              placeholder="Enter new category"
+              _placeholder={{ color: "gray.500" }}
+              value={state.updatingCat}
+              onChange={(e) => {
+                store.setUpdatingCat(e.target.value);
+              }}
+            />
+            <InputRightElement width="4.5rem" justify="right">
+              <IconButton
+                aria-label="Create category"
+                icon={<AddIcon />}
+                variant="unstyled"
+                onClick={() => store.addCategory()}
+              />
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+        <FormControl id="complexity" isRequired>
+          <FormLabel>Complexity</FormLabel>
+          <Select
+            value={state.complexity}
+            onChange={(e) => {
+              store.setComplexity(e.target.value);
+            }}
+          >
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+          </Select>
         </FormControl>
         <Stack spacing={6} direction={["column", "row"]}>
           <Button

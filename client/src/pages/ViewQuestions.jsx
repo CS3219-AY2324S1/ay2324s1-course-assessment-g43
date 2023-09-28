@@ -26,6 +26,10 @@ import {
   Tag,
   TagLabel,
   TagCloseButton,
+  Badge,
+  Divider,
+  AbsoluteCenter,
+  Box,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -284,8 +288,33 @@ export const ViewQuestions = observer(() => {
                 <ModalHeader>{state.selectedQuestion.title}</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                  <Text>{state.selectedQuestion.description}</Text>
-                  {/*more details to be added here*/}
+                  <Badge
+                    colorScheme={
+                      state.selectedQuestion.complexity == "Easy"
+                        ? "green"
+                        : state.selectedQuestion.complexity == "Medium"
+                        ? "yellow"
+                        : "red"
+                    }
+                  >
+                    {state.selectedQuestion.complexity}
+                  </Badge>
+                  <HStack spacing={2} paddingBlock={3}>
+                    {state.selectedQuestion.category.map((category) => (
+                      <Tag key={category} borderRadius="full" variant="solid">
+                        <TagLabel>{category}</TagLabel>
+                      </Tag>
+                    ))}
+                  </HStack>
+                  <Box position="relative" padding="3">
+                    <Divider />
+                    <AbsoluteCenter bg="white" px="4">
+                      Task Discription
+                    </AbsoluteCenter>
+                  </Box>
+                  <Text paddingTop={"3"}>
+                    {state.selectedQuestion.description}
+                  </Text>
                 </ModalBody>
 
                 <ModalFooter>

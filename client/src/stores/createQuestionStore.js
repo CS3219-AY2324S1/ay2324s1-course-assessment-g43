@@ -38,6 +38,10 @@ class CreateQuestionStore {
     this.state.category.splice(index, 1);
   }
 
+  clearCategory() {
+    this.state.category = [];
+  }
+
   setComplexity(complexity) {
     this.state.complexity = complexity;
   }

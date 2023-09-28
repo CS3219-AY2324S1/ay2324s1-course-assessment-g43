@@ -57,6 +57,7 @@ export const ViewQuestions = observer(() => {
   const createQuestion = () => {
     toast.promise(createQuestionStore.createQuestion(), {
       success: () => {
+        createStore.clearCategory();
         onCreateClose();
         store.getAllQuestions();
         return {
@@ -213,7 +214,13 @@ export const ViewQuestions = observer(() => {
                 </FormControl>
                 <FormControl id="complexity" isRequired>
                   <FormLabel>Complexity</FormLabel>
-                  <Select placeholder="Select complexity">
+                  <Select
+                    placeholder="Select complexity"
+                    value={state.description}
+                    onChange={(e) => {
+                      createStore.setComplexity(e.target.value);
+                    }}
+                  >
                     <option>Easy</option>
                     <option>Medium</option>
                     <option>Hard</option>

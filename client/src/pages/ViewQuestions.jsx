@@ -300,7 +300,7 @@ export const ViewQuestions = observer(() => {
                     {state.selectedQuestion.complexity}
                   </Badge>
                   <HStack spacing={2} paddingBlock={3}>
-                    {state.selectedQuestion.category.map((category) => (
+                    {state.selectedQuestion.category?.map((category) => (
                       <Tag key={category} borderRadius="full" variant="solid">
                         <TagLabel>{category}</TagLabel>
                       </Tag>

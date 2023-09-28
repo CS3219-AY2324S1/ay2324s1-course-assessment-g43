@@ -15,6 +15,13 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  ModalFooter,
+  Tag,
+  TagLabel,
+  Badge,
+  Divider,
+  AbsoluteCenter,
+  Box,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -22,10 +29,19 @@ import { PageContainer } from "../components/PageContainer";
 import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 
-export const ViewQuestions = observer(() => {
+export const ViewQuestionsUser = observer(() => {
   const store = viewQuestionsStore;
   const state = store.state;
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isViewOpen,
+    onOpen: onViewOpen,
+    onClose: onViewClose,
+  } = useDisclosure();
+
+  const handleOpenModal = (question) => {
+    store.setSelectedQuestion(question);
+    onViewOpen();
+  };
 
   useEffect(() => {
     store.getAllQuestions();
@@ -40,7 +56,11 @@ export const ViewQuestions = observer(() => {
           </Text>
           <HStack>
             <Input variant="outline" placeholder="Search" width="400px" />
-            <IconButton aria-label="Search database" icon={<SearchIcon />} />
+            <IconButton
+              aria-label="Search database"
+              icon={<SearchIcon />}
+              variant={"outline"}
+            />
           </HStack>
         </HStack>
         <Flex justifyContent={"space-between"} px={6}>
@@ -51,9 +71,9 @@ export const ViewQuestions = observer(() => {
           <Text fontWeight="bold">Actions</Text>
         </Flex>
         {!!state.questions ? (
-          state.questions.map((question) => {
+          state.questions.map((question, index) => {
             return (
-              <Card key="">
+              <Card key={index}>
                 <CardBody>
                   <Flex justifyContent={"space-between"}>
                     <HStack>
@@ -62,27 +82,9 @@ export const ViewQuestions = observer(() => {
                         {question.title}
                       </Text>
                     </HStack>
-                    <Button onClick={onOpen}>View Details</Button>
-                    <Modal
-                      isOpen={isOpen}
-                      onClose={onClose}
-                      isCentered
-                      size={"xl"}
-                    >
-                      <ModalOverlay
-                        bg="none"
-                        backdropFilter="auto"
-                        backdropBlur="1px"
-                      />
-                      <ModalContent>
-                        <ModalHeader>{question.title}</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                          <Text>{question.description}</Text>
-                          {/*more details to be added here*/}
-                        </ModalBody>
-                      </ModalContent>
-                    </Modal>
+                    <Button onClick={() => handleOpenModal(question)}>
+                      View Details
+                    </Button>
                   </Flex>
                 </CardBody>
               </Card>
@@ -95,6 +97,64 @@ export const ViewQuestions = observer(() => {
               <Text>Can't seem to find any questions.</Text>
             </CardBody>
           </Card>
+        )}
+        {!!state.selectedQuestion ? (
+          <>
+            <Modal
+              isOpen={isViewOpen}
+              onClose={onViewClose}
+              isCentered
+              size={"xl"}
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>{state.selectedQuestion.title}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Badge
+                    colorScheme={
+                      state.selectedQuestion.complexity == "Easy"
+                        ? "green"
+                        : state.selectedQuestion.complexity == "Medium"
+                        ? "yellow"
+                        : "red"
+                    }
+                  >
+                    {state.selectedQuestion.complexity}
+                  </Badge>
+                  <HStack spacing={2} paddingBlock={3}>
+                    {state.selectedQuestion.category?.map((category) => (
+                      <Tag key={category} borderRadius="full" variant="solid">
+                        <TagLabel>{category}</TagLabel>
+                      </Tag>
+                    ))}
+                  </HStack>
+                  <Box position="relative" padding="3">
+                    <Divider />
+                    <AbsoluteCenter bg="white" px="4">
+                      Task Discription
+                    </AbsoluteCenter>
+                  </Box>
+                  <Text paddingTop={"3"}>
+                    {state.selectedQuestion.description}
+                  </Text>
+                </ModalBody>
+
+                <ModalFooter>
+                  <Button
+                    variant="outline"
+                    mr={3}
+                    onClick={() => onViewClose()}
+                  >
+                    Save Question
+                    {/*to update with future functionality*/}
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </>
+        ) : (
+          <></>
         )}
       </Stack>
     </PageContainer>

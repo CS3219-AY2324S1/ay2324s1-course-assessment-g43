@@ -38,18 +38,7 @@ const Navbar = () => {
       ? [
           {
             label: "Questions",
-            children: [
-              {
-                label: "Browse",
-                subLabel: "Browse all questions",
-                href: "/browse",
-              },
-              {
-                label: "Create",
-                subLabel: "Create new questions",
-                href: "/create-question",
-              },
-            ],
+            href: "/browse",
           },
           {
             label: "My Profile",

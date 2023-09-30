@@ -30,6 +30,6 @@ export const PageContainer = ({ children, w }) => {
 };
 
 PageContainer.propTypes = {
-  children: PropTypes.children,
+  children: PropTypes.object,
   w: PropTypes.string,
 };

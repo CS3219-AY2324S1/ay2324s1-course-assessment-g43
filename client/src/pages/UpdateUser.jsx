@@ -5,7 +5,6 @@ import {
   Heading,
   Input,
   Stack,
-  useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 import { updateUserStore } from "../stores/updateUserStore";

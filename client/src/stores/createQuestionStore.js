@@ -1,22 +1,17 @@
 import { makeAutoObservable } from "mobx";
-import { updateQuestionById } from "../services/questionService";
+import { createQuestion } from "../services/questionService";
 
-class UpdateQuestionStore {
+class CreateQuestionStore {
   state = {
-    questionId: -1,
     title: "",
     description: "",
-    updatingCat: "",
+    creatingCat: "",
     category: [],
     complexity: "",
   };
 
   constructor() {
     makeAutoObservable(this);
-  }
-
-  setQuestionId(questionId) {
-    this.state.questionId = questionId;
   }
 
   setTitle(title) {
@@ -27,18 +22,14 @@ class UpdateQuestionStore {
     this.state.description = description;
   }
 
-  setCategory(category) {
-    this.state.category = category;
-  }
-
-  setUpdatingCat(cat) {
-    this.state.updatingCat = cat;
+  setCreatingCat(cat) {
+    this.state.creatingCat = cat;
   }
 
   addCategory() {
-    if (this.state.updatingCat != "") {
-      this.state.category.push(this.state.updatingCat);
-      this.setUpdatingCat("");
+    if (this.state.creatingCat != "") {
+      this.state.category.push(this.state.creatingCat);
+      this.setCreatingCat("");
     }
   }
 
@@ -47,19 +38,24 @@ class UpdateQuestionStore {
     this.state.category.splice(index, 1);
   }
 
+  clearCategory() {
+    this.state.category = [];
+  }
+
   setComplexity(complexity) {
     this.state.complexity = complexity;
   }
 
-  async updateQuestionById() {
+  async createQuestion() {
     try {
-      const res = await updateQuestionById(this.state.questionId, this.state);
+      const res = await createQuestion(this.state);
       console.log(res);
       return res;
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 }
 
-export const updateQuestionStore = new UpdateQuestionStore();
+export const createQuestionStore = new CreateQuestionStore();

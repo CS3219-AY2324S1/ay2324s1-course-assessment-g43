@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  question-service:
+    image: cs3219-ay2324s1-g43/question-service
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV}
+    ports:
+      - "3000:3000"

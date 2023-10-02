@@ -4,7 +4,12 @@ const basePath = "http://localhost:3000/api/questions";
 
 export const createQuestion = async (req) => {
   try {
-    const res = await axios.post(`${basePath}`, req);
+    const token = localStorage.getItem("jwt");
+    const res = await axios.post(`${basePath}`, req, {
+      headers: {
+        authorization:`Bearer ${token}`,
+      }
+    });
     console.log(res);
     return res;
   } catch (err) {
@@ -13,14 +18,24 @@ export const createQuestion = async (req) => {
 };
 
 export const getAllQuestions = async () => {
-  const res = await axios.get(`${basePath}`);
+  const token = localStorage.getItem("jwt");
+  const res = await axios.get(`${basePath}`, {
+    headers: {
+      authorization:`Bearer ${token}`,
+    }
+  });
   console.log(res);
   return res;
 };
 
 export const getQuestionById = async (id) => {
   try {
-    const res = await axios.get(`${basePath}/${id}`);
+    const token = localStorage.getItem("jwt");
+    const res = await axios.get(`${basePath}/${id}`, {
+      headers: {
+        authorization:`Bearer ${token}`,
+      }
+    });
     console.log(res);
     return res;
   } catch (err) {
@@ -29,13 +44,23 @@ export const getQuestionById = async (id) => {
 };
 
 export const updateQuestionById = async (id, req) => {
-  const res = await axios.put(`${basePath}/${id}`, req);
+  const token = localStorage.getItem("jwt");
+  const res = await axios.put(`${basePath}/${id}`, req, {
+    headers: {
+      authorization:`Bearer ${token}`,
+    }
+  });
   console.log(res);
   return res;
 };
 
 export const deleteQuestionById = async (id) => {
-  const res = await axios.delete(`${basePath}/${id}`);
+  const token = localStorage.getItem("jwt");
+  const res = await axios.delete(`${basePath}/${id}`,{
+    headers: {
+      authorization:`Bearer ${token}`,
+    }
+  });
   console.log(res);
   return res;
 };

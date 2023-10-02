@@ -29,6 +29,7 @@ const Navbar = () => {
 
   const onLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("jwt");
     navigate("/");
   };
 

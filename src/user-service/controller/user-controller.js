@@ -1,5 +1,6 @@
 const pool = require("../db.js");
 const validator = require("../utils/validator.js");
+const authFunctions = require("../utils/authFunctions.js")
 
 exports.createUser = async (req, res) => {
   const { username, email, password } = req.body
@@ -104,9 +105,17 @@ exports.userLogin = async (req, res) => {
       })
     }
 
+    //create JWT
+    console.log("email used for jwt: ", email); //to be deleted
+    const token = authFunctions.createToken(email);
+    if (token) {
+      console.log("JWT created on login"); //delete?
+    }
+    
     return res.status(200).json({
       message: 'User logged in',
-      data: { user: result.rows[0] }
+      data: { user: result.rows[0], //Qns: Correct to store in data?
+      jwt: token }
     });
   } catch (error) {
     return res.status(500).send({

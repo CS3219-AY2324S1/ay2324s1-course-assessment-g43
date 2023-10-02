@@ -94,7 +94,7 @@ export const UpdateQuestion = observer(() => {
             }}
           />
         </FormControl>
-        <FormControl id="category" isRequired>
+        <FormControl id="category">
           <FormLabel>Category</FormLabel>
           <HStack spacing={4} paddingBottom={1}>
             {state.category?.map((category) => (

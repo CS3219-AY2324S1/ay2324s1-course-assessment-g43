@@ -185,7 +185,7 @@ export const ViewQuestions = observer(() => {
                     }}
                   />
                 </FormControl>
-                <FormControl id="category" isRequired>
+                <FormControl id="category">
                   <FormLabel>Category</FormLabel>
                   <HStack spacing={4} paddingBottom={1}>
                     {createState.category.map((category) => (

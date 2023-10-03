@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>PeerPrep</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <main>
+      <div id="main-section" class="section visible">
+        <h1>Welcome to PeerPrep</h1>
+        <button id="create-question-btn">Create Question</button>
+        <div id="question-list">
+          <!-- Display questions here -->
+        </div>
+      </div>
+      <div id="create-question-section" class="section">
+        <h2 id="page-title">Create Question</h2>
+        <form id="create-question-form">
+          <div class="form-group">
+            <label for="create-question-title">Title:</label>
+            <input
+              type="text"
+              id="create-question-title"
+              name="create-question-title"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="create-question-description">Description:</label>
+            <textarea
+              id="create-question-description"
+              name="create-question-description"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="create-question-category">Category:</label>
+            <input
+              type="text"
+              id="create-question-category"
+              name="create-question-category"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="create-question-complexity">Complexity:</label>
+            <select
+              id="create-question-complexity"
+              name="create-question-complexity"
+            >
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+
+          <button type="submit" id="create-confirm-button">
+            Create Question
+          </button>
+          <button type="button" class="back-to-main">Back</button>
+        </form>
+      </div>
+      <div id="view-question-section" class="section">
+        <h2>Question Details</h2>
+        <div id="question-details">
+          <p><strong>Title:</strong> <span id="view-question-title"></span></p>
+          <p>
+            <strong>Description:</strong>
+            <span id="view-question-description"></span>
+          </p>
+          <p>
+            <strong>Category:</strong> <span id="view-question-category"></span>
+          </p>
+          <p>
+            <strong>Complexity:</strong>
+            <span id="view-question-complexity"></span>
+          </p>
+        </div>
+
+        <button id="update-question-btn">Update Question</button>
+        <button id="delete-question-btn">Delete Question</button>
+        <button class="back-to-main">Back</button>
+      </div>
+      <div id="update-question-section" class="section">
+        <h2 id="page-title">Update Question</h2>
+        <form id="update-question-form">
+          <div class="form-group">
+            <label for="update-question-title">Title:</label>
+            <input
+              type="text"
+              id="update-question-title"
+              name="update-question-title"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="update-question-description">Description:</label>
+            <textarea
+              id="update-question-description"
+              name="update-question-description"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="update-question-category">Category:</label>
+            <input
+              type="text"
+              id="update-question-category"
+              name="update-question-category"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="update-question-complexity">Complexity:</label>
+            <select
+              id="update-question-complexity"
+              name="update-question-complexity"
+            >
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+
+          <button type="submit" id="update-confirm-button">
+            Update Question
+          </button>
+          <button type="button" id="back-to-view">Back</button>
+        </form>
+      </div>
+    </main>
+    <script src="./src/index.js"></script>
+  </body>
+</html>

@@ -94,6 +94,13 @@ exports.userLogin = async (req, res) => {
   const { email, password } = req.body;
   const BLANK_USERNAME = "";
 
+  if (!email || !password) {
+    return res.status(401).json({
+      message: "Email and password are necessary to register an account.",
+      data: {},
+    });
+  }
+
   try {
     const emailExists = await validator.checkIfNameOrEmailExists(
       BLANK_USERNAME,

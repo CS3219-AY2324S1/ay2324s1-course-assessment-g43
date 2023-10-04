@@ -13,6 +13,16 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -38,7 +48,19 @@ const Navbar = () => {
       ? [
           {
             label: "Questions",
-            href: "/browse",
+            children: [
+              {
+                label: "Browse",
+                subLabel: "Explore the question pool",
+                href: "/browse",
+              },
+              {
+                label: "Match",
+                subLabel: "Get matched with a peer",
+                href: "#",
+                //left this here because i wanted the hand to appear
+              },
+            ],
           },
           {
             label: "My Profile",
@@ -199,7 +221,9 @@ const DesktopNav = ({ navItems }) => {
 };
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
-  return (
+  const bgcolor = useColorModeValue("pink.50", "gray.900");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  return label == "Browse" ? (
     <Box
       as="a"
       href={href}
@@ -207,7 +231,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       display={"block"}
       p={2}
       rounded={"md"}
-      _hover={{ bg: useColorModeValue("pink.50", "gray.900") }}
+      _hover={{ bg: bgcolor }}
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
@@ -233,6 +257,68 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         </Flex>
       </Stack>
     </Box>
+  ) : (
+    <Stack>
+      <Box
+        as="a"
+        href={href}
+        role={"group"}
+        display={"block"}
+        p={2}
+        rounded={"md"}
+        _hover={{ bg: bgcolor }}
+        onClick={() => onOpen()}
+      >
+        <Stack direction={"row"} align={"center"}>
+          <Box>
+            <Text
+              transition={"all .3s ease"}
+              _groupHover={{ color: "pink.400" }}
+              fontWeight={500}
+            >
+              {label}
+            </Text>
+            <Text fontSize={"sm"}>{subLabel}</Text>
+          </Box>
+          <Flex
+            transition={"all .3s ease"}
+            transform={"translateX(-10px)"}
+            opacity={0}
+            _groupHover={{ opacity: "100%", transform: "translateX(0)" }}
+            justify={"flex-end"}
+            align={"center"}
+            flex={1}
+          >
+            <Icon color={"pink.400"} w={5} h={5} as={ChevronRightIcon} />
+          </Flex>
+        </Stack>
+      </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Find Match</ModalHeader>
+          <ModalCloseButton />
+          <form>
+            <ModalBody>
+              <FormControl id="complexity" isRequired>
+                <FormLabel>Complexity</FormLabel>
+                <Select placeholder="Select complexity">
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </Select>
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme="green" mr={3} onClick={onClose}>
+                Match
+              </Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+    </Stack>
   );
 };
 
@@ -251,7 +337,8 @@ const MobileNav = ({ navItems }) => {
 };
 
 const MobileNavItem = ({ label, children, href }) => {
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen: isToggleOpen, onToggle } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -282,7 +369,11 @@ const MobileNavItem = ({ label, children, href }) => {
         )}
       </Box>
 
-      <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
+      <Collapse
+        in={isToggleOpen}
+        animateOpacity
+        style={{ marginTop: "0!important" }}
+      >
         <Stack
           mt={2}
           pl={4}
@@ -292,12 +383,47 @@ const MobileNavItem = ({ label, children, href }) => {
           align={"start"}
         >
           {children &&
-            children.map((child) => (
-              <Box as="a" key={child.label} py={2} href={child.href}>
-                {child.label}
-              </Box>
-            ))}
+            children.map((child) =>
+              child.label == "Browse" ? (
+                <Box as="a" key={child.label} py={2} href={child.href}>
+                  {child.label}
+                </Box>
+              ) : (
+                <Box
+                  as="a"
+                  key={child.label}
+                  py={2}
+                  href={child.href}
+                  onClick={() => onOpen()}
+                >
+                  {child.label}
+                </Box>
+              )
+            )}
         </Stack>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Find Match</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl id="complexity" isRequired>
+                <FormLabel>Complexity</FormLabel>
+                <Select placeholder="Select complexity">
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </Select>
+              </FormControl>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button colorScheme="green" mr={3} onClick={onClose}>
+                Match
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Collapse>
     </Stack>
   );
@@ -305,14 +431,23 @@ const MobileNavItem = ({ label, children, href }) => {
 
 DesktopSubNav.propTypes = {
   label: PropTypes.string,
-  href: PropTypes.href,
+  href: PropTypes.string,
   subLabel: PropTypes.string,
 };
 
 MobileNavItem.propTypes = {
   label: PropTypes.string,
-  children: PropTypes.children,
-  href: PropTypes.href,
+  children: PropTypes.array,
+  href: PropTypes.string,
+};
+
+MobileNav.propTypes = {
+  navItems: PropTypes.array,
+};
+
+DesktopNav.propTypes = {
+  navItems: PropTypes.array,
+  map: PropTypes.object,
 };
 
 export default Navbar;

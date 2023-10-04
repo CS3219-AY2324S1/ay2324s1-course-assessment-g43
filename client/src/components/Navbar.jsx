@@ -223,7 +223,7 @@ const DesktopNav = ({ navItems }) => {
 const DesktopSubNav = ({ label, href, subLabel }) => {
   const bgcolor = useColorModeValue("pink.50", "gray.900");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  return label == "Browse" ? (
+  return label != "Match" ? (
     <Box
       as="a"
       href={href}
@@ -384,7 +384,7 @@ const MobileNavItem = ({ label, children, href }) => {
         >
           {children &&
             children.map((child) =>
-              child.label == "Browse" ? (
+              child.label != "Match" ? (
                 <Box as="a" key={child.label} py={2} href={child.href}>
                   {child.label}
                 </Box>

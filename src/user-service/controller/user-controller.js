@@ -16,7 +16,7 @@ exports.createUser = async (req, res) => {
     }
     
     let newUser = await pool.query(
-      'INSERT INTO Users (username, email, password) VALUES ($1, $2, $3) RETURNING *', 
+      'INSERT INTO Users (username, email, password) VALUES ($1, $2, $3) RETURNING uid, username, email', 
       [username, email, password]
     );
     
@@ -38,7 +38,7 @@ exports.createUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
 
   try {
-    const users = await pool.query('SELECT * FROM Users ORDER BY uid ASC');
+    const users = await pool.query('SELECT uid, username, email FROM Users ORDER BY uid ASC');
 
     return res.status(200).json({
       message: 'Users retrieved',
@@ -57,7 +57,7 @@ exports.getUser = async (req, res) => {
   const id = parseInt(req.params.id)
 
   try {
-    const result = await pool.query('SELECT * FROM Users WHERE uid = $1', [id]);
+    const result = await pool.query('SELECT uid, username, email FROM Users WHERE uid = $1', [id]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ 
@@ -105,6 +105,7 @@ exports.userLogin = async (req, res) => {
       })
     }
 
+<<<<<<< HEAD
     //create JWT
     console.log("email used for jwt: ", email); //to be deleted
     const token = authFunctions.createToken(email);
@@ -116,6 +117,13 @@ exports.userLogin = async (req, res) => {
       message: 'User logged in',
       data: { user: result.rows[0], //Qns: Correct to store in data?
       jwt: token }
+=======
+    const resultWithoutPassword = await pool.query('SELECT uid, username, email FROM Users WHERE email = $1', [email]);
+
+    return res.status(200).json({
+      message: 'User logged in',
+      data: { user: resultWithoutPassword.rows[0] }
+>>>>>>> af5a4140f8a0dc4b5c2dc6e1e0e307cf3dd0f9c3
     });
   } catch (error) {
     return res.status(500).send({
@@ -135,12 +143,15 @@ exports.userLogout = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const id = parseInt(req.params.id)
-  const { username, email, password } = req.body
+  const { username, email } = req.body
   
   try {
-    const userExists = await validator.checkIfNameOrEmailExists(username, email);
+    const usersOtherThanId = await pool.query(
+      "SELECT * FROM Users WHERE uid !=$1 AND (username = $2 OR email = $3)", 
+      [id, username, email]
+    );
 
-    if (userExists) {
+    if (usersOtherThanId.rows.length > 0) {
       return res.status(401).json({ 
         message: 'Username or email already exists',
         data: {}
@@ -157,8 +168,8 @@ exports.updateProfile = async (req, res) => {
     }
 
     let updatedUser = await pool.query(
-      'UPDATE Users SET username = $1, email = $2, password = $3 WHERE uid = $4 RETURNING *',
-      [username, email, password, id],
+      'UPDATE Users SET username = $1, email = $2 WHERE uid = $3 RETURNING uid, username, email',
+      [username, email, id],
     );
 
     return res.status(200).send({
@@ -188,7 +199,7 @@ exports.deleteProfile = async (req, res) => {
       })
     }
 
-    const deletedUser = await pool.query('DELETE FROM Users WHERE uid = $1 RETURNING *', [id]);
+    const deletedUser = await pool.query('DELETE FROM Users WHERE uid = $1 RETURNING uid, username, email', [id]);
 
     return res.status(200).send({
       message: `User deleted with ID: ${id}`,

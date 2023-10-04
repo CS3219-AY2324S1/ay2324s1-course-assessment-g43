@@ -6,11 +6,18 @@ const authFunctions = require("../utils/authFunctions.js");
 
 
 /**
- * A User Payload for POST and PUT requests
+ * A User Payload for POST requests
  * @typedef {object} UserPayload
  * @property {string} username - The user's username
  * @property {string} email - The user's email
  * @property {string} password - The user's password
+ */
+
+/**
+ * A User Payload for PUT requests
+ * @typedef {object} UserPutPayload
+ * @property {string} username - The user's username
+ * @property {string} email - The user's email
  */
 
 /**
@@ -19,7 +26,6 @@ const authFunctions = require("../utils/authFunctions.js");
  * @property {integer} uid - The user's unique identification number
  * @property {string} username - The user's username
  * @property {string} email - The user's email
- * @property {string} password - The user's password
  */
 
 /**
@@ -65,8 +71,7 @@ const authFunctions = require("../utils/authFunctions.js");
  *		"user": {
  *			"uid": 12,
  *			"username": "jing",
- *			"email": "jing@email.com",
- *			"password": "123"
+ *			"email": "jing@email.com"
  *		}
  *	}
  *}
@@ -109,8 +114,7 @@ router.post("/register", userController.createUser);
 		"user": {
 			"uid": 12,
 			"username": "jing",
-			"email": "jing@email.com",
-			"password": "123"
+			"email": "jing@email.com"
 		}
 	}
 }
@@ -142,38 +146,32 @@ router.post("/logout", authFunctions.authenticateRequest, userController.userLog
 			{
 				"uid": 2,
 				"username": "chang",
-				"email": "chang@email.com",
-				"password": "123"
+				"email": "chang@email.com"
 			},
 			{
 				"uid": 4,
 				"username": "clevon",
-				"email": "clevon@email.com",
-				"password": "123"
+				"email": "clevon@email.com"
 			},
 			{
 				"uid": 5,
 				"username": "branda",
-				"email": "branda@email.com",
-				"password": "123"
+				"email": "branda@email.com"
 			},
 			{
 				"uid": 6,
 				"username": "ish",
-				"email": "ish@email.com",
-				"password": "123"
+				"email": "ish@email.com"
 			},
 			{
 				"uid": 12,
 				"username": "jing",
-				"email": "jing@email.com",
-				"password": "123"
+				"email": "jing@email.com"
 			},
             {
 				"uid": 14,
 				"username": "rachel",
-				"email": "rachel@email.com",
-				"password": "123"
+				"email": "rachel@email.com"
 			}
 		]
 	}
@@ -201,8 +199,7 @@ router.get("/getUsers", userController.getUsers);
 		"user": {
 			"uid": 12,
 			"username": "jing",
-			"email": "jing@email.com",
-			"password": "123"
+			"email": "jing@email.com"
 		}
 	}
 }
@@ -224,6 +221,7 @@ router.get("/getUsers/:id", userController.getUser);
  * PUT /api/update/{id}
  * @summary Updates details for a single user
  * @param {integer} id.path.required - The user's id
+ * @param {UserPutPayload} request.body.required - The user's update
  * @return {MessageUserDocument} 200 - success response - application/json
  * @return {ErrorResponse} 401 - unauthorized response - application/json
  * @return {ErrorResponse} 500 - error response - aplication/json
@@ -234,8 +232,7 @@ router.get("/getUsers/:id", userController.getUser);
 		"user": {
 			"uid": 12,
 			"username": "jy",
-			"email": "jy@email.com",
-			"password": "123"
+			"email": "jy@email.com"
 		}
 	}
 }

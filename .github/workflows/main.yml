@@ -1,0 +1,14 @@
+name: Main Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Test
+      uses: ./.github/workflows/test.yml

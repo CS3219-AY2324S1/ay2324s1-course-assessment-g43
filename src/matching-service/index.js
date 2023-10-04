@@ -3,6 +3,8 @@ import cors from "cors";
 import { Server } from "socket.io";
 import http from "http";
 import { connect } from 'amqplib';
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const port = 5001;
@@ -21,7 +23,9 @@ app.get("/api/hello", (req, res) => {
   res.send("Hello world");
 });
 
-const connection = await connect('amqps://wevlszxo:vOvIm593u8ZTXxF3RkPlSHTLjojDF6LH@armadillo.rmq.cloudamqp.com/wevlszxo');
+const ampqHost = process.env.AMPQ_HOST;
+
+const connection = await connect(ampqHost);
 
 const channel = await connection.createChannel();
 

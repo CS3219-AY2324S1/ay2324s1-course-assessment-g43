@@ -20,7 +20,8 @@ export const RegisterUser = observer(() => {
   const state = registerUserStore.state;
   const toast = useToast();
 
-  const onRegister = () => {
+  const onRegister = (e) => {
+    e.preventDefault();
     toast.promise(registerUserStore.register(), {
       success: {
         title: "Account registered.",

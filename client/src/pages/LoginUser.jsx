@@ -23,7 +23,8 @@ export const LoginUser = observer(() => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const onLogin = () => {
+  const onLogin = (e) => {
+    e.preventDefault();
     toast.promise(store.login(), {
       success: (user) => {
         if (!!user) navigate("/");

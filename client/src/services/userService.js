@@ -25,17 +25,9 @@ export const login = async (req) => {
   return res.data;
 };
 
-export const logout = async (req) => { //api not called in function??? check with team //navbar directly toggle to landing page
-  // const token = localStorage.getItem("jwt");
-  // console.log("retrieved logout token"); //delete
-  const res = await axios.post(`${basePath}/logout`, req, //{
-  //   headers: {
-  //     authorization:`Bearer ${token}`,
-  //   }
-  // }
-  );
+export const logout = async (req) => {
+  const res = await axios.post(`${basePath}/logout`, req);
   console.log(res);
-  // localStorage.removeItem("jwt");
   return res;
 };
 

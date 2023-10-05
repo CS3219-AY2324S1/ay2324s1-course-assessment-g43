@@ -1,11 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const maxAge = 3 * 24 * 60 * 60//value in SECONDS
-
-exports.createToken = (email) => {
+const maxAge = 3 * 24 * 60 * 60 //value in SECONDS
+exports.createToken = (uid, usertype) => {
     let token;
     try {
-        token = jwt.sign({ email },process.env.ACCESS_TOKEN_SECRET,{
+        token = jwt.sign({ uid, usertype },process.env.ACCESS_TOKEN_SECRET,{
             expiresIn: maxAge
         });
         return token;
@@ -25,20 +24,17 @@ exports.authenticateRequest = (req, res, next) => {
             data: {} 
         })
     }
-    console.log("jwt received, proceeding to verfy") //to be deleted
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, email) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
         if (err) {
             return res.status(403).json({ 
                 message: `Invalid authorization token received. Denied Access.`,
                 data: {} 
             })
         }
-        console.log("verified"); //to be deleted
         next();
     })
 }
 
-//for question-service to call
 exports.authenticateToken = (req, res) => {
     const token = req.params.token;
     if (token == null) {
@@ -48,7 +44,6 @@ exports.authenticateToken = (req, res) => {
             data: {} 
         })
     }
-    console.log("jwt received, proceeding to verfy") //to be deleted
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, email) => {
         if (err) {
             res.status(403).json({

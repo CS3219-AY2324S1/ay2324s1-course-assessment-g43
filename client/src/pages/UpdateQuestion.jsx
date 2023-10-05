@@ -33,7 +33,7 @@ export const UpdateQuestion = observer(() => {
   const updateQuestion = () => {
     toast.promise(store.updateQuestionById(), {
       success: () => {
-        navigate("/browse");
+        navigate("/browseAdmin");
         return {
           title: "Successfully updated.",
           description: "You've successfully updated the question!",

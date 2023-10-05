@@ -38,7 +38,7 @@ exports.createUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
 
   try {
-    const users = await pool.query('SELECT uid, username, email FROM Users ORDER BY uid ASC');
+    const users = await pool.query('SELECT uid, usertype, username, email FROM Users ORDER BY uid ASC');
 
     return res.status(200).json({
       message: 'Users retrieved',
@@ -57,7 +57,7 @@ exports.getUser = async (req, res) => {
   const id = parseInt(req.params.id)
 
   try {
-    const result = await pool.query('SELECT uid, username, email FROM Users WHERE uid = $1', [id]);
+    const result = await pool.query('SELECT uid, usertype, username, email FROM Users WHERE uid = $1', [id]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ 
@@ -105,25 +105,15 @@ exports.userLogin = async (req, res) => {
       })
     }
 
-<<<<<<< HEAD
+    const resultWithoutPassword = await pool.query('SELECT uid, username, email FROM Users WHERE email = $1', [email]);
     //create JWT
-    console.log("email used for jwt: ", email); //to be deleted
-    const token = authFunctions.createToken(email);
-    if (token) {
-      console.log("JWT created on login"); //delete?
-    }
+    const uid = result.rows[0].uid;
+    const usertype = result.rows[0].usertype;
+    const token = authFunctions.createToken(uid, usertype);
     
     return res.status(200).json({
       message: 'User logged in',
-      data: { user: result.rows[0], //Qns: Correct to store in data?
-      jwt: token }
-=======
-    const resultWithoutPassword = await pool.query('SELECT uid, username, email FROM Users WHERE email = $1', [email]);
-
-    return res.status(200).json({
-      message: 'User logged in',
-      data: { user: resultWithoutPassword.rows[0] }
->>>>>>> af5a4140f8a0dc4b5c2dc6e1e0e307cf3dd0f9c3
+      data: { user: resultWithoutPassword.rows[0], jwt: token} 
     });
   } catch (error) {
     return res.status(500).send({

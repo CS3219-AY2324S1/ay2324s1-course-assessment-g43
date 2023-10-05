@@ -285,6 +285,7 @@ export const ViewQuestions = observer(() => {
               onClose={onViewClose}
               isCentered
               size={"xl"}
+              scrollBehavior={"inside"}
             >
               <ModalOverlay />
               <ModalContent>

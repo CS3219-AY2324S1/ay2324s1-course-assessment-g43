@@ -293,7 +293,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           </Flex>
         </Stack>
       </Box>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Find Match</ModalHeader>
@@ -401,7 +401,7 @@ const MobileNavItem = ({ label, children, href }) => {
               )
             )}
         </Stack>
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Find Match</ModalHeader>

@@ -6,6 +6,7 @@ import { UpdateUser } from "./pages/UpdateUser";
 import { ViewUser } from "./pages/ViewUser";
 import { ViewQuestions } from "./pages/ViewQuestions";
 import { UpdateQuestion } from "./pages/UpdateQuestion";
+import { ViewSession } from "./pages/ViewSession";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           exact={true}
           Component={UpdateQuestion}
         />
+        <Route path="/session" exact={true} Component={ViewSession} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,9 +1,11 @@
-import express from "express";
+import { connect } from "amqplib";
 import cors from "cors";
-import { Server } from "socket.io";
-import http from "http";
-import { connect } from 'amqplib';
 import dotenv from "dotenv";
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import getQuestionId from "./src/question-id-service.js";
+
 dotenv.config();
 
 const app = express();
@@ -29,9 +31,9 @@ const connection = await connect(ampqHost);
 
 const channel = await connection.createChannel();
 
-const EASY_QUEUE = 'easy-queue';
-const MEDIUM_QUEUE = 'medium-queue';
-const HARD_QUEUE = 'hard-queue';
+const EASY_QUEUE = "easy-queue";
+const MEDIUM_QUEUE = "medium-queue";
+const HARD_QUEUE = "hard-queue";
 
 await channel.assertQueue(EASY_QUEUE, { durable: false, messageTtl: 30000 });
 await channel.assertQueue(MEDIUM_QUEUE, { durable: false, messageTtl: 30000 });
@@ -39,49 +41,62 @@ await channel.assertQueue(HARD_QUEUE, { durable: false, messageTtl: 30000 });
 
 const getQueue = (difficulty) => {
   switch (difficulty) {
-    case 'easy':
+    case "Easy":
       return EASY_QUEUE;
-    case 'medium':
+    case "Medium":
       return MEDIUM_QUEUE;
-    case 'hard':
+    case "Hard":
       return HARD_QUEUE;
     default:
       return null;
   }
-}
+};
 
 io.on("connection", (socket) => {
-  console.log("We have a new connection");
+  console.log(`Connection opened: ${socket.id}`);
 
-  socket.on("new-match", async (uid, difficulty) => {
-    console.log("new match uid " + uid);
-    console.log("new match difficulty " + difficulty);
+  socket.on("match-request", async (uid, difficulty) => {
+    if (!uid || !difficulty) {
+      console.log("Invalid request");
+      io.to(socket.id).emit("match-failure", "Missing arguments");
+      return;
+    }
+
+    console.log(`match-request: (${uid}, ${difficulty})`);
 
     const queueName = getQueue(difficulty);
 
     // polls the queue
-    const msg = await channel.get(queueName);
-    
+    const dequeuedMessage = await channel.get(queueName);
+
     // if there is no users in the queue, add the user to the queue
-    if (msg == false) {
-      const qid = Math.floor(Math.random() * 100); // Gets a random question
+    if (!dequeuedMessage) {
+      const qid = await getQuestionId(difficulty);
+      if (!qid) {
+        io.to(socket.id).emit("match-failure", "No question found");
+        return;
+      }
+
       const message = {
         uid,
         qid,
         socketId: socket.id,
       };
 
-      console.log("added message into queue" + JSON.stringify(message));
-      
-      channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), );
+      console.log("Added to Message Queue:");
+      console.log(message);
+
+      channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
     } else {
       // else pair the users up
-      const { uid, qid, socketId } = JSON.parse(msg.content.toString());
+      const otherUser = JSON.parse(dequeuedMessage.content.toString());
+      console.log("MATCHED:");
+      console.log(otherUser);
 
-      console.log("found a match uid: " + uid + " qid: " + qid + " socketId: " + socketId);
-
-      io.to([socketId, socket.id]).emit("match-success", [uid, qid]);
-
+      io.to([otherUser.socketId, socket.id]).emit("match-success", {
+        uid: otherUser.uid,
+        qid: otherUser.qid,
+      });
     }
   });
 
@@ -90,7 +105,6 @@ io.on("connection", (socket) => {
   });
 });
 
-
-server.listen(5001, () => {
-  console.log("listening on port 5001");
+server.listen(port, () => {
+  console.log(`listening on port ${port}`);
 });

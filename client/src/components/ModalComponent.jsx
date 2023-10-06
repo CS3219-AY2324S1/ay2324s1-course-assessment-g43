@@ -21,15 +21,14 @@ const ModalComponent = observer(() => {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{modalComponentStore.modalTitle}</ModalHeader>
-        <ModalCloseButton />
-        <form>
+      <form onSubmit={modalComponentStore.onSubmit}>
+        <ModalContent>
+          <ModalHeader>{modalComponentStore.modalTitle}</ModalHeader>
+          <ModalCloseButton />
           <ModalBody>{modalComponentStore.modalBody}</ModalBody>
-
           <ModalFooter>{modalComponentStore.modalFooter}</ModalFooter>
-        </form>
-      </ModalContent>
+        </ModalContent>
+      </form>
     </Modal>
   );
 });

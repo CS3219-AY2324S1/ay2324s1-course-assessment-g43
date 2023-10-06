@@ -4,11 +4,13 @@ export const createModalComponentStore = () => {
     modalTitle: null,
     modalBody: null,
     modalFooter: null,
-    openModal(modalTitle, modalBody, modalFooter) {
+    onSubmit: () => {},
+    openModal(modalTitle, modalBody, modalFooter, submitFunction) {
       // set the content of the modal and then open it
       this.setModalTitle(modalTitle);
       this.setModalBody(modalBody);
       this.setModalFooter(modalFooter);
+      this.setOnSubmit(submitFunction);
       this.isOpen = true;
     },
     closeModal() {
@@ -17,6 +19,7 @@ export const createModalComponentStore = () => {
       this.setModalTitle(null);
       this.setModalBody(null);
       this.setModalFooter(null);
+      this.setOnSubmit(() => {});
     },
     setModalTitle(content) {
       this.modalTitle = content;
@@ -26,6 +29,9 @@ export const createModalComponentStore = () => {
     },
     setModalFooter(content) {
       this.modalFooter = content;
+    },
+    setOnSubmit(submitFunction) {
+      this.onSubmit = submitFunction;
     },
   };
 };

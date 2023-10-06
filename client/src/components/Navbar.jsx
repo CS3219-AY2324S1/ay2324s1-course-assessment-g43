@@ -16,6 +16,7 @@ import {
   FormControl,
   FormLabel,
   Select,
+  Input,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -27,6 +28,7 @@ import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";
+import { matchingFormStore } from "../stores/matchingFormStore";
 
 const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
@@ -163,24 +165,38 @@ const Navbar = observer(() => {
   );
 });
 
-const modalBody = (
-  <FormControl id="complexity" isRequired>
-    <FormLabel>Complexity</FormLabel>
-    <Select placeholder="Select complexity">
-      <option>Easy</option>
-      <option>Medium</option>
-      <option>Hard</option>
-    </Select>
-  </FormControl>
-);
+const modalTitle = "Find a Match!";
 
-const modalFooter = (
-  <Button colorScheme="green" mr={3} onClick={() => console.log("can click")}>
-    Match
-  </Button>
-);
+const ModalBody = observer(() => {
+  return (
+    <FormControl id="complexity" isRequired>
+      <FormLabel>Complexity</FormLabel>
+      <Select
+        placeholder="Select complexity"
+        isDisabled={matchingFormStore.isLoading}
+      >
+        <option>Easy</option>
+        <option>Medium</option>
+        <option>Hard</option>
+      </Select>
+    </FormControl>
+  );
+});
 
-const modalTitle = "Find Match";
+const ModalFooter = observer(() => {
+  return (
+    <Button
+      colorScheme="green"
+      mr={3}
+      type="submit"
+      isLoading={matchingFormStore.isLoading}
+      isDisabled={matchingFormStore.isLoading}
+      loadingText={`Finding you a match (${matchingFormStore.countdown}s)`}
+    >
+      Match
+    </Button>
+  );
+});
 
 const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
@@ -265,7 +281,15 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         label != "Match"
           ? () => {}
           : () =>
-              modalComponentStore.openModal(modalTitle, modalBody, modalFooter)
+              modalComponentStore.openModal(
+                modalTitle,
+                <ModalBody />,
+                <ModalFooter />,
+                () => {
+                  console.log("i submitting sia");
+                  matchingFormStore.startLoading();
+                }
+              )
       }
     >
       <Stack direction={"row"} align={"center"}>
@@ -382,8 +406,12 @@ const MobileNavItem = ({ label, children, href }) => {
                     : () =>
                         modalComponentStore.openModal(
                           modalTitle,
-                          modalBody,
-                          modalFooter
+                          <ModalBody />,
+                          <ModalFooter />,
+                          () => {
+                            console.log("i submitting sia");
+                            matchingFormStore.startLoading();
+                          }
                         )
                 }
               >

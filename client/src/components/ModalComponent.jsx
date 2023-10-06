@@ -22,6 +22,7 @@ const ModalComponent = observer(() => {
     <Modal
       isOpen={modalComponentStore.isOpen}
       onClose={modalComponentStore.closeModal}
+      isCentered
     >
       <ModalOverlay />
       <ModalContent>

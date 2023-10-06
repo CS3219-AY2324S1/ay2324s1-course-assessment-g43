@@ -2,12 +2,12 @@ import axios from "axios";
 
 const basePath = "http://localhost:5000/api";
 
-export const getUserById = async (id) => { //functions called by user? need to authenticate or not? if not called by user wont have token
+export const getUserById = async (id) => {
   const res = await axios.get(`${basePath}/getUsers/${id}`);
   return res.data.data;
 };
 
-export const getAllUsers = async () => { //functions called by user? need to authenticate or not? if not called by user wont have token
+export const getAllUsers = async () => {
   const res = await axios.get(`${basePath}/getUsers`);
   console.log(res);
   return res;

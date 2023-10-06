@@ -1,6 +1,7 @@
 import { Flex, Box, useColorModeValue } from "@chakra-ui/react";
 import { PropTypes } from "prop-types";
 import Navbar from "./Navbar";
+import ModalComponent from "./ModalComponent";
 
 export const PageContainer = ({ children, w }) => {
   return (
@@ -25,6 +26,7 @@ export const PageContainer = ({ children, w }) => {
           {children}
         </Box>
       </Flex>
+      <ModalComponent />
     </>
   );
 };

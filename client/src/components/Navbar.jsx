@@ -13,16 +13,6 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Select,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -32,8 +22,10 @@ import {
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { observer } from "mobx-react";
+import { useModalComponentStore } from "../contextProviders/modalContext";
 
-const Navbar = () => {
+const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
 
@@ -44,7 +36,7 @@ const Navbar = () => {
 
   const localStorageUser = localStorage.getItem("user");
   const navItems =
-    !!localStorageUser && localStorageUser != "undefined"
+    !!localStorageUser && localStorageUser !== "undefined"
       ? [
           {
             label: "Questions",
@@ -57,8 +49,6 @@ const Navbar = () => {
               {
                 label: "Match",
                 subLabel: "Get matched with a peer",
-                href: "#",
-                //left this here because i wanted the hand to appear
               },
             ],
           },
@@ -168,7 +158,7 @@ const Navbar = () => {
       </Collapse>
     </Box>
   );
-};
+});
 
 const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
@@ -237,8 +227,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       },
     });
   };
+  const modalComponentStore = useModalComponentStore();
 
-  return label != "Match" ? (
+  return (
     <Box
       as="a"
       href={href}
@@ -247,6 +238,8 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       p={2}
       rounded={"md"}
       _hover={{ bg: bgcolor }}
+      cursor={"pointer"}
+      onClick={label != "Match" ? () => {} : modalComponentStore.openModal}
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
@@ -272,72 +265,6 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         </Flex>
       </Stack>
     </Box>
-  ) : (
-    <Stack>
-      <Box
-        as="a"
-        href={href}
-        role={"group"}
-        display={"block"}
-        p={2}
-        rounded={"md"}
-        _hover={{ bg: bgcolor }}
-        onClick={() => onOpen()}
-      >
-        <Stack direction={"row"} align={"center"}>
-          <Box>
-            <Text
-              transition={"all .3s ease"}
-              _groupHover={{ color: "pink.400" }}
-              fontWeight={500}
-            >
-              {label}
-            </Text>
-            <Text fontSize={"sm"}>{subLabel}</Text>
-          </Box>
-          <Flex
-            transition={"all .3s ease"}
-            transform={"translateX(-10px)"}
-            opacity={0}
-            _groupHover={{ opacity: "100%", transform: "translateX(0)" }}
-            justify={"flex-end"}
-            align={"center"}
-            flex={1}
-          >
-            <Icon color={"pink.400"} w={5} h={5} as={ChevronRightIcon} />
-          </Flex>
-        </Stack>
-      </Box>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Find Match</ModalHeader>
-          <ModalCloseButton />
-          <form>
-            <ModalBody>
-              <FormControl id="complexity" isRequired>
-                <FormLabel>Complexity</FormLabel>
-                <Select placeholder="Select complexity">
-                  <option>Easy</option>
-                  <option>Medium</option>
-                  <option>Hard</option>
-                </Select>
-              </FormControl>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                colorScheme="green"
-                mr={3}
-                onClick={() => redirectToSessionPage()}
-              >
-                Match
-              </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
-    </Stack>
   );
 };
 
@@ -358,7 +285,7 @@ const MobileNav = ({ navItems }) => {
 const MobileNavItem = ({ label, children, href }) => {
   const navigate = useNavigate();
   const { isOpen: isToggleOpen, onToggle } = useDisclosure();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const modalComponentStore = useModalComponentStore();
 
   const redirectToSessionPage = () => {
     navigate("/session", {
@@ -379,27 +306,27 @@ const MobileNavItem = ({ label, children, href }) => {
         py={2}
         as="a"
         href={href ?? "#"}
-        justifyContent="space-between"
-        alignItems="center"
         _hover={{
           textDecoration: "none",
         }}
       >
-        <Text
-          fontWeight={600}
-          color={useColorModeValue("gray.600", "gray.200")}
-        >
-          {label}
-        </Text>
-        {children && (
-          <Icon
-            as={ChevronDownIcon}
-            transition={"all .25s ease-in-out"}
-            transform={isOpen ? "rotate(180deg)" : ""}
-            w={6}
-            h={6}
-          />
-        )}
+        <Flex justifyContent={"space-between"} alignItems={"center"}>
+          <Text
+            fontWeight={600}
+            color={useColorModeValue("gray.600", "gray.200")}
+          >
+            {label}
+          </Text>
+          {children && (
+            <Icon
+              as={ChevronDownIcon}
+              transition={"all .25s ease-in-out"}
+              transform={isToggleOpen ? "rotate(180deg)" : ""}
+              w={6}
+              h={6}
+            />
+          )}
+        </Flex>
       </Box>
 
       <Collapse
@@ -416,51 +343,22 @@ const MobileNavItem = ({ label, children, href }) => {
           align={"start"}
         >
           {children &&
-            children.map((child) =>
-              child.label != "Match" ? (
-                <Box as="a" key={child.label} py={2} href={child.href}>
-                  {child.label}
-                </Box>
-              ) : (
-                <Box
-                  as="a"
-                  key={child.label}
-                  py={2}
-                  href={child.href}
-                  onClick={() => onOpen()}
-                >
-                  {child.label}
-                </Box>
-              )
-            )}
-        </Stack>
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Find Match</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl id="complexity" isRequired>
-                <FormLabel>Complexity</FormLabel>
-                <Select placeholder="Select complexity">
-                  <option>Easy</option>
-                  <option>Medium</option>
-                  <option>Hard</option>
-                </Select>
-              </FormControl>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                colorScheme="green"
-                mr={3}
-                onClick={() => redirectToSessionPage()}
+            children.map((child) => (
+              <Box
+                as="a"
+                key={child.label}
+                py={2}
+                href={child.href}
+                onClick={
+                  child.label != "Match"
+                    ? () => {}
+                    : modalComponentStore.openModal
+                }
               >
-                Match
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+                {child.label}
+              </Box>
+            ))}
+        </Stack>
       </Collapse>
     </Stack>
   );

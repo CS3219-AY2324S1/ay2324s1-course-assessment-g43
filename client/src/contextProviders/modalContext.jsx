@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { createModalComponentStore } from "../stores/ModalComponentStore";
+import { createModalComponentStore } from "../stores/modalComponentStore";
 import { useLocalObservable } from "mobx-react";
 
 const ModalComponentContext = createContext(null);

@@ -13,6 +13,9 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  FormControl,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -160,6 +163,25 @@ const Navbar = observer(() => {
   );
 });
 
+const modalBody = (
+  <FormControl id="complexity" isRequired>
+    <FormLabel>Complexity</FormLabel>
+    <Select placeholder="Select complexity">
+      <option>Easy</option>
+      <option>Medium</option>
+      <option>Hard</option>
+    </Select>
+  </FormControl>
+);
+
+const modalFooter = (
+  <Button colorScheme="green" mr={3} onClick={() => console.log("can click")}>
+    Match
+  </Button>
+);
+
+const modalTitle = "Find Match";
+
 const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
@@ -239,7 +261,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       rounded={"md"}
       _hover={{ bg: bgcolor }}
       cursor={"pointer"}
-      onClick={label != "Match" ? () => {} : modalComponentStore.openModal}
+      onClick={
+        label != "Match"
+          ? () => {}
+          : () =>
+              modalComponentStore.openModal(modalTitle, modalBody, modalFooter)
+      }
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
@@ -352,7 +379,12 @@ const MobileNavItem = ({ label, children, href }) => {
                 onClick={
                   child.label != "Match"
                     ? () => {}
-                    : modalComponentStore.openModal
+                    : () =>
+                        modalComponentStore.openModal(
+                          modalTitle,
+                          modalBody,
+                          modalFooter
+                        )
                 }
               >
                 {child.label}

@@ -4,9 +4,9 @@
 name: Testing Workflow
 
 on:
-  push:
+  pull_request_target:
     branches: [ $default-branch ]
-  pull_request:
+  push:
     branches: [ $default-branch ]
 
 jobs:

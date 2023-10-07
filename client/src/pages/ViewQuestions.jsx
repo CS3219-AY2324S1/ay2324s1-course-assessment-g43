@@ -58,7 +58,8 @@ export const ViewQuestions = observer(() => {
     onClose: onCreateClose,
   } = useDisclosure();
 
-  const createQuestion = () => {
+  const createQuestion = (e) => {
+    e.preventDefault();
     toast.promise(createQuestionStore.createQuestion(), {
       success: () => {
         createStore.clearCategory();
@@ -163,80 +164,82 @@ export const ViewQuestions = observer(() => {
             <ModalContent>
               <ModalHeader>Create New Question</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
-                <FormControl id="title" isRequired>
-                  <FormLabel>Title</FormLabel>
-                  <Input
-                    placeholder="Question Title"
-                    _placeholder={{ color: "gray.500" }}
-                    type="text"
-                    value={state.title}
-                    onChange={(e) => createStore.setTitle(e.target.value)}
-                  />
-                </FormControl>
-                <FormControl id="description" isRequired>
-                  <FormLabel>Description</FormLabel>
-                  <Textarea
-                    placeholder="Question description"
-                    _placeholder={{ color: "gray.500" }}
-                    value={state.description}
-                    onChange={(e) => {
-                      createStore.setDescription(e.target.value);
-                    }}
-                  />
-                </FormControl>
-                <FormControl id="category">
-                  <FormLabel>Category</FormLabel>
-                  <HStack spacing={4} paddingBottom={1}>
-                    {createState.category.map((category) => (
-                      <Tag key={category} borderRadius="full" variant="solid">
-                        <TagLabel>{category}</TagLabel>
-                        <TagCloseButton
-                          onClick={() => createStore.removeCategory(category)}
-                        />
-                      </Tag>
-                    ))}
-                  </HStack>
-                  <InputGroup>
+              <form onSubmit={createQuestion}>
+                <ModalBody>
+                  <FormControl id="title" isRequired>
+                    <FormLabel>Title</FormLabel>
                     <Input
-                      placeholder="Enter new category"
+                      placeholder="Question Title"
                       _placeholder={{ color: "gray.500" }}
-                      value={createState.creatingCat}
+                      type="text"
+                      value={state.title}
+                      onChange={(e) => createStore.setTitle(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormControl id="description" isRequired>
+                    <FormLabel>Description</FormLabel>
+                    <Textarea
+                      placeholder="Question description"
+                      _placeholder={{ color: "gray.500" }}
+                      value={state.description}
                       onChange={(e) => {
-                        createStore.setCreatingCat(e.target.value);
+                        createStore.setDescription(e.target.value);
                       }}
                     />
-                    <InputRightElement width="4.5rem" justify="right">
-                      <IconButton
-                        aria-label="Create category"
-                        icon={<AddIcon />}
-                        variant={"unstyled"}
-                        onClick={() => createStore.addCategory()}
+                  </FormControl>
+                  <FormControl id="category">
+                    <FormLabel>Category</FormLabel>
+                    <HStack spacing={4} paddingBottom={1}>
+                      {createState.category.map((category) => (
+                        <Tag key={category} borderRadius="full" variant="solid">
+                          <TagLabel>{category}</TagLabel>
+                          <TagCloseButton
+                            onClick={() => createStore.removeCategory(category)}
+                          />
+                        </Tag>
+                      ))}
+                    </HStack>
+                    <InputGroup>
+                      <Input
+                        placeholder="Enter new category"
+                        _placeholder={{ color: "gray.500" }}
+                        value={createState.creatingCat}
+                        onChange={(e) => {
+                          createStore.setCreatingCat(e.target.value);
+                        }}
                       />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
-                <FormControl id="complexity" isRequired>
-                  <FormLabel>Complexity</FormLabel>
-                  <Select
-                    placeholder="Select complexity"
-                    value={state.complexity}
-                    onChange={(e) => {
-                      createStore.setComplexity(e.target.value);
-                    }}
-                  >
-                    <option>Easy</option>
-                    <option>Medium</option>
-                    <option>Hard</option>
-                  </Select>
-                </FormControl>
-              </ModalBody>
+                      <InputRightElement width="4.5rem" justify="right">
+                        <IconButton
+                          aria-label="Create category"
+                          icon={<AddIcon />}
+                          variant={"unstyled"}
+                          onClick={() => createStore.addCategory()}
+                        />
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+                  <FormControl id="complexity" isRequired>
+                    <FormLabel>Complexity</FormLabel>
+                    <Select
+                      placeholder="Select complexity"
+                      value={state.complexity}
+                      onChange={(e) => {
+                        createStore.setComplexity(e.target.value);
+                      }}
+                    >
+                      <option>Easy</option>
+                      <option>Medium</option>
+                      <option>Hard</option>
+                    </Select>
+                  </FormControl>
+                </ModalBody>
 
-              <ModalFooter>
-                <Button colorScheme="green" mr={3} onClick={createQuestion}>
-                  Create Question
-                </Button>
-              </ModalFooter>
+                <ModalFooter>
+                  <Button colorScheme="green" mr={3} type="submit">
+                    Create Question
+                  </Button>
+                </ModalFooter>
+              </form>
             </ModalContent>
           </Modal>
         </HStack>
@@ -282,6 +285,7 @@ export const ViewQuestions = observer(() => {
               onClose={onViewClose}
               isCentered
               size={"xl"}
+              scrollBehavior={"inside"}
             >
               <ModalOverlay />
               <ModalContent>

@@ -3,13 +3,9 @@ import axios from "axios";
 const basePath = "http://localhost:3000/api/questions";
 
 export const createQuestion = async (req) => {
-  try {
-    const res = await axios.post(`${basePath}`, req);
-    console.log(res);
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const res = await axios.post(`${basePath}`, req);
+  console.log(res);
+  return res;
 };
 
 export const getAllQuestions = async () => {

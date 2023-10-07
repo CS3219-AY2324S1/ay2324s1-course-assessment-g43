@@ -23,7 +23,8 @@ export const LoginUser = observer(() => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const onLogin = () => {
+  const onLogin = (e) => {
+    e.preventDefault();
     toast.promise(store.login(), {
       success: (user) => {
         if (!!user) navigate("/");
@@ -59,37 +60,40 @@ export const LoginUser = observer(() => {
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
-        <Stack spacing={4}>
-          <FormControl id="email">
-            <FormLabel>Email address</FormLabel>
-            <Input
-              type="email"
-              value={state.email}
-              onChange={(e) => {
-                store.setEmail(e.target.value);
-              }}
-            />
-          </FormControl>
-          <FormControl id="password" isRequired>
-            <FormLabel>Password</FormLabel>
-            <InputGroup>
+        <form onSubmit={onLogin}>
+          <Stack spacing={4}>
+            <FormControl id="email" isRequired>
+              <FormLabel>Email address</FormLabel>
               <Input
-                type={state.showPassword ? "text" : "password"}
-                value={state.password}
-                onChange={(e) => store.setPassword(e.target.value)}
+                placeholder="johndoe@example.com"
+                type="email"
+                value={state.email}
+                onChange={(e) => {
+                  store.setEmail(e.target.value);
+                }}
               />
-              <InputRightElement h={"full"}>
-                <Button
-                  variant={"ghost"}
-                  onClick={() => store.toggleShowPassword()}
-                >
-                  {state.showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-          <Stack spacing={10}>
-            {/* <Stack
+            </FormControl>
+            <FormControl id="password" isRequired>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input
+                  placeholder="johndoe123"
+                  type={state.showPassword ? "text" : "password"}
+                  value={state.password}
+                  onChange={(e) => store.setPassword(e.target.value)}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() => store.toggleShowPassword()}
+                  >
+                    {state.showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <Stack spacing={10}>
+              {/* <Stack
                 direction={{ base: "column", sm: "row" }}
                 align={"start"}
                 justify={"space-between"}
@@ -97,18 +101,19 @@ export const LoginUser = observer(() => {
                 <Checkbox>Remember me</Checkbox>
                 <Text color={"blue.400"}>Forgot password?</Text>
               </Stack> */}
-            <Button
-              bg={"blue.400"}
-              color={"white"}
-              _hover={{
-                bg: "blue.500",
-              }}
-              onClick={onLogin}
-            >
-              Log In
-            </Button>
+              <Button
+                bg={"blue.400"}
+                color={"white"}
+                _hover={{
+                  bg: "blue.500",
+                }}
+                type="submit"
+              >
+                Log In
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
+        </form>
         <Stack pt={6}>
           <Text align={"center"}>
             No account yet?{" "}

@@ -22,7 +22,7 @@ exports.createQuestion = async (req, res) => {
     return res.status(201).json(question);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ error: "Error creating question" });
+    return res.status(400).json({ message: "Error creating question" });
   }
 };
 
@@ -32,10 +32,10 @@ exports.getQuestion = async (req, res) => {
     const question = await Question.findOne({ questionId });
     return question
       ? res.status(200).json(question)
-      : res.status(404).json({ error: "Question not found" });
+      : res.status(404).json({ message: "Question not found" });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Error fetching question" });
+    return res.status(500).json({ message: "Error fetching question" });
   }
 };
 
@@ -47,7 +47,7 @@ exports.getAllQuestions = async (req, res) => {
       : res.status(200).json([]);
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Error fetching questions" });
+    return res.status(500).json({ message: "Error fetching questions" });
   }
 };
 
@@ -58,7 +58,7 @@ exports.updateQuestion = async (req, res) => {
     const question = await Question.findOne({ questionId });
 
     if (!question) {
-      return res.status(404).json({ error: "Question not found" });
+      return res.status(404).json({ message: "Question not found" });
     }
 
     if (title) {
@@ -79,7 +79,7 @@ exports.updateQuestion = async (req, res) => {
     return res.status(200).json(question);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ error: "Error updating question" });
+    return res.status(400).json({ message: "Error updating question" });
   }
 };
 
@@ -89,10 +89,10 @@ exports.deleteQuestion = async (req, res) => {
     const deletedDoc = await Question.findOneAndDelete({ questionId });
     return deletedDoc
       ? res.status(200).json(deletedDoc)
-      : res.status(404).json({ error: "Question not found" });
+      : res.status(404).json({ message: "Question not found" });
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ error: "Error deleting question" });
+    return res.status(400).json({ message: "Error deleting question" });
   }
 };
 

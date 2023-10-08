@@ -35,12 +35,14 @@ const EASY_QUEUE = "easy-queue";
 const MEDIUM_QUEUE = "medium-queue";
 const HARD_QUEUE = "hard-queue";
 
+const TIMEOUT_MS = 35 * 1000;
+
 await channel.assertQueue(EASY_QUEUE, { durable: false, messageTtl: 30000 });
 await channel.assertQueue(MEDIUM_QUEUE, { durable: false, messageTtl: 30000 });
 await channel.assertQueue(HARD_QUEUE, { durable: false, messageTtl: 30000 });
 
-const getQueue = (difficulty) => {
-  switch (difficulty) {
+const getQueue = (complexity) => {
+  switch (complexity) {
     case "Easy":
       return EASY_QUEUE;
     case "Medium":
@@ -54,24 +56,33 @@ const getQueue = (difficulty) => {
 
 io.on("connection", (socket) => {
   console.log(`Connection opened: ${socket.id}`);
+  const timeoutId = setTimeout(() => {
+    io.to(socket.id).emit("match-failure", "Timeout");
+    socket.disconnect(true);
+    console.log("Socket disconnected due to timeout");
+  }, TIMEOUT_MS);
 
-  socket.on("match-request", async (uid, difficulty) => {
-    if (!uid || !difficulty) {
+  socket.on("match-request", async (message) => {
+    const parsedMessage = JSON.parse(message);
+    const { uid, complexity } = parsedMessage;
+    if (!uid || !complexity) {
       console.log("Invalid request");
+      console.log(`uid: ${uid}`);
+      console.log(`complexity: ${complexity}`);
       io.to(socket.id).emit("match-failure", "Missing arguments");
       return;
     }
 
-    console.log(`match-request: (${uid}, ${difficulty})`);
+    console.log(`match-request: (${uid}, ${complexity})`);
 
-    const queueName = getQueue(difficulty);
+    const queueName = getQueue(complexity);
 
     // polls the queue
     const dequeuedMessage = await channel.get(queueName);
 
     // if there is no users in the queue, add the user to the queue
     if (!dequeuedMessage) {
-      const qid = await getQuestionId(difficulty);
+      const qid = await getQuestionId(complexity);
       if (!qid) {
         io.to(socket.id).emit("match-failure", "No question found");
         return;
@@ -89,18 +100,23 @@ io.on("connection", (socket) => {
       channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
     } else {
       // else pair the users up
-      const otherUser = JSON.parse(dequeuedMessage.content.toString());
+      const firstUser = JSON.parse(dequeuedMessage.content.toString());
       console.log("MATCHED:");
-      console.log(otherUser);
+      console.log(firstUser);
 
-      io.to([otherUser.socketId, socket.id]).emit("match-success", {
-        uid: otherUser.uid,
-        qid: otherUser.qid,
+      io.to(firstUser.socketId).emit("match-success", {
+        uid: uid,
+        qid: firstUser.qid,
+      });
+      io.to(socket.id).emit("match-success", {
+        uid: firstUser.uid,
+        qid: firstUser.qid,
       });
     }
   });
 
   socket.on("disconnect", () => {
+    clearTimeout(timeoutId);
     console.log("User has left");
   });
 });

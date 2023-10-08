@@ -16,7 +16,6 @@ import {
   FormControl,
   FormLabel,
   Select,
-  Input,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -165,15 +164,16 @@ const Navbar = observer(() => {
   );
 });
 
-const modalTitle = "Find a Match!";
+const matchingModalTitle = "Find a Match!";
 
-const ModalBody = observer(() => {
+const MatchingModalBody = observer(() => {
   return (
     <FormControl id="complexity" isRequired>
       <FormLabel>Complexity</FormLabel>
       <Select
         placeholder="Select complexity"
         isDisabled={matchingFormStore.isLoading}
+        onChange={(e) => matchingFormStore.setComplexity(e.target.value)}
       >
         <option>Easy</option>
         <option>Medium</option>
@@ -183,7 +183,7 @@ const ModalBody = observer(() => {
   );
 });
 
-const ModalFooter = observer(() => {
+const MatchingModalFooter = observer(() => {
   return (
     <Button
       colorScheme="green"
@@ -282,12 +282,26 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           ? () => {}
           : () =>
               modalComponentStore.openModal(
-                modalTitle,
-                <ModalBody />,
-                <ModalFooter />,
+                matchingModalTitle,
+                <MatchingModalBody />,
+                <MatchingModalFooter />,
                 () => {
-                  console.log("i submitting sia");
+                  const uid = JSON.parse(localStorage.getItem("user")).uid;
+                  matchingFormStore.setUid(uid);
+
+                  const successCallback = (data) => {
+                    redirectToSessionPage(data);
+                  };
+                  const failureCallback = (error) => {
+                    alert(error);
+                    console.log(error);
+                  };
+
                   matchingFormStore.startLoading();
+                  matchingFormStore.sendMatchRequest(
+                    successCallback,
+                    failureCallback
+                  );
                 }
               )
       }
@@ -405,12 +419,28 @@ const MobileNavItem = ({ label, children, href }) => {
                     ? () => {}
                     : () =>
                         modalComponentStore.openModal(
-                          modalTitle,
-                          <ModalBody />,
-                          <ModalFooter />,
+                          matchingModalTitle,
+                          <MatchingModalBody />,
+                          <MatchingModalFooter />,
                           () => {
-                            console.log("i submitting sia");
+                            const uid = JSON.parse(
+                              localStorage.getItem("user")
+                            ).uid;
+                            matchingFormStore.setUid(uid);
+
+                            const successCallback = (data) => {
+                              redirectToSessionPage(data);
+                            };
+                            const failureCallback = (error) => {
+                              alert(error);
+                              console.log(error);
+                            };
+
                             matchingFormStore.startLoading();
+                            matchingFormStore.sendMatchRequest(
+                              successCallback,
+                              failureCallback
+                            );
                           }
                         )
                 }

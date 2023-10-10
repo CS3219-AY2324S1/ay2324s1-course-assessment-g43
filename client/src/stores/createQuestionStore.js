@@ -14,6 +14,16 @@ class CreateQuestionStore {
     makeAutoObservable(this);
   }
 
+  resetState() {
+    this.state = {
+      title: "",
+      description: "",
+      creatingCat: "",
+      category: [],
+      complexity: "",
+    };
+  }
+
   setTitle(title) {
     this.state.title = title;
   }
@@ -36,10 +46,6 @@ class CreateQuestionStore {
   removeCategory(category) {
     const index = this.state.category.indexOf(category);
     this.state.category.splice(index, 1);
-  }
-
-  clearCategory() {
-    this.state.category = [];
   }
 
   setComplexity(complexity) {

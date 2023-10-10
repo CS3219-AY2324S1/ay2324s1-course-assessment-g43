@@ -40,32 +40,26 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
+import { useModalComponentStore } from "../contextProviders/modalContext";
 
 export const ViewQuestions = observer(() => {
   const navigate = useNavigate();
-
+  const modalComponentStore = useModalComponentStore();
   const toast = useToast();
   const store = viewQuestionsStore;
-  const createStore = createQuestionStore;
   const state = store.state;
-  const createState = createStore.state;
   const {
     isOpen: isViewOpen,
     onOpen: onViewOpen,
     onClose: onViewClose,
-  } = useDisclosure();
-  const {
-    isOpen: isCreateOpen,
-    onOpen: onCreateOpen,
-    onClose: onCreateClose,
   } = useDisclosure();
 
   const createQuestion = (e) => {
     e.preventDefault();
     toast.promise(createQuestionStore.createQuestion(), {
       success: () => {
-        createStore.clearCategory();
-        onCreateClose();
+        modalComponentStore.closeModal();
+        createQuestionStore.resetState();
         store.getAllQuestions();
         return {
           title: "Question created.",
@@ -154,96 +148,15 @@ export const ViewQuestions = observer(() => {
             aria-label="Create question"
             icon={<AddIcon />}
             variant={"outline"}
-            onClick={() => onCreateOpen()}
+            onClick={() =>
+              modalComponentStore.openModal(
+                createQuestionModalTitle,
+                <CreateQuestionModalBody />,
+                <CreateQuestionModalFooter />,
+                createQuestion
+              )
+            }
           />
-          <Modal
-            isOpen={isCreateOpen}
-            onClose={onCreateClose}
-            isCentered
-            size={"xl"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Create New Question</ModalHeader>
-              <ModalCloseButton />
-              <form onSubmit={createQuestion}>
-                <ModalBody>
-                  <FormControl id="title" isRequired>
-                    <FormLabel>Title</FormLabel>
-                    <Input
-                      placeholder="Question Title"
-                      _placeholder={{ color: "gray.500" }}
-                      type="text"
-                      value={state.title}
-                      onChange={(e) => createStore.setTitle(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormControl id="description" isRequired>
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                      placeholder="Question description"
-                      _placeholder={{ color: "gray.500" }}
-                      value={state.description}
-                      onChange={(e) => {
-                        createStore.setDescription(e.target.value);
-                      }}
-                    />
-                  </FormControl>
-                  <FormControl id="category">
-                    <FormLabel>Category</FormLabel>
-                    <HStack spacing={4} paddingBottom={1}>
-                      {createState.category.map((category) => (
-                        <Tag key={category} borderRadius="full" variant="solid">
-                          <TagLabel>{category}</TagLabel>
-                          <TagCloseButton
-                            onClick={() => createStore.removeCategory(category)}
-                          />
-                        </Tag>
-                      ))}
-                    </HStack>
-                    <InputGroup>
-                      <Input
-                        placeholder="Enter new category"
-                        _placeholder={{ color: "gray.500" }}
-                        value={createState.creatingCat}
-                        onChange={(e) => {
-                          createStore.setCreatingCat(e.target.value);
-                        }}
-                      />
-                      <InputRightElement width="4.5rem" justify="right">
-                        <IconButton
-                          aria-label="Create category"
-                          icon={<AddIcon />}
-                          variant={"unstyled"}
-                          onClick={() => createStore.addCategory()}
-                        />
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-                  <FormControl id="complexity" isRequired>
-                    <FormLabel>Complexity</FormLabel>
-                    <Select
-                      placeholder="Select complexity"
-                      value={state.complexity}
-                      onChange={(e) => {
-                        createStore.setComplexity(e.target.value);
-                      }}
-                    >
-                      <option>Easy</option>
-                      <option>Medium</option>
-                      <option>Hard</option>
-                    </Select>
-                  </FormControl>
-                </ModalBody>
-
-                <ModalFooter>
-                  <Button colorScheme="green" mr={3} type="submit">
-                    Create Question
-                  </Button>
-                </ModalFooter>
-              </form>
-            </ModalContent>
-          </Modal>
         </HStack>
         <Flex
           justifyContent={"space-between"}
@@ -361,3 +274,86 @@ export const ViewQuestions = observer(() => {
     </PageContainer>
   );
 });
+
+const createQuestionModalTitle = "Create New Question";
+
+const CreateQuestionModalBody = observer(() => {
+  return (
+    <>
+      <FormControl id="title" isRequired>
+        <FormLabel>Title</FormLabel>
+        <Input
+          placeholder="Question Title"
+          _placeholder={{ color: "gray.500" }}
+          type="text"
+          value={createQuestionStore.state.title}
+          onChange={(e) => createQuestionStore.setTitle(e.target.value)}
+        />
+      </FormControl>
+      <FormControl id="description" isRequired>
+        <FormLabel>Description</FormLabel>
+        <Textarea
+          placeholder="Question description"
+          _placeholder={{ color: "gray.500" }}
+          value={createQuestionStore.state.description}
+          onChange={(e) => {
+            createQuestionStore.setDescription(e.target.value);
+          }}
+        />
+      </FormControl>
+      <FormControl id="category">
+        <FormLabel>Category</FormLabel>
+        <HStack spacing={4} paddingBottom={1}>
+          {createQuestionStore.state.category.map((category) => (
+            <Tag key={category} borderRadius="full" variant="solid">
+              <TagLabel>{category}</TagLabel>
+              <TagCloseButton
+                onClick={() => createQuestionStore.removeCategory(category)}
+              />
+            </Tag>
+          ))}
+        </HStack>
+        <InputGroup>
+          <Input
+            placeholder="Enter new category"
+            _placeholder={{ color: "gray.500" }}
+            value={createQuestionStore.state.creatingCat}
+            onChange={(e) => {
+              createQuestionStore.setCreatingCat(e.target.value);
+            }}
+          />
+          <InputRightElement width="4.5rem" justify="right">
+            <IconButton
+              aria-label="Create category"
+              icon={<AddIcon />}
+              variant={"unstyled"}
+              onClick={() => createQuestionStore.addCategory()}
+            />
+          </InputRightElement>
+        </InputGroup>
+      </FormControl>
+      <FormControl id="complexity" isRequired>
+        <FormLabel>Complexity</FormLabel>
+        <Select
+          placeholder="Select complexity"
+          value={createQuestionStore.state.complexity}
+          onChange={(e) => {
+            createQuestionStore.setComplexity(e.target.value);
+          }}
+        >
+          <option>Easy</option>
+          <option>Medium</option>
+          <option>Hard</option>
+        </Select>
+      </FormControl>
+    </>
+  );
+});
+
+const CreateQuestionModalFooter = () => {
+  return (
+    <Button colorScheme="green" mr={3} type="submit">
+      Create Question
+    </Button>
+  );
+};

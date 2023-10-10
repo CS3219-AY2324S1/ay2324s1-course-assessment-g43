@@ -14,6 +14,7 @@ export const createQuestion = async (req) => {
     return res;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 

@@ -8,14 +8,6 @@ import {
   Stack,
   IconButton,
   Input,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   useToast,
   FormControl,
   FormLabel,
@@ -30,8 +22,6 @@ import {
   Divider,
   AbsoluteCenter,
   Box,
-  Grid,
-  GridItem,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -43,16 +33,10 @@ import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 
 export const ViewQuestions = observer(() => {
-  const navigate = useNavigate();
   const modalComponentStore = useModalComponentStore();
   const toast = useToast();
   const store = viewQuestionsStore;
   const state = store.state;
-  const {
-    isOpen: isViewOpen,
-    onOpen: onViewOpen,
-    onClose: onViewClose,
-  } = useDisclosure();
 
   const createQuestion = (e) => {
     e.preventDefault();
@@ -83,17 +67,12 @@ export const ViewQuestions = observer(() => {
     });
   };
 
-  const redirectToUpdateQuestionPage = (selectedQuestion) => {
-    navigate("/update-question", {
-      state: { selectedQuestion: JSON.stringify(selectedQuestion) },
-    });
-  };
-
   const deleteQuestion = (id) => {
     window.confirm("Delete this question? This action is irreversible.");
     toast.promise(store.deleteQuestion(id), {
       success: () => {
-        onViewClose();
+        modalComponentStore.closeModal();
+        store.setSelectedQuestion({});
         store.getAllQuestions();
         return {
           title: "Successfully deleted question.",
@@ -119,7 +98,12 @@ export const ViewQuestions = observer(() => {
 
   const handleOpenModal = (question) => {
     store.setSelectedQuestion(question);
-    onViewOpen();
+    modalComponentStore.openModal(
+      <ViewQuestionDetailsModalTitle />,
+      <ViewQuestionDetailsModalBody />,
+      <ViewQuestionDetailsModalFooter />,
+      () => deleteQuestion(viewQuestionsStore.state.selectedQuestion.questionId)
+    );
   };
 
   useEffect(() => {
@@ -200,75 +184,6 @@ export const ViewQuestions = observer(() => {
               <Text>Can't seem to find any questions.</Text>
             </CardBody>
           </Card>
-        )}
-        {!!state.selectedQuestion ? (
-          <>
-            <Modal
-              isOpen={isViewOpen}
-              onClose={onViewClose}
-              isCentered
-              size={"xl"}
-              scrollBehavior={"inside"}
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>{state.selectedQuestion.title}</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <Badge
-                    colorScheme={
-                      state.selectedQuestion.complexity == "Easy"
-                        ? "green"
-                        : state.selectedQuestion.complexity == "Medium"
-                        ? "yellow"
-                        : "red"
-                    }
-                  >
-                    {state.selectedQuestion.complexity}
-                  </Badge>
-                  <HStack spacing={2} paddingBlock={3}>
-                    {state.selectedQuestion.category?.map((category) => (
-                      <Tag key={category} borderRadius="full" variant="solid">
-                        <TagLabel>{category}</TagLabel>
-                      </Tag>
-                    ))}
-                  </HStack>
-                  <Box position="relative" padding="3">
-                    <Divider />
-                    <AbsoluteCenter bg="white" px="4">
-                      Task Discription
-                    </AbsoluteCenter>
-                  </Box>
-                  <Text paddingTop={"3"}>
-                    {state.selectedQuestion.description}
-                  </Text>
-                </ModalBody>
-
-                <ModalFooter>
-                  <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={() =>
-                      redirectToUpdateQuestionPage(state.selectedQuestion)
-                    }
-                  >
-                    Update Question
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={() =>
-                      deleteQuestion(state.selectedQuestion.questionId)
-                    }
-                  >
-                    Delete Question
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          </>
-        ) : (
-          <></>
         )}
       </Stack>
     </PageContainer>
@@ -357,3 +272,70 @@ const CreateQuestionModalFooter = () => {
     </Button>
   );
 };
+
+const ViewQuestionDetailsModalTitle = observer(() => {
+  return <div>{viewQuestionsStore.state.selectedQuestion.title}</div>;
+});
+
+const ViewQuestionDetailsModalBody = observer(() => {
+  return (
+    <>
+      <Badge
+        colorScheme={
+          viewQuestionsStore.state.selectedQuestion.complexity == "Easy"
+            ? "green"
+            : viewQuestionsStore.state.selectedQuestion.complexity == "Medium"
+            ? "yellow"
+            : "red"
+        }
+      >
+        {viewQuestionsStore.state.selectedQuestion.complexity}
+      </Badge>
+      <HStack spacing={2} paddingBlock={3}>
+        {viewQuestionsStore.state.selectedQuestion.category?.map((category) => (
+          <Tag key={category} borderRadius="full" variant="solid">
+            <TagLabel>{category}</TagLabel>
+          </Tag>
+        ))}
+      </HStack>
+      <Box position="relative" padding="3">
+        <Divider />
+        <AbsoluteCenter bg="white" px="4">
+          Task Discription
+        </AbsoluteCenter>
+      </Box>
+      <Text paddingTop={"3"}>
+        {viewQuestionsStore.state.selectedQuestion.description}
+      </Text>
+    </>
+  );
+});
+
+const ViewQuestionDetailsModalFooter = observer(() => {
+  const navigate = useNavigate();
+  const modalComponentStore = useModalComponentStore();
+  const redirectToUpdateQuestionPage = (selectedQuestion) => {
+    modalComponentStore.closeModal();
+    navigate("/update-question", {
+      state: { selectedQuestion: JSON.stringify(selectedQuestion) },
+    });
+  };
+  return (
+    <>
+      <Button
+        colorScheme="blue"
+        mr={3}
+        onClick={() =>
+          redirectToUpdateQuestionPage(
+            viewQuestionsStore.state.selectedQuestion
+          )
+        }
+      >
+        Update Question
+      </Button>
+      <Button variant="ghost" colorScheme="red" type="submit">
+        Delete Question
+      </Button>
+    </>
+  );
+});

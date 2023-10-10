@@ -301,12 +301,13 @@ const ViewQuestionDetailsModalBody = observer(() => {
       <Box position="relative" padding="3">
         <Divider />
         <AbsoluteCenter bg="white" px="4">
-          Task Discription
+          Task Description
         </AbsoluteCenter>
       </Box>
-      <Text paddingTop={"3"}>
-        {viewQuestionsStore.state.selectedQuestion.description}
-      </Text>
+      {viewQuestionsStore.state.selectedQuestion.description &&
+        viewQuestionsStore.state.selectedQuestion.description
+          .split("\n")
+          .map((p) => <Text py={1}>{p}</Text>)}
     </>
   );
 });

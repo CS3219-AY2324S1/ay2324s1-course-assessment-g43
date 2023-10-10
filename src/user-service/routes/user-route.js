@@ -282,6 +282,6 @@ router.put("/update/:id", authFunctions.authenticateRequest, userController.upda
 
 router.delete("/delete/:id", authFunctions.authenticateRequest, userController.deleteProfile);
 
-router.get("/verifyToken/:token", authFunctions.authenticateToken);
+router.get("/verifyToken", authFunctions.authenticateToken);
 
 module.exports = router;

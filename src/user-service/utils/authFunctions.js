@@ -36,15 +36,16 @@ exports.authenticateRequest = (req, res, next) => {
 }
 
 exports.authenticateToken = (req, res) => {
-    const token = req.params.token;
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {
         console.log("No JWT token received");
-        return res.status(401).json({ 
+        return res.status(401).json({
             message: `No authorization token received.`,
-            data: {} 
-        })
+            data: {}
+        });
     }
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, email) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
         if (err) {
             res.status(403).json({
                 isValid: false,
@@ -54,8 +55,8 @@ exports.authenticateToken = (req, res) => {
         } else {
             res.status(200).json({
                 isValid: true,
-                message: 'Token is valid',
-                data: {} 
+                message: "Token is valid",
+                data: {}
             });
         }
     });

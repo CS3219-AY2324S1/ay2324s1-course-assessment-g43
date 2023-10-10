@@ -102,7 +102,9 @@ export const ViewQuestions = observer(() => {
       <ViewQuestionDetailsModalTitle />,
       <ViewQuestionDetailsModalBody />,
       <ViewQuestionDetailsModalFooter />,
-      () => deleteQuestion(viewQuestionsStore.state.selectedQuestion.questionId)
+      () =>
+        deleteQuestion(viewQuestionsStore.state.selectedQuestion.questionId),
+      () => viewQuestionsStore.setSelectedQuestion({})
     );
   };
 
@@ -137,7 +139,8 @@ export const ViewQuestions = observer(() => {
                 createQuestionModalTitle,
                 <CreateQuestionModalBody />,
                 <CreateQuestionModalFooter />,
-                createQuestion
+                createQuestion,
+                () => createQuestionStore.resetState()
               )
             }
           />

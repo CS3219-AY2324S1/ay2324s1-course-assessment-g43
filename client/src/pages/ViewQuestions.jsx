@@ -30,6 +30,8 @@ import {
   Divider,
   AbsoluteCenter,
   Box,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -133,19 +135,19 @@ export const ViewQuestions = observer(() => {
   return (
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"}>
-        <HStack justifyContent={"space-between"}>
+        <Stack justifyContent={"space-between"} direction={["column", "row"]}>
           <Text fontSize="40px" align={"start"}>
             Questions
           </Text>
-          <HStack>
-            <Input variant="outline" placeholder="Search" width="400px" />
+          <HStack w={"100%"} justifyContent={"flex-end"}>
+            <Input variant="outline" placeholder="Search" maxW={"400px"} />
             <IconButton
               aria-label="Search database"
               icon={<SearchIcon />}
               variant={"outline"}
             />
           </HStack>
-        </HStack>
+        </Stack>
         <HStack justify={"right"}>
           <Text>Create new question</Text>
           <IconButton
@@ -243,7 +245,11 @@ export const ViewQuestions = observer(() => {
             </ModalContent>
           </Modal>
         </HStack>
-        <Flex justifyContent={"space-between"} px={6}>
+        <Flex
+          justifyContent={"space-between"}
+          px={6}
+          direction={["column", "row"]}
+        >
           <HStack>
             <Text fontWeight="bold">ID</Text>
             <Text fontWeight="bold">Question Title</Text>
@@ -255,7 +261,11 @@ export const ViewQuestions = observer(() => {
             return (
               <Card key={index}>
                 <CardBody>
-                  <Flex justifyContent={"space-between"}>
+                  <Flex
+                    justifyContent={"space-between"}
+                    direction={["column", "row"]}
+                    gap={2}
+                  >
                     <HStack>
                       <Text>{question.questionId}.</Text>
                       <Text textOverflow={"ellipsis"} maxW={"inherit"}>

@@ -51,7 +51,7 @@ const Navbar = () => {
       ? [
           {
             label: "Questions",
-            href: userRole === 'admin' ? '/browseAdmin' : '/browseUser',
+            href: userRole === 'admin' ? '/browse-admin' : '/browse-user',
           },
           {
             label: "My Profile",

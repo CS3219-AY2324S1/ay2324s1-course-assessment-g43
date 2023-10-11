@@ -59,7 +59,7 @@ const router = express.Router();
  *  "error": "Error creating question"
  * }
  */
-router.post("/questions", auth.authenticate, questionController.createQuestion);
+router.post("/questions", auth.authenticate, auth.checkAuthorization, questionController.createQuestion);
 
 /**
  * GET /api/questions/{id}
@@ -161,7 +161,7 @@ router.get("/questions", auth.authenticate, questionController.getAllQuestions);
  *  "error": "Question not found"
  * }
  */
-router.put("/questions/:id", auth.authenticate, questionController.updateQuestion);
+router.put("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.updateQuestion);
 
 /**
  * DELETE /api/questions/{id}
@@ -191,6 +191,6 @@ router.put("/questions/:id", auth.authenticate, questionController.updateQuestio
  *  "error": "Question not found"
  * }
  */
-router.delete("/questions/:id", auth.authenticate, questionController.deleteQuestion);
+router.delete("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.deleteQuestion);
 
 module.exports = router;

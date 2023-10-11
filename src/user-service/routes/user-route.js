@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const userController = require("../controller/user-controller.js");
-const authFunctions = require("../utils/authFunctions.js");
+const authFunctions = require("../utils/auth-functions.js");
 
 
 /**

@@ -26,7 +26,7 @@ exports.authenticateRequest = (req, res, next) => {
     }
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
         if (err) {
-            return res.status(403).json({ 
+            return res.status(401).json({ 
                 message: `Invalid authorization token received. Denied Access.`,
                 data: {} 
             })
@@ -44,9 +44,9 @@ exports.authenticateToken = (req, res) => {
             data: {} 
         })
     }
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, email) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
         if (err) {
-            res.status(403).json({
+            res.status(401).json({
                 isValid: false,
                 message: `Invalid authorization token received. Denied Access.`,
                 data: {}

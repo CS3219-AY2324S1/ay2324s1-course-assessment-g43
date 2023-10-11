@@ -17,8 +17,8 @@ function App() {
         <Route path="/register-user" exact={true} Component={RegisterUser} />
         <Route path="/update-user" exact={true} Component={UpdateUser} />
         <Route path="/me" exact={true} Component={ViewUser} />
-        <Route path="/browseAdmin" exact={true} Component={ViewQuestions} />
-        <Route path="/browseUser" exact={true} Component={ViewQuestionsUser} />
+        <Route path="/browse-admin" exact={true} Component={ViewQuestions} />
+        <Route path="/browse-user" exact={true} Component={ViewQuestionsUser} />
 
         <Route
           path="/update-question"

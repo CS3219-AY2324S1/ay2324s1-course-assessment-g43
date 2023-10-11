@@ -1,6 +1,6 @@
 const pool = require("../db.js");
 const validator = require("../utils/validator.js");
-const authFunctions = require("../utils/authFunctions.js")
+const authFunctions = require("../utils/auth-functions.js")
 
 exports.createUser = async (req, res) => {
   const { username, email, password } = req.body;

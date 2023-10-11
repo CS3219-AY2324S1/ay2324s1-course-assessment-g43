@@ -8,6 +8,11 @@ class MatchingFormStore {
     makeAutoObservable(this);
   }
 
+  resetState() {
+    this.isLoading = false;
+    this.countdown = 0;
+  }
+
   startLoading() {
     this.isLoading = true;
     this.countdown = 60;
@@ -22,10 +27,6 @@ class MatchingFormStore {
         }
       });
     }, 1000);
-  }
-
-  setTest(test) {
-    this.test = test;
   }
 }
 

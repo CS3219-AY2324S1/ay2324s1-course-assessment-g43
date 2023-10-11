@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const basePath = "http://localhost:5000/api";
+const basePath = "http://localhost:8000/api";
 
 export const getUserById = async (id) => {
   const res = await axios.get(`${basePath}/getUsers/${id}`);

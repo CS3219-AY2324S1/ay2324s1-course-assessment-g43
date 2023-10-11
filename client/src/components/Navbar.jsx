@@ -285,10 +285,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                 modalTitle,
                 <ModalBody />,
                 <ModalFooter />,
-                () => {
+                (e) => {
+                  e.preventDefault();
                   console.log("i submitting sia");
                   matchingFormStore.startLoading();
-                }
+                },
+                () => matchingFormStore.resetState()
               )
       }
     >
@@ -408,10 +410,12 @@ const MobileNavItem = ({ label, children, href }) => {
                           modalTitle,
                           <ModalBody />,
                           <ModalFooter />,
-                          () => {
+                          (e) => {
+                            e.preventDefault();
                             console.log("i submitting sia");
                             matchingFormStore.startLoading();
-                          }
+                          },
+                          () => matchingFormStore.resetState()
                         )
                 }
               >

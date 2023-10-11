@@ -2,7 +2,7 @@ const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 
 const app = express();
-const port = 5000;
+const port = 8000;
 const cors = require("cors");
 const pool = require("./db.js");
 
@@ -12,7 +12,7 @@ const options = {
   info: {
     version: "1.0.0",
     title: "PeerPrep User Service API",
-    description: "The REST API endpoints for the PeerPrep User Service."
+    description: "The REST API endpoints for the PeerPrep User Service.",
   },
   baseDir: __dirname,
   // Glob pattern to find your jsdoc files (multiple patterns can be added in an array)

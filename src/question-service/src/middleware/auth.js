@@ -5,10 +5,14 @@ const basePath = "http://localhost:5000/api";
 
 const verifyToken = async(token) => {
   try {
-    const res = await axios.get(`${basePath}/verifyToken/${token}`);
-    return res.data; 
+    const res = await axios.get(`${basePath}/verifyToken`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
   } catch (error) {
-    console.error("Error verifying token:", error);
+    console.error("Error verifying token: ", error);
     throw error;
   }
 };

@@ -1,4 +1,5 @@
 import socketIOClient from "socket.io-client";
+import { getRandomQuestionByComplexity } from "../services/questionService";
 
 const ENDPOINT = "http://localhost:5001";
 
@@ -33,6 +34,11 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
     if (onMatchFailure) {
       onMatchFailure(errorMsg);
     }
+  });
+
+  socket.on("fetch-question", async (complexity, callback) => {
+    const question = await getRandomQuestionByComplexity(complexity);
+    callback(question);
   });
 
   return socket;

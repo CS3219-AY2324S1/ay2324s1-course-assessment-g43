@@ -115,7 +115,7 @@ const Navbar = observer(() => {
           {localStorageUser ? (
             <Button
               as={"a"}
-              display={{ base: "none", md: "inline-flex" }}
+              display={{ base: "inline_flex", md: "inline-flex" }}
               fontSize={"sm"}
               fontWeight={600}
               color={"white"}
@@ -140,7 +140,7 @@ const Navbar = observer(() => {
               </Button>
               <Button
                 as={"a"}
-                display={{ base: "none", md: "inline-flex" }}
+                display={{ base: "inline-flex", md: "inline-flex" }}
                 fontSize={"sm"}
                 fontWeight={600}
                 color={"white"}
@@ -250,21 +250,20 @@ const DesktopNav = ({ navItems }) => {
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
   const bgcolor = useColorModeValue("pink.50", "gray.900");
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
-  const redirectToSessionPage = () => {
+  const redirectToSessionPage = ({questionId, title, description, category, complexity }) => {
     navigate("/session", {
       state: {
-        questionId: 35,
-        title: "Linked List Cycle Detection",
-        description:
-          "Given head, the head of a linked list, determine if the linked list has a cycle in it. There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to. Note that pos is not passed as a parameter. Return true if there is a cycle in the linked list. Otherwise, return false. Example 1: Input: head = [3,2,0,-4], pos = 1 Output: true Explanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed). Example 2: Input: head = [1,2], pos = 0 Output: true Explanation: There is a cycle in the linked list, where the tail connects to the 0th node. Example 3: Input: head = [1], pos = -1 Output: false Explanation: There is no cycle in the linked list. Constraints:  The number of the nodes in the list is in the range [0, 104].  -105 <= Node.val <= 105  pos is -1 or a valid index in the linked-list. Follow up: Can you solve it using O(1) (i.e. constant) memory?",
-        category: ["Data Structures", "Algorithms"],
-        complexity: "Easy",
+        questionId: questionId,
+        title: title,
+        description: description,
+        category: category,
+        complexity: complexity,
       },
     });
   };
+
   const modalComponentStore = useModalComponentStore();
 
   return (
@@ -285,11 +284,13 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                 matchingModalTitle,
                 <MatchingModalBody />,
                 <MatchingModalFooter />,
-                () => {
+                (e) => {
+                  e.preventDefault();
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
 
                   const successCallback = (data) => {
+                    modalComponentStore.closeModal();
                     redirectToSessionPage(data);
                   };
                   const failureCallback = (error) => {
@@ -302,7 +303,8 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     successCallback,
                     failureCallback
                   );
-                }
+                },
+                () => matchingFormStore.resetState()
               )
       }
     >
@@ -348,19 +350,18 @@ const MobileNav = ({ navItems }) => {
 };
 
 const MobileNavItem = ({ label, children, href }) => {
-  const navigate = useNavigate();
   const { isOpen: isToggleOpen, onToggle } = useDisclosure();
   const modalComponentStore = useModalComponentStore();
 
-  const redirectToSessionPage = () => {
+  const navigate = useNavigate();
+  const redirectToSessionPage = ({questionId, title, description, category, complexity }) => {
     navigate("/session", {
       state: {
-        questionId: 35,
-        title: "Linked List Cycle Detection",
-        description:
-          "Given head, the head of a linked list, determine if the linked list has a cycle in it. There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to. Note that pos is not passed as a parameter. Return true if there is a cycle in the linked list. Otherwise, return false. Example 1: Input: head = [3,2,0,-4], pos = 1 Output: true Explanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed). Example 2: Input: head = [1,2], pos = 0 Output: true Explanation: There is a cycle in the linked list, where the tail connects to the 0th node. Example 3: Input: head = [1], pos = -1 Output: false Explanation: There is no cycle in the linked list. Constraints:  The number of the nodes in the list is in the range [0, 104].  -105 <= Node.val <= 105  pos is -1 or a valid index in the linked-list. Follow up: Can you solve it using O(1) (i.e. constant) memory?",
-        category: ["Data Structures", "Algorithms"],
-        complexity: "Easy",
+        questionId: questionId,
+        title: title,
+        description: description,
+        category: category,
+        complexity: complexity,
       },
     });
   };
@@ -422,13 +423,15 @@ const MobileNavItem = ({ label, children, href }) => {
                           matchingModalTitle,
                           <MatchingModalBody />,
                           <MatchingModalFooter />,
-                          () => {
+                          (e) => {
+                            e.preventDefault();
                             const uid = JSON.parse(
                               localStorage.getItem("user")
                             ).uid;
                             matchingFormStore.setUid(uid);
 
                             const successCallback = (data) => {
+                              modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                             };
                             const failureCallback = (error) => {
@@ -441,7 +444,8 @@ const MobileNavItem = ({ label, children, href }) => {
                               successCallback,
                               failureCallback
                             );
-                          }
+                          },
+                          () => matchingFormStore.resetState()
                         )
                 }
               >

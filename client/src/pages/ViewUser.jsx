@@ -61,7 +61,6 @@ export const ViewUser = observer(() => {
 
   return (
     <PageContainer>
-      <>
         <IconButton
           icon={<ArrowBackIcon />}
           bg={"transparent"}
@@ -106,7 +105,6 @@ export const ViewUser = observer(() => {
             </Button>
           </Stack>
         </Stack>
-      </>
     </PageContainer>
   );
 });

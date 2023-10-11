@@ -12,6 +12,18 @@ class MatchingFormStore {
     makeAutoObservable(this);
   }
 
+  resetState() {
+    this.isLoading = false;
+    this.countdown = 0;
+
+    const message = JSON.stringify({
+      uid: this.uid,
+      complexity: this.complexity,
+    });
+
+    this.socket?.emit("cancel-request", message);
+  }
+
   startLoading() {
     this.isLoading = true;
     this.countdown = 30;
@@ -40,8 +52,8 @@ class MatchingFormStore {
     this.uid = newVal;
   }
 
-  setComplexity(newVal) {
-    this.complexity = newVal;
+  setComplexity(newComplexity) {
+    this.complexity = newComplexity;
   }
 
   /**
@@ -58,7 +70,7 @@ class MatchingFormStore {
         console.log(data);
         this.setLoading(false);
         if (onMatchSuccess) {
-          onMatchSuccess();
+          onMatchSuccess(data);
         }
       },
       (error) => {

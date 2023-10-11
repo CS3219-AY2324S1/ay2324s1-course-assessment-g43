@@ -24,6 +24,18 @@ export const getQuestionById = async (id) => {
   }
 };
 
+export const getRandomQuestionByComplexity = async (complexity) => {
+  try {
+    const res = await axios.get(
+      `${basePath}/random?complexity=${complexity}`
+    );
+    return res.data;
+  } catch (error) {
+    console.log("Error getting questionId:", error.message);
+    return null;
+  }
+}
+
 export const updateQuestionById = async (id, req) => {
   const res = await axios.put(`${basePath}/${id}`, req);
   console.log(res);

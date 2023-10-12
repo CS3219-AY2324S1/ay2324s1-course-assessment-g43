@@ -4,17 +4,12 @@ const jwtDecode = require("jwt-decode");
 const basePath = "http://localhost:5000/api";
 
 const verifyToken = async (token) => {
-  try {
-    const res = await axios.get(`${basePath}/verifyToken`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data;
-  } catch (error) {
-    console.error("Error verifying token: ", error);
-    throw error;
-  }
+  const res = await axios.get(`${basePath}/verifyToken`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
 };
 
 exports.authenticate = async (req, res, next) => {
@@ -37,12 +32,17 @@ exports.authenticate = async (req, res, next) => {
         data: {},
       });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: `Internal server error during token verification.: ${error}`,
-      data: {},
-    });
+  } catch (err) {
+    console.log(err.message);
+    return err.response?.status == 401
+      ? res.status(401).json({
+          message: `Invalid token: ${err.response.data.message}`,
+          data: {},
+        })
+      : res.status(500).json({
+          message: `Internal server error during token verification: ${err.message}`,
+          data: {},
+        });
   }
 };
 

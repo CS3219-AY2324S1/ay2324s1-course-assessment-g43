@@ -17,16 +17,19 @@ class MatchingFormStore {
     this.isLoading = true;
     this.countdown = 60;
 
-    const countdownInterval = setInterval(() => {
-      runInAction(() => {
-        if (this.countdown > 0) {
-          this.countdown -= 1;
-        } else {
-          this.isLoading = false;
-          clearInterval(countdownInterval);
-        }
-      });
-    }, 1000);
+    return new Promise((resolve, reject) => {
+      const countdownInterval = setInterval(() => {
+        runInAction(() => {
+          if (this.countdown > 0) {
+            this.countdown -= 1;
+          } else {
+            this.isLoading = false;
+            reject("Sorry, but we could not find a match. Please try again!");
+            clearInterval(countdownInterval);
+          }
+        });
+      }, 1000);
+    });
   }
 }
 

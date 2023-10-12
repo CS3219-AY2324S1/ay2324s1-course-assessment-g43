@@ -16,6 +16,7 @@ import {
   FormControl,
   FormLabel,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -249,6 +250,7 @@ const DesktopNav = ({ navItems }) => {
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
   const bgcolor = useColorModeValue("pink.50", "gray.900");
+  const toast = useToast();
 
   const modalComponentStore = useModalComponentStore();
 
@@ -273,7 +275,16 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                 (e) => {
                   e.preventDefault();
                   console.log("i submitting sia");
-                  matchingFormStore.startLoading();
+                  matchingFormStore
+                    .startLoading()
+                    .then(null, (rejectionReason) => {
+                      toast({
+                        title: rejectionReason,
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    });
                 },
                 () => matchingFormStore.resetState()
               )
@@ -323,6 +334,7 @@ const MobileNav = ({ navItems }) => {
 const MobileNavItem = ({ label, children, href }) => {
   const { isOpen: isToggleOpen, onToggle } = useDisclosure();
   const modalComponentStore = useModalComponentStore();
+  const toast = useToast();
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -384,7 +396,16 @@ const MobileNavItem = ({ label, children, href }) => {
                           (e) => {
                             e.preventDefault();
                             console.log("i submitting sia");
-                            matchingFormStore.startLoading();
+                            matchingFormStore
+                              .startLoading()
+                              .then(null, (rejectionReason) => {
+                                toast({
+                                  title: rejectionReason,
+                                  status: "warning",
+                                  duration: 5000,
+                                  isClosable: true,
+                                });
+                              });
                           },
                           () => matchingFormStore.resetState()
                         )

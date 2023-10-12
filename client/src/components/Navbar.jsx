@@ -16,6 +16,7 @@ import {
   FormControl,
   FormLabel,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -251,7 +252,9 @@ const DesktopNav = ({ navItems }) => {
 const DesktopSubNav = ({ label, href, subLabel }) => {
   const bgcolor = useColorModeValue("pink.50", "gray.900");
   const navigate = useNavigate();
-
+  const toast = useToast();
+  const modalComponentStore = useModalComponentStore();
+  
   const redirectToSessionPage = ({questionId, title, description, category, complexity }) => {
     navigate("/session", {
       state: {
@@ -263,8 +266,6 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       },
     });
   };
-
-  const modalComponentStore = useModalComponentStore();
 
   return (
     <Box
@@ -298,7 +299,16 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     console.log(error);
                   };
 
-                  matchingFormStore.startLoading();
+                  matchingFormStore
+                    .startLoading()
+                    .then(null, (rejectionReason) => {
+                      toast({
+                        title: rejectionReason,
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    });
                   matchingFormStore.sendMatchRequest(
                     successCallback,
                     failureCallback
@@ -352,6 +362,7 @@ const MobileNav = ({ navItems }) => {
 const MobileNavItem = ({ label, children, href }) => {
   const { isOpen: isToggleOpen, onToggle } = useDisclosure();
   const modalComponentStore = useModalComponentStore();
+  const toast = useToast();
 
   const navigate = useNavigate();
   const redirectToSessionPage = ({questionId, title, description, category, complexity }) => {
@@ -425,6 +436,7 @@ const MobileNavItem = ({ label, children, href }) => {
                           <MatchingModalFooter />,
                           (e) => {
                             e.preventDefault();
+
                             const uid = JSON.parse(
                               localStorage.getItem("user")
                             ).uid;
@@ -439,7 +451,16 @@ const MobileNavItem = ({ label, children, href }) => {
                               console.log(error);
                             };
 
-                            matchingFormStore.startLoading();
+                            matchingFormStore
+                              .startLoading()
+                              .then(null, (rejectionReason) => {
+                                toast({
+                                  title: rejectionReason,
+                                  status: "warning",
+                                  duration: 5000,
+                                  isClosable: true,
+                                });
+                              });
                             matchingFormStore.sendMatchRequest(
                               successCallback,
                               failureCallback

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const userController = require("../controller/user-controller.js");
+const authFunctions = require("../utils/auth-functions.js");
 
 
 /**
@@ -130,7 +131,7 @@ router.post("/register", userController.createUser);
  */
 router.post("/login", userController.userLogin);
 
-router.post("/logout", userController.userLogout);
+router.post("/logout", authFunctions.authenticateRequest, userController.userLogout);
 
 /**
  * GET /api/getUsers
@@ -246,7 +247,7 @@ router.get("/getUsers/:id", userController.getUser);
 	"data": {}
 }
  */
-router.put("/update/:id", userController.updateProfile);
+router.put("/update/:id", authFunctions.authenticateRequest, userController.updateProfile);
 
 /**
  * DELETE /api/update/{id}
@@ -279,6 +280,8 @@ router.put("/update/:id", userController.updateProfile);
 }
  */
 
-router.delete("/delete/:id", userController.deleteProfile);
+router.delete("/delete/:id", authFunctions.authenticateRequest, userController.deleteProfile);
+
+router.get("/verifyToken", authFunctions.authenticateToken);
 
 module.exports = router;

@@ -23,22 +23,35 @@ import {
 import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
 
+import jwt from "jwt-decode";
+
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
 
   const onLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("jwt");
     navigate("/");
   };
 
+  let userRole = '';
+  try {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      const decodedToken = jwt(token);
+      userRole = decodedToken.usertype;
+    }
+  } catch (error) {
+    console.log("Error: Failed to get/decode jwt. ", error);
+  }
   const localStorageUser = localStorage.getItem("user");
   const navItems =
     !!localStorageUser && localStorageUser != "undefined"
       ? [
           {
             label: "Questions",
-            href: "/browse",
+            href: userRole === 'admin' ? '/browse-admin' : '/browse-user',
           },
           {
             label: "My Profile",

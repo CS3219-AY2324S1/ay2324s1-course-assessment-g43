@@ -96,7 +96,7 @@ exports.deleteQuestion = async (req, res) => {
   }
 };
 
-exports.getRandomQuestionId = async (req, res) => {
+exports.getRandomQuestion = async (req, res) => {
   try {
     const complexity = req.query.complexity;
     const filteredQuestions = complexity
@@ -107,9 +107,9 @@ exports.getRandomQuestionId = async (req, res) => {
     const randomQuestion = filteredQuestions[randomIndex];
     return randomQuestion
       ? res.status(200).json(randomQuestion)
-      : res.status(404).json({ error: "Question not found" });
+      : res.status(404).json({ message: "Question not found" });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Error fetching random question" });
+    return res.status(500).json({ message: "Error fetching random question" });
   }
 };

@@ -43,16 +43,12 @@ class MatchingFormStore {
     });
   }
 
-  setTest(test) {
-    this.test = test;
+  setLoading(loading) {
+    this.isLoading = loading;
   }
 
-  setLoading(newVal) {
-    this.isLoading = newVal;
-  }
-
-  setUid(newVal) {
-    this.uid = newVal;
+  setUid(uid) {
+    this.uid = uid;
   }
 
   setComplexity(newComplexity) {
@@ -61,7 +57,7 @@ class MatchingFormStore {
 
   /**
    * Sends a match request to the matching microservice using a websocket.
-   * 
+   *
    * @param {Function} onMatchSuccess
    * @param {Function} onMatchFailure
    * @param {Function} onSocketDisconnect

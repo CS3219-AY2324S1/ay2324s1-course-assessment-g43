@@ -46,7 +46,7 @@ const router = express.Router();
  *  "error": "Question not found"
  * }
  */
-router.get("/questions/random", questionController.getRandomQuestionId);
+router.get("/questions/random", questionController.getRandomQuestion);
 
 /**
  * POST /api/questions

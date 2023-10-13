@@ -34,6 +34,8 @@ const EASY_QUEUE = "easy-queue";
 const MEDIUM_QUEUE = "medium-queue";
 const HARD_QUEUE = "hard-queue";
 
+const TIMEOUT_MS = 35 * 1000;
+
 await channel.assertQueue(EASY_QUEUE, { durable: false, messageTtl: 30000 });
 await channel.assertQueue(MEDIUM_QUEUE, { durable: false, messageTtl: 30000 });
 await channel.assertQueue(HARD_QUEUE, { durable: false, messageTtl: 30000 });
@@ -53,6 +55,9 @@ const getQueue = (complexity) => {
 
 io.on("connection", (socket) => {
   console.log(`Connection opened: ${socket.id}`);
+  const timeoutId = setTimeout(() => {
+    socket.disconnect(true);
+  }, TIMEOUT_MS);
 
   socket.on("match-request", async (message) => {
     const parsedMessage = JSON.parse(message);
@@ -141,6 +146,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    clearTimeout(timeoutId);
     console.log("User has left");
   });
 });

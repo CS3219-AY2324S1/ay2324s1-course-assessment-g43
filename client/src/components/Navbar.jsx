@@ -254,15 +254,21 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   const navigate = useNavigate();
   const toast = useToast();
   const modalComponentStore = useModalComponentStore();
-  
-  const redirectToSessionPage = ({questionId, title, description, category, complexity }) => {
+
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
     navigate("/session", {
       state: {
-        questionId: questionId,
-        title: title,
-        description: description,
-        category: category,
-        complexity: complexity,
+        questionId,
+        title,
+        description,
+        category,
+        complexity,
       },
     });
   };
@@ -294,21 +300,16 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     modalComponentStore.closeModal();
                     redirectToSessionPage(data);
                   };
-                  const failureCallback = (error) => {
-                    alert(error);
-                    console.log(error);
+                  const failureCallback = (rejectionReason) => {
+                    toast({
+                      title: rejectionReason,
+                      status: "warning",
+                      duration: 5000,
+                      isClosable: true,
+                    });
                   };
 
-                  matchingFormStore
-                    .startLoading()
-                    .then(null, (rejectionReason) => {
-                      toast({
-                        title: rejectionReason,
-                        status: "warning",
-                        duration: 5000,
-                        isClosable: true,
-                      });
-                    });
+                  matchingFormStore.startLoading().then(null, failureCallback);
                   matchingFormStore.sendMatchRequest(
                     successCallback,
                     failureCallback
@@ -365,7 +366,13 @@ const MobileNavItem = ({ label, children, href }) => {
   const toast = useToast();
 
   const navigate = useNavigate();
-  const redirectToSessionPage = ({questionId, title, description, category, complexity }) => {
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
     navigate("/session", {
       state: {
         questionId: questionId,
@@ -446,21 +453,18 @@ const MobileNavItem = ({ label, children, href }) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                             };
-                            const failureCallback = (error) => {
-                              alert(error);
-                              console.log(error);
+                            const failureCallback = (rejectionReason) => {
+                              toast({
+                                title: rejectionReason,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
                             };
 
                             matchingFormStore
                               .startLoading()
-                              .then(null, (rejectionReason) => {
-                                toast({
-                                  title: rejectionReason,
-                                  status: "warning",
-                                  duration: 5000,
-                                  isClosable: true,
-                                });
-                              });
+                              .then(null, failureCallback);
                             matchingFormStore.sendMatchRequest(
                               successCallback,
                               failureCallback

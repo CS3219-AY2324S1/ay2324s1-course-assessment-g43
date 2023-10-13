@@ -74,50 +74,40 @@ io.on("connection", (socket) => {
 
     // if there is no users in the queue, add the user to the queue
     if (!dequeuedMessage) {
-
       socket.emit("fetch-question", complexity, async (question) => {
         if (!question) {
           io.to(socket.id).emit("match-failure", "No question found");
           return;
         }
-  
+
         const questionString = JSON.stringify(question);
-  
+
         const message = {
           uid,
           questionString,
           socketId: socket.id,
         };
-  
+
         console.log("Added to Message Queue:");
         console.log(message);
-  
-        channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
 
-      })
+        channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
+      });
     } else {
       // else pair the users up
       const firstRequest = JSON.parse(dequeuedMessage.content.toString());
       console.log("MATCHED:");
       console.log(firstRequest);
 
-      const { questionId, title, description, category, complexity } = JSON.parse(firstRequest.questionString);
+      const question = JSON.parse(firstRequest.questionString);
 
       io.to(firstRequest.socketId).emit("match-success", {
         uid: uid,
-        questionId: questionId,
-        title: title,
-        description: description,
-        category: category,
-        complexity: complexity,
+        ...question,
       });
       io.to(socket.id).emit("match-success", {
         uid: firstRequest.uid,
-        questionId: questionId,
-        title: title,
-        description: description,
-        category: category,
-        complexity: complexity,
+        ...question,
       });
     }
   });
@@ -129,6 +119,7 @@ io.on("connection", (socket) => {
       console.log("Invalid request");
       console.log(`uid: ${uid}`);
       console.log(`complexity: ${complexity}`);
+      // TODO: Emit different event for cancel failure (+ handle event in FE)
       io.to(socket.id).emit("match-failure", "Missing arguments");
       return;
     }
@@ -136,13 +127,12 @@ io.on("connection", (socket) => {
     console.log(`cancel request: (${uid}, ${complexity})`);
 
     const queueName = getQueue(complexity);
-    
+
     // Removes the current message in the queue.
     await channel.get(queueName);
   });
 
   socket.on("disconnect", () => {
-    // clearTimeout(timeoutId);
     console.log("User has left");
   });
 });

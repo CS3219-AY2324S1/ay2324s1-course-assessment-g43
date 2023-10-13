@@ -68,6 +68,10 @@ io.on("connection", (socket) => {
     console.log(`match-request: (${uid}, ${complexity})`);
 
     const queueName = getQueue(complexity);
+    if (!queueName) {
+      io.to(socket.id).emit("match-failure", "Invalid arguments");
+      return;
+    }
 
     // polls the queue
     const dequeuedMessage = await channel.get(queueName);
@@ -127,6 +131,10 @@ io.on("connection", (socket) => {
     console.log(`cancel request: (${uid}, ${complexity})`);
 
     const queueName = getQueue(complexity);
+    if (!queueName) {
+      io.to(socket.id).emit("match-failure", "Invalid arguments");
+      return;
+    }
 
     // Removes the current message in the queue.
     await channel.get(queueName);

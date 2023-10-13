@@ -27,7 +27,7 @@ const router = express.Router();
 /**
  * An error response
  * @typedef {object} ErrorResponse
- * @property {string} error - The error message
+ * @property {string} message - The error message
  */
 
 /**
@@ -43,7 +43,7 @@ const router = express.Router();
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  */
 router.get("/questions/random", questionController.getRandomQuestion);
@@ -73,7 +73,7 @@ router.get("/questions/random", questionController.getRandomQuestion);
  * }
  * @example response - 400 - example 400 response
  * {
- *  "error": "Error creating question"
+ *  "message": "Error creating question"
  * }
  */
 router.post("/questions", questionController.createQuestion);
@@ -99,11 +99,11 @@ router.post("/questions", questionController.createQuestion);
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  * @example response - 500 - example 500 response
  * {
- *  "error": "Error fetching question"
+ *  "message": "Error fetching question"
  * }
  */
 router.get("/questions/:id", questionController.getQuestion);
@@ -144,7 +144,7 @@ router.get("/questions/:id", questionController.getQuestion);
  * ]
  * @example response - 500 - example 500 response
  * {
- *  "error": "Error fetching questions"
+ *  "message": "Error fetching questions"
  * }
  */
 router.get("/questions", questionController.getAllQuestions);
@@ -171,11 +171,11 @@ router.get("/questions", questionController.getAllQuestions);
  * }
  * @example response - 400 - example 400 response
  * {
- *  "error": "Error updating question"
+ *  "message": "Error updating question"
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  */
 router.put("/questions/:id", questionController.updateQuestion);
@@ -201,11 +201,11 @@ router.put("/questions/:id", questionController.updateQuestion);
  * }
  * @example response - 400 - example 400 response
  * {
- *  "error": "Error deleting question"
+ *  "message": "Error deleting question"
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  */
 router.delete("/questions/:id", questionController.deleteQuestion);

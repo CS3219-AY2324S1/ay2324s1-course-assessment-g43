@@ -58,10 +58,10 @@ class MatchingFormStore {
   /**
    * Sends a match request to the matching microservice using a websocket.
    *
-   * @param {Function} onMatchSuccess
-   * @param {Function} onMatchFailure
-   * @param {Function} onSocketDisconnect
-   * @returns {socketIOClient.Socket}
+   * @param {Function} onMatchSuccess - callback function for successful match
+   * @param {Function} onMatchFailure - callback function for failed match
+   * @param {Function} onSocketDisconnect - callback function for socket disconnect
+   * @returns null
    */
   sendMatchRequest(onMatchSuccess, onMatchFailure, onSocketDisconnect) {
     this.socket = setupSocket(
@@ -94,8 +94,6 @@ class MatchingFormStore {
       complexity: this.complexity,
     });
     this.socket.emit("match-request", message);
-
-    return this.socket;
   }
 }
 

@@ -61,6 +61,8 @@ export const ViewUser = observer(() => {
 
   return (
     <PageContainer>
+      {/* The fragment is needed coz PageContainer's children prop is a single object*/}
+      <>
         <IconButton
           icon={<ArrowBackIcon />}
           bg={"transparent"}
@@ -105,6 +107,7 @@ export const ViewUser = observer(() => {
             </Button>
           </Stack>
         </Stack>
+      </>
     </PageContainer>
   );
 });

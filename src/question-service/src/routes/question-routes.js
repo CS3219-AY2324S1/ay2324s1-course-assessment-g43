@@ -47,7 +47,11 @@ const router = express.Router();
  *  "message": "Question not found"
  * }
  */
-router.get("/questions/random", questionController.getRandomQuestion);
+router.get(
+  "/questions/random",
+  auth.authenticate,
+  questionController.getRandomQuestion
+);
 
 /**
  * POST /api/questions
@@ -77,7 +81,12 @@ router.get("/questions/random", questionController.getRandomQuestion);
  *  "message": "Error creating question"
  * }
  */
-router.post("/questions", auth.authenticate, auth.checkAuthorization, questionController.createQuestion);
+router.post(
+  "/questions",
+  auth.authenticate,
+  auth.checkAuthorization,
+  questionController.createQuestion
+);
 
 /**
  * GET /api/questions/{id}
@@ -179,7 +188,12 @@ router.get("/questions", auth.authenticate, questionController.getAllQuestions);
  *  "message": "Question not found"
  * }
  */
-router.put("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.updateQuestion);
+router.put(
+  "/questions/:id",
+  auth.authenticate,
+  auth.checkAuthorization,
+  questionController.updateQuestion
+);
 
 /**
  * DELETE /api/questions/{id}
@@ -209,6 +223,11 @@ router.put("/questions/:id", auth.authenticate, auth.checkAuthorization, questio
  *  "message": "Question not found"
  * }
  */
-router.delete("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.deleteQuestion);
+router.delete(
+  "/questions/:id",
+  auth.authenticate,
+  auth.checkAuthorization,
+  questionController.deleteQuestion
+);
 
 module.exports = router;

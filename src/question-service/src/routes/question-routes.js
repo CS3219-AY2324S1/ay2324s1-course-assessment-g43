@@ -1,5 +1,6 @@
 const express = require("express");
 const questionController = require("../controllers/question-controller");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -76,7 +77,7 @@ router.get("/questions/random", questionController.getRandomQuestion);
  *  "message": "Error creating question"
  * }
  */
-router.post("/questions", questionController.createQuestion);
+router.post("/questions", auth.authenticate, auth.checkAuthorization, questionController.createQuestion);
 
 /**
  * GET /api/questions/{id}
@@ -106,7 +107,7 @@ router.post("/questions", questionController.createQuestion);
  *  "message": "Error fetching question"
  * }
  */
-router.get("/questions/:id", questionController.getQuestion);
+router.get("/questions/:id", auth.authenticate, questionController.getQuestion);
 
 /**
  * GET /api/questions
@@ -147,7 +148,7 @@ router.get("/questions/:id", questionController.getQuestion);
  *  "message": "Error fetching questions"
  * }
  */
-router.get("/questions", questionController.getAllQuestions);
+router.get("/questions", auth.authenticate, questionController.getAllQuestions);
 
 /**
  * PUT /api/questions/{id}
@@ -178,7 +179,7 @@ router.get("/questions", questionController.getAllQuestions);
  *  "message": "Question not found"
  * }
  */
-router.put("/questions/:id", questionController.updateQuestion);
+router.put("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.updateQuestion);
 
 /**
  * DELETE /api/questions/{id}
@@ -208,6 +209,6 @@ router.put("/questions/:id", questionController.updateQuestion);
  *  "message": "Question not found"
  * }
  */
-router.delete("/questions/:id", questionController.deleteQuestion);
+router.delete("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.deleteQuestion);
 
 module.exports = router;

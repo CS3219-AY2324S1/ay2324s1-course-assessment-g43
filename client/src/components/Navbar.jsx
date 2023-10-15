@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { matchingFormStore } from "../stores/matchingFormStore";
+import jwt from "jwt-decode";
 
 const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
@@ -36,9 +37,20 @@ const Navbar = observer(() => {
 
   const onLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("jwt");
     navigate("/");
   };
 
+  let userRole = '';
+  try {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      const decodedToken = jwt(token);
+      userRole = decodedToken.usertype;
+    }
+  } catch (error) {
+    console.log("Error: Failed to get/decode jwt. ", error);
+  }
   const localStorageUser = localStorage.getItem("user");
   const navItems =
     !!localStorageUser && localStorageUser !== "undefined"
@@ -49,7 +61,7 @@ const Navbar = observer(() => {
               {
                 label: "Browse",
                 subLabel: "Explore the question pool",
-                href: "/browse",
+                href: userRole === 'admin' ? '/browse-admin' : '/browse-user',
               },
               {
                 label: "Match",

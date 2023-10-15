@@ -1,5 +1,6 @@
 const pool = require("../db.js");
 const validator = require("../utils/validator.js");
+const authFunctions = require("../utils/auth-functions.js")
 
 exports.createUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -47,9 +48,8 @@ exports.createUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const users = await pool.query(
-      "SELECT uid, username, email FROM Users ORDER BY uid ASC"
+      'SELECT uid, usertype, username, email FROM Users ORDER BY uid ASC'
     );
-
     return res.status(200).json({
       message: "Users retrieved",
       data: { users: users.rows },
@@ -67,10 +67,9 @@ exports.getUser = async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT uid, username, email FROM Users WHERE uid = $1",
+      'SELECT uid, usertype, username, email FROM Users WHERE uid = $1',
       [id]
     );
-
     if (result.rows.length === 0) {
       return res.status(401).json({
         message: "User does not exist",
@@ -114,9 +113,10 @@ exports.userLogin = async (req, res) => {
       });
     }
 
-    const result = await pool.query("SELECT * FROM Users WHERE email = $1", [
-      email,
-    ]);
+    const result = await pool.query(
+      "SELECT * FROM Users WHERE email = $1",
+      [email],
+      );
 
     const validPassword = result.rows[0].password === password;
 
@@ -128,13 +128,18 @@ exports.userLogin = async (req, res) => {
     }
 
     const resultWithoutPassword = await pool.query(
-      "SELECT uid, username, email FROM Users WHERE email = $1",
+      'SELECT uid, username, email FROM Users WHERE email = $1',
       [email]
     );
 
+    //create JWT
+    const uid = result.rows[0].uid;
+    const usertype = result.rows[0].usertype;
+    const token = authFunctions.createToken(uid, usertype);
+    
     return res.status(200).json({
-      message: "User logged in",
-      data: { user: resultWithoutPassword.rows[0] },
+      message: 'User logged in',
+      data: { user: resultWithoutPassword.rows[0], jwt: token},
     });
   } catch (error) {
     return res.status(500).send({
@@ -169,7 +174,10 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    const result = await pool.query("SELECT * FROM Users WHERE uid = $1", [id]);
+    const result = await pool.query(
+      "SELECT * FROM Users WHERE uid = $1",
+      [id]
+    );
 
     if (result.rows.length === 0) {
       return res.status(401).json({

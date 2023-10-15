@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "jest"
   },
   "author": "",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "mockingoose": "^2.16.2"
+    "mockingoose": "^2.16.2",
+    "nodemon": "^3.0.1"
   }
 }

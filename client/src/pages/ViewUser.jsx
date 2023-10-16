@@ -11,7 +11,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { viewUserStore } from "../stores/viewUserStore";
 import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { PageContainer } from "../components/PageContainer";
 
 export const ViewUser = observer(() => {
@@ -61,50 +61,53 @@ export const ViewUser = observer(() => {
 
   return (
     <PageContainer>
-      <IconButton
-        icon={<ArrowBackIcon />}
-        bg={"transparent"}
-        onClick={() => {
-          navigate(-1);
-        }}
-      />
-      <Stack spacing={4} w={"full"} maxW={"lg"}>
-        <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
-          User Profile Details
-        </Heading>
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-          {Object.entries(state).map((item, index) => (
-            <>
-              <Text fontWeight="bold">{item[0]}:</Text>
-              <Text>{item[1]}</Text>
-            </>
-          ))}
-        </SimpleGrid>
-        <Stack spacing={6} direction={["column", "row"]}>
-          <Button
-            bg={"red.400"}
-            color={"white"}
-            w="full"
-            _hover={{
-              bg: "red.500",
-            }}
-            onClick={deleteUser}
-          >
-            Delete your profile
-          </Button>
-          <Button
-            bg={"blue.400"}
-            color={"white"}
-            w="full"
-            _hover={{
-              bg: "blue.500",
-            }}
-            onClick={redirectToUpdateUserPage}
-          >
-            Update your profile
-          </Button>
+      {/* The fragment is needed coz PageContainer's children prop is a single object*/}
+      <>
+        <IconButton
+          icon={<ArrowBackIcon />}
+          bg={"transparent"}
+          onClick={() => {
+            navigate(-1);
+          }}
+        />
+        <Stack spacing={4} w={"full"} maxW={"lg"}>
+          <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+            User Profile Details
+          </Heading>
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+            {Object.entries(state).map((item, index) => (
+              <Fragment key={index}>
+                <Text fontWeight="bold">{item[0]}:</Text>
+                <Text>{item[1]}</Text>
+              </Fragment>
+            ))}
+          </SimpleGrid>
+          <Stack spacing={6} direction={["column", "row"]}>
+            <Button
+              bg={"red.400"}
+              color={"white"}
+              w="full"
+              _hover={{
+                bg: "red.500",
+              }}
+              onClick={deleteUser}
+            >
+              Delete your profile
+            </Button>
+            <Button
+              bg={"blue.400"}
+              color={"white"}
+              w="full"
+              _hover={{
+                bg: "blue.500",
+              }}
+              onClick={redirectToUpdateUserPage}
+            >
+              Update your profile
+            </Button>
+          </Stack>
         </Stack>
-      </Stack>
+      </>
     </PageContainer>
   );
 });

@@ -95,3 +95,21 @@ exports.deleteQuestion = async (req, res) => {
     return res.status(400).json({ message: "Error deleting question" });
   }
 };
+
+exports.getRandomQuestion = async (req, res) => {
+  try {
+    const complexity = req.query.complexity;
+    const filteredQuestions = complexity
+      ? await Question.find({ complexity })
+      : await Question.find();
+
+    const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
+    const randomQuestion = filteredQuestions[randomIndex];
+    return randomQuestion
+      ? res.status(200).json(randomQuestion)
+      : res.status(404).json({ message: "Question not found" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error fetching random question" });
+  }
+};

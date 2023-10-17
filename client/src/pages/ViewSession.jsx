@@ -20,6 +20,7 @@ import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
+import { ScrollableText } from "../components/ScrollableText";
 import { useEffect } from "react";
 
 export const ViewSession = observer(() => {
@@ -69,7 +70,7 @@ export const ViewSession = observer(() => {
         </HStack>
         <Divider />
         <HStack>
-          <Stack spacing={4} w={"100%"} p={6} align={"start"}>
+          <Stack spacing={4} w={"50%"} p={6} align={"start"}>
             <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
               {state.title}
             </Heading>
@@ -86,7 +87,7 @@ export const ViewSession = observer(() => {
                 Task Discription
               </AbsoluteCenter>
             </Box>
-            <Text paddingTop={"3"}>{state.description}</Text>
+            <ScrollableText text={state.description} />
           </Stack>
           <Divider orientation="vertical" />
 
@@ -97,11 +98,11 @@ export const ViewSession = observer(() => {
             align={"start"}
             direction={"column"}
           >
-            <Card w={"100%"} h={"40vh"}>
+            <Card w={"100%"} h={"100%"}>
               <CardHeader>
                 <Select
                   placeholder="Java"
-                  w={"20%"}
+                  w={{ base: "20%", sm: "40%" }}
                   variant={"filled"}
                   h={"10%"}
                 >

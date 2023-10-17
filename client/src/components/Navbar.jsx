@@ -311,6 +311,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                   const successCallback = (data) => {
                     modalComponentStore.closeModal();
                     redirectToSessionPage(data);
+                    toast({
+                      title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                      status: "success",
+                      duration: 8000,
+                      isClosable: true,
+                    });
                   };
                   const failureCallback = (rejectionReason) => {
                     toast({
@@ -445,6 +451,7 @@ const MobileNavItem = ({ label, children, href }) => {
                 key={child.label}
                 py={2}
                 href={child.href}
+                cursor={"pointer"}
                 onClick={
                   child.label != "Match"
                     ? () => {}
@@ -464,6 +471,12 @@ const MobileNavItem = ({ label, children, href }) => {
                             const successCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
+                              toast({
+                                title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                                status: "success",
+                                duration: 8000,
+                                isClosable: true,
+                              });
                             };
                             const failureCallback = (rejectionReason) => {
                               toast({

@@ -1,5 +1,6 @@
 const pool = require("../db.js");
 const validator = require("../utils/validator.js");
+const bcrypt = require("bcrypt");
 const authFunctions = require("../utils/auth-functions.js")
 
 exports.createUser = async (req, res) => {
@@ -26,9 +27,11 @@ exports.createUser = async (req, res) => {
       });
     }
 
+    const hash = await bcrypt.hash(password, 10);
+
     let newUser = await pool.query(
       "INSERT INTO Users (username, email, password) VALUES ($1, $2, $3) RETURNING uid, username, email",
-      [username, email, password]
+      [username, email, hash]
     );
 
     return res.status(201).send({
@@ -118,7 +121,7 @@ exports.userLogin = async (req, res) => {
       [email],
       );
 
-    const validPassword = result.rows[0].password === password;
+    const validPassword = await bcrypt.compare(password, result.rows[0].password);
 
     if (!validPassword) {
       return res.status(401).json({

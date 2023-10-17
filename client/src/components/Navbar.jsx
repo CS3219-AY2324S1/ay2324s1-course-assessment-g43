@@ -16,6 +16,7 @@ import {
   FormControl,
   FormLabel,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -28,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { matchingFormStore } from "../stores/matchingFormStore";
+import jwt from "jwt-decode";
 
 const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
@@ -35,9 +37,20 @@ const Navbar = observer(() => {
 
   const onLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("jwt");
     navigate("/");
   };
 
+  let userRole = "";
+  try {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      const decodedToken = jwt(token);
+      userRole = decodedToken.usertype;
+    }
+  } catch (error) {
+    console.log("Error: Failed to get/decode jwt. ", error);
+  }
   const localStorageUser = localStorage.getItem("user");
   const navItems =
     !!localStorageUser && localStorageUser !== "undefined"
@@ -48,7 +61,7 @@ const Navbar = observer(() => {
               {
                 label: "Browse",
                 subLabel: "Explore the question pool",
-                href: "/browse",
+                href: userRole === "admin" ? "/browse-admin" : "/browse-user",
               },
               {
                 label: "Match",
@@ -164,15 +177,16 @@ const Navbar = observer(() => {
   );
 });
 
-const modalTitle = "Find a Match!";
+const matchingModalTitle = "Find a Match!";
 
-const ModalBody = observer(() => {
+const MatchingModalBody = observer(() => {
   return (
     <FormControl id="complexity" isRequired>
       <FormLabel>Complexity</FormLabel>
       <Select
         placeholder="Select complexity"
         isDisabled={matchingFormStore.isLoading}
+        onChange={(e) => matchingFormStore.setComplexity(e.target.value)}
       >
         <option>Easy</option>
         <option>Medium</option>
@@ -182,7 +196,7 @@ const ModalBody = observer(() => {
   );
 });
 
-const ModalFooter = observer(() => {
+const MatchingModalFooter = observer(() => {
   return (
     <Button
       colorScheme="green"
@@ -249,8 +263,27 @@ const DesktopNav = ({ navItems }) => {
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
   const bgcolor = useColorModeValue("pink.50", "gray.900");
-
+  const navigate = useNavigate();
+  const toast = useToast();
   const modalComponentStore = useModalComponentStore();
+
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
+    navigate("/session", {
+      state: {
+        questionId,
+        title,
+        description,
+        category,
+        complexity,
+      },
+    });
+  };
 
   return (
     <Box
@@ -267,13 +300,38 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           ? () => {}
           : () =>
               modalComponentStore.openModal(
-                modalTitle,
-                <ModalBody />,
-                <ModalFooter />,
+                matchingModalTitle,
+                <MatchingModalBody />,
+                <MatchingModalFooter />,
                 (e) => {
                   e.preventDefault();
-                  console.log("i submitting sia");
-                  matchingFormStore.startLoading();
+                  const uid = JSON.parse(localStorage.getItem("user")).uid;
+                  matchingFormStore.setUid(uid);
+
+                  const successCallback = (data) => {
+                    modalComponentStore.closeModal();
+                    redirectToSessionPage(data);
+                    toast({
+                      title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                      status: "success",
+                      duration: 8000,
+                      isClosable: true,
+                    });
+                  };
+                  const failureCallback = (rejectionReason) => {
+                    toast({
+                      title: rejectionReason,
+                      status: "warning",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  };
+
+                  matchingFormStore.startLoading().then(null, failureCallback);
+                  matchingFormStore.sendMatchRequest(
+                    successCallback,
+                    failureCallback
+                  );
                 },
                 () => matchingFormStore.resetState()
               )
@@ -323,6 +381,26 @@ const MobileNav = ({ navItems }) => {
 const MobileNavItem = ({ label, children, href }) => {
   const { isOpen: isToggleOpen, onToggle } = useDisclosure();
   const modalComponentStore = useModalComponentStore();
+  const toast = useToast();
+
+  const navigate = useNavigate();
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
+    navigate("/session", {
+      state: {
+        questionId: questionId,
+        title: title,
+        description: description,
+        category: category,
+        complexity: complexity,
+      },
+    });
+  };
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -373,18 +451,49 @@ const MobileNavItem = ({ label, children, href }) => {
                 key={child.label}
                 py={2}
                 href={child.href}
+                cursor={"pointer"}
                 onClick={
                   child.label != "Match"
                     ? () => {}
                     : () =>
                         modalComponentStore.openModal(
-                          modalTitle,
-                          <ModalBody />,
-                          <ModalFooter />,
+                          matchingModalTitle,
+                          <MatchingModalBody />,
+                          <MatchingModalFooter />,
                           (e) => {
                             e.preventDefault();
-                            console.log("i submitting sia");
-                            matchingFormStore.startLoading();
+
+                            const uid = JSON.parse(
+                              localStorage.getItem("user")
+                            ).uid;
+                            matchingFormStore.setUid(uid);
+
+                            const successCallback = (data) => {
+                              modalComponentStore.closeModal();
+                              redirectToSessionPage(data);
+                              toast({
+                                title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                                status: "success",
+                                duration: 8000,
+                                isClosable: true,
+                              });
+                            };
+                            const failureCallback = (rejectionReason) => {
+                              toast({
+                                title: rejectionReason,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+
+                            matchingFormStore
+                              .startLoading()
+                              .then(null, failureCallback);
+                            matchingFormStore.sendMatchRequest(
+                              successCallback,
+                              failureCallback
+                            );
                           },
                           () => matchingFormStore.resetState()
                         )

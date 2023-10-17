@@ -28,6 +28,7 @@ class LoginUserStore {
     try {
       const res = await login(this.state);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("jwt", res.data.jwt);
       return res.data.user;
     } catch (err) {
       console.log(err);

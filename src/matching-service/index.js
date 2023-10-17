@@ -143,6 +143,8 @@ io.on("connection", (socket) => {
 
     // Removes the current message in the queue.
     await channel.get(queueName);
+
+    socket.disconnect(true);
   });
 
   socket.on("disconnect", () => {

@@ -13,6 +13,7 @@ import {
   FormLabel,
   Select,
   Textarea,
+  InputLeftElement,
   InputRightElement,
   InputGroup,
   Tag,
@@ -120,12 +121,16 @@ export const ViewQuestions = observer(() => {
             Questions
           </Text>
           <HStack w={"100%"} justifyContent={"flex-end"}>
-            <Input variant="outline" placeholder="Search" maxW={"400px"} />
-            <IconButton
-              aria-label="Search database"
-              icon={<SearchIcon />}
-              variant={"outline"}
-            />
+            <InputGroup maxW={"400px"}>
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon />
+              </InputLeftElement>
+              <Input
+                variant="outline"
+                placeholder="Search"
+                onChange={(e) => store.setSearchQuery(e.target.value)}
+              />
+            </InputGroup>
           </HStack>
         </Stack>
         <HStack justify={"right"}>
@@ -157,29 +162,35 @@ export const ViewQuestions = observer(() => {
           <Text fontWeight="bold">Actions</Text>
         </Flex>
         {!!state.questions ? (
-          state.questions.map((question, index) => {
-            return (
-              <Card key={index}>
-                <CardBody>
-                  <Flex
-                    justifyContent={"space-between"}
-                    direction={["column", "row"]}
-                    gap={2}
-                  >
-                    <HStack>
-                      <Text>{question.questionId}.</Text>
-                      <Text textOverflow={"ellipsis"} maxW={"inherit"}>
-                        {question.title}
-                      </Text>
-                    </HStack>
-                    <Button onClick={() => handleOpenModal(question)}>
-                      View Details
-                    </Button>
-                  </Flex>
-                </CardBody>
-              </Card>
-            );
-          })
+          state.questions
+            .filter((question) =>
+              question.title
+                .toLowerCase()
+                .includes(state.searchQuery.toLowerCase())
+            )
+            .map((question, index) => {
+              return (
+                <Card key={index}>
+                  <CardBody>
+                    <Flex
+                      justifyContent={"space-between"}
+                      direction={["column", "row"]}
+                      gap={2}
+                    >
+                      <HStack>
+                        <Text>{question.questionId}.</Text>
+                        <Text textOverflow={"ellipsis"} maxW={"inherit"}>
+                          {question.title}
+                        </Text>
+                      </HStack>
+                      <Button onClick={() => handleOpenModal(question)}>
+                        View Details
+                      </Button>
+                    </Flex>
+                  </CardBody>
+                </Card>
+              );
+            })
         ) : (
           <Card>
             <CardBody>

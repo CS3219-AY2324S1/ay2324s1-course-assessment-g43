@@ -15,7 +15,6 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   Tag,
   TagLabel,
   Badge,
@@ -139,17 +138,6 @@ export const ViewQuestionsUser = observer(() => {
                     {state.selectedQuestion.description}
                   </Text>
                 </ModalBody>
-
-                <ModalFooter>
-                  <Button
-                    variant="outline"
-                    mr={3}
-                    onClick={() => onViewClose()}
-                  >
-                    Save Question
-                    {/*to update with future functionality*/}
-                  </Button>
-                </ModalFooter>
               </ModalContent>
             </Modal>
           </>

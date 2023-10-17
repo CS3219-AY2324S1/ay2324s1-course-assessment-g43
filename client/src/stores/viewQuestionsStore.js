@@ -8,6 +8,7 @@ class ViewQuestionsStore {
   state = {
     questions: [],
     selectedQuestion: {},
+    searchQuery: "",
   };
 
   constructor() {
@@ -31,6 +32,10 @@ class ViewQuestionsStore {
 
   setSelectedQuestion(selectedQuestion) {
     this.state.selectedQuestion = selectedQuestion;
+  }
+
+  setSearchQuery(searchQuery) {
+    this.state.searchQuery = searchQuery;
   }
 
   async deleteQuestion(id) {

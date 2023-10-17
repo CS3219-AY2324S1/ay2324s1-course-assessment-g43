@@ -13,6 +13,10 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  FormControl,
+  FormLabel,
+  Select,
+  useToast,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -22,10 +26,12 @@ import {
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
 import { useNavigate } from "react-router-dom";
-
+import { observer } from "mobx-react";
+import { useModalComponentStore } from "../contextProviders/modalContext";
+import { matchingFormStore } from "../stores/matchingFormStore";
 import jwt from "jwt-decode";
 
-const Navbar = () => {
+const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
 
@@ -35,7 +41,7 @@ const Navbar = () => {
     navigate("/");
   };
 
-  let userRole = '';
+  let userRole = "";
   try {
     const token = localStorage.getItem("jwt");
     if (token) {
@@ -47,11 +53,21 @@ const Navbar = () => {
   }
   const localStorageUser = localStorage.getItem("user");
   const navItems =
-    !!localStorageUser && localStorageUser != "undefined"
+    !!localStorageUser && localStorageUser !== "undefined"
       ? [
           {
             label: "Questions",
-            href: userRole === 'admin' ? '/browse-admin' : '/browse-user',
+            children: [
+              {
+                label: "Browse",
+                subLabel: "Explore the question pool",
+                href: userRole === "admin" ? "/browse-admin" : "/browse-user",
+              },
+              {
+                label: "Match",
+                subLabel: "Get matched with a peer",
+              },
+            ],
           },
           {
             label: "My Profile",
@@ -112,7 +128,7 @@ const Navbar = () => {
           {localStorageUser ? (
             <Button
               as={"a"}
-              display={{ base: "none", md: "inline-flex" }}
+              display={{ base: "inline_flex", md: "inline-flex" }}
               fontSize={"sm"}
               fontWeight={600}
               color={"white"}
@@ -137,7 +153,7 @@ const Navbar = () => {
               </Button>
               <Button
                 as={"a"}
-                display={{ base: "none", md: "inline-flex" }}
+                display={{ base: "inline-flex", md: "inline-flex" }}
                 fontSize={"sm"}
                 fontWeight={600}
                 color={"white"}
@@ -159,7 +175,41 @@ const Navbar = () => {
       </Collapse>
     </Box>
   );
-};
+});
+
+const matchingModalTitle = "Find a Match!";
+
+const MatchingModalBody = observer(() => {
+  return (
+    <FormControl id="complexity" isRequired>
+      <FormLabel>Complexity</FormLabel>
+      <Select
+        placeholder="Select complexity"
+        isDisabled={matchingFormStore.isLoading}
+        onChange={(e) => matchingFormStore.setComplexity(e.target.value)}
+      >
+        <option>Easy</option>
+        <option>Medium</option>
+        <option>Hard</option>
+      </Select>
+    </FormControl>
+  );
+});
+
+const MatchingModalFooter = observer(() => {
+  return (
+    <Button
+      colorScheme="green"
+      mr={3}
+      type="submit"
+      isLoading={matchingFormStore.isLoading}
+      isDisabled={matchingFormStore.isLoading}
+      loadingText={`Finding you a match (${matchingFormStore.countdown}s)`}
+    >
+      Match
+    </Button>
+  );
+});
 
 const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
@@ -212,6 +262,29 @@ const DesktopNav = ({ navItems }) => {
 };
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
+  const bgcolor = useColorModeValue("pink.50", "gray.900");
+  const navigate = useNavigate();
+  const toast = useToast();
+  const modalComponentStore = useModalComponentStore();
+
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
+    navigate("/session", {
+      state: {
+        questionId,
+        title,
+        description,
+        category,
+        complexity,
+      },
+    });
+  };
+
   return (
     <Box
       as="a"
@@ -220,7 +293,49 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
       display={"block"}
       p={2}
       rounded={"md"}
-      _hover={{ bg: useColorModeValue("pink.50", "gray.900") }}
+      _hover={{ bg: bgcolor }}
+      cursor={"pointer"}
+      onClick={
+        label != "Match"
+          ? () => {}
+          : () =>
+              modalComponentStore.openModal(
+                matchingModalTitle,
+                <MatchingModalBody />,
+                <MatchingModalFooter />,
+                (e) => {
+                  e.preventDefault();
+                  const uid = JSON.parse(localStorage.getItem("user")).uid;
+                  matchingFormStore.setUid(uid);
+
+                  const successCallback = (data) => {
+                    modalComponentStore.closeModal();
+                    redirectToSessionPage(data);
+                    toast({
+                      title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                      status: "success",
+                      duration: 8000,
+                      isClosable: true,
+                    });
+                  };
+                  const failureCallback = (rejectionReason) => {
+                    toast({
+                      title: rejectionReason,
+                      status: "warning",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  };
+
+                  matchingFormStore.startLoading().then(null, failureCallback);
+                  matchingFormStore.sendMatchRequest(
+                    successCallback,
+                    failureCallback
+                  );
+                },
+                () => matchingFormStore.resetState()
+              )
+      }
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
@@ -264,7 +379,28 @@ const MobileNav = ({ navItems }) => {
 };
 
 const MobileNavItem = ({ label, children, href }) => {
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen: isToggleOpen, onToggle } = useDisclosure();
+  const modalComponentStore = useModalComponentStore();
+  const toast = useToast();
+
+  const navigate = useNavigate();
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  }) => {
+    navigate("/session", {
+      state: {
+        questionId: questionId,
+        title: title,
+        description: description,
+        category: category,
+        complexity: complexity,
+      },
+    });
+  };
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -272,30 +408,34 @@ const MobileNavItem = ({ label, children, href }) => {
         py={2}
         as="a"
         href={href ?? "#"}
-        justifyContent="space-between"
-        alignItems="center"
         _hover={{
           textDecoration: "none",
         }}
       >
-        <Text
-          fontWeight={600}
-          color={useColorModeValue("gray.600", "gray.200")}
-        >
-          {label}
-        </Text>
-        {children && (
-          <Icon
-            as={ChevronDownIcon}
-            transition={"all .25s ease-in-out"}
-            transform={isOpen ? "rotate(180deg)" : ""}
-            w={6}
-            h={6}
-          />
-        )}
+        <Flex justifyContent={"space-between"} alignItems={"center"}>
+          <Text
+            fontWeight={600}
+            color={useColorModeValue("gray.600", "gray.200")}
+          >
+            {label}
+          </Text>
+          {children && (
+            <Icon
+              as={ChevronDownIcon}
+              transition={"all .25s ease-in-out"}
+              transform={isToggleOpen ? "rotate(180deg)" : ""}
+              w={6}
+              h={6}
+            />
+          )}
+        </Flex>
       </Box>
 
-      <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
+      <Collapse
+        in={isToggleOpen}
+        animateOpacity
+        style={{ marginTop: "0!important" }}
+      >
         <Stack
           mt={2}
           pl={4}
@@ -306,7 +446,59 @@ const MobileNavItem = ({ label, children, href }) => {
         >
           {children &&
             children.map((child) => (
-              <Box as="a" key={child.label} py={2} href={child.href}>
+              <Box
+                as="a"
+                key={child.label}
+                py={2}
+                href={child.href}
+                cursor={"pointer"}
+                onClick={
+                  child.label != "Match"
+                    ? () => {}
+                    : () =>
+                        modalComponentStore.openModal(
+                          matchingModalTitle,
+                          <MatchingModalBody />,
+                          <MatchingModalFooter />,
+                          (e) => {
+                            e.preventDefault();
+
+                            const uid = JSON.parse(
+                              localStorage.getItem("user")
+                            ).uid;
+                            matchingFormStore.setUid(uid);
+
+                            const successCallback = (data) => {
+                              modalComponentStore.closeModal();
+                              redirectToSessionPage(data);
+                              toast({
+                                title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                                status: "success",
+                                duration: 8000,
+                                isClosable: true,
+                              });
+                            };
+                            const failureCallback = (rejectionReason) => {
+                              toast({
+                                title: rejectionReason,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+
+                            matchingFormStore
+                              .startLoading()
+                              .then(null, failureCallback);
+                            matchingFormStore.sendMatchRequest(
+                              successCallback,
+                              failureCallback
+                            );
+                          },
+                          () => matchingFormStore.resetState()
+                        )
+                }
+              >
                 {child.label}
               </Box>
             ))}
@@ -318,14 +510,23 @@ const MobileNavItem = ({ label, children, href }) => {
 
 DesktopSubNav.propTypes = {
   label: PropTypes.string,
-  href: PropTypes.href,
+  href: PropTypes.string,
   subLabel: PropTypes.string,
 };
 
 MobileNavItem.propTypes = {
   label: PropTypes.string,
-  children: PropTypes.children,
-  href: PropTypes.href,
+  children: PropTypes.array,
+  href: PropTypes.string,
+};
+
+MobileNav.propTypes = {
+  navItems: PropTypes.array,
+};
+
+DesktopNav.propTypes = {
+  navItems: PropTypes.array,
+  map: PropTypes.object,
 };
 
 export default Navbar;

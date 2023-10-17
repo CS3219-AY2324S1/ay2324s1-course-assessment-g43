@@ -28,8 +28,30 @@ const router = express.Router();
 /**
  * An error response
  * @typedef {object} ErrorResponse
- * @property {string} error - The error message
+ * @property {string} message - The error message
  */
+
+/**
+ * GET /api/questions/random
+ * @summary Gets a random `questionId` by complexity.
+ * 
+ * @param {string} complexity.query.optional - The complexity to filter by - enum:Easy,Medium,Hard
+ * @return {integer} 200 - success response - application/json
+ * @return {ErrorResponse} 404 - not found response - application/json
+ * @example response - 200 - example 200 response
+ * {
+ *  "questionId": 4
+ * }
+ * @example response - 404 - example 404 response
+ * {
+ *  "message": "Question not found"
+ * }
+ */
+router.get(
+  "/questions/random",
+  auth.authenticate,
+  questionController.getRandomQuestion
+);
 
 /**
  * POST /api/questions
@@ -56,10 +78,15 @@ const router = express.Router();
  * }
  * @example response - 400 - example 400 response
  * {
- *  "error": "Error creating question"
+ *  "message": "Error creating question"
  * }
  */
-router.post("/questions", auth.authenticate, auth.checkAuthorization, questionController.createQuestion);
+router.post(
+  "/questions",
+  auth.authenticate,
+  auth.checkAuthorization,
+  questionController.createQuestion
+);
 
 /**
  * GET /api/questions/{id}
@@ -82,11 +109,11 @@ router.post("/questions", auth.authenticate, auth.checkAuthorization, questionCo
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  * @example response - 500 - example 500 response
  * {
- *  "error": "Error fetching question"
+ *  "message": "Error fetching question"
  * }
  */
 router.get("/questions/:id", auth.authenticate, questionController.getQuestion);
@@ -127,7 +154,7 @@ router.get("/questions/:id", auth.authenticate, questionController.getQuestion);
  * ]
  * @example response - 500 - example 500 response
  * {
- *  "error": "Error fetching questions"
+ *  "message": "Error fetching questions"
  * }
  */
 router.get("/questions", auth.authenticate, questionController.getAllQuestions);
@@ -154,14 +181,19 @@ router.get("/questions", auth.authenticate, questionController.getAllQuestions);
  * }
  * @example response - 400 - example 400 response
  * {
- *  "error": "Error updating question"
+ *  "message": "Error updating question"
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  */
-router.put("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.updateQuestion);
+router.put(
+  "/questions/:id",
+  auth.authenticate,
+  auth.checkAuthorization,
+  questionController.updateQuestion
+);
 
 /**
  * DELETE /api/questions/{id}
@@ -184,13 +216,18 @@ router.put("/questions/:id", auth.authenticate, auth.checkAuthorization, questio
  * }
  * @example response - 400 - example 400 response
  * {
- *  "error": "Error deleting question"
+ *  "message": "Error deleting question"
  * }
  * @example response - 404 - example 404 response
  * {
- *  "error": "Question not found"
+ *  "message": "Question not found"
  * }
  */
-router.delete("/questions/:id", auth.authenticate, auth.checkAuthorization, questionController.deleteQuestion);
+router.delete(
+  "/questions/:id",
+  auth.authenticate,
+  auth.checkAuthorization,
+  questionController.deleteQuestion
+);
 
 module.exports = router;

@@ -41,7 +41,7 @@ const Navbar = observer(() => {
     navigate("/");
   };
 
-  let userRole = '';
+  let userRole = "";
   try {
     const token = localStorage.getItem("jwt");
     if (token) {
@@ -61,7 +61,7 @@ const Navbar = observer(() => {
               {
                 label: "Browse",
                 subLabel: "Explore the question pool",
-                href: userRole === 'admin' ? '/browse-admin' : '/browse-user',
+                href: userRole === "admin" ? "/browse-admin" : "/browse-user",
               },
               {
                 label: "Match",

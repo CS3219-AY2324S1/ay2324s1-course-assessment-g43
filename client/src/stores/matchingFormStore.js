@@ -31,7 +31,9 @@ class MatchingFormStore {
     return new Promise((resolve, reject) => {
       const countdownInterval = setInterval(() => {
         runInAction(() => {
-          if (this.countdown > 0) {
+          if (!this.isLoading) {
+            clearInterval(countdownInterval);
+          } else if (this.countdown > 0) {
             this.countdown -= 1;
           } else {
             this.isLoading = false;

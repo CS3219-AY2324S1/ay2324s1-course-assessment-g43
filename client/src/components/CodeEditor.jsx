@@ -1,4 +1,4 @@
-import { Stack } from "@chakra-ui/react";
+import { Stack, CardHeader, CardBody, Divider, Select } from "@chakra-ui/react";
 import { useRef, useState, useEffect } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -49,7 +49,17 @@ export const CodeEditor = () => {
 
   const [code, setCode] = useState("");
   const [file, setFile] = useState();
-  const [language, setLanguage] = useState("javascript");
+  const [language, setLanguage] = useState("python");
+
+  const handleLanguageChange = (language) => {
+    if (language == "Python") {
+      setLanguage("python");
+    } else if (language == "Java") {
+      setLanguage("javascript");
+    } else {
+      setLanguage("cpp");
+    }
+  };
 
   const handleFileChange = (event) => {
     if (event.target.files) {
@@ -78,19 +88,38 @@ export const CodeEditor = () => {
   }, [file]);
 
   return (
-    <Stack align={"center"}>
-      <div>
-        <input type="file" onChange={handleFileChange} />
-      </div>
-      <Editor
-        height={"50vh"}
-        width={"90vw"}
-        theme={"vs-dark"}
-        onMount={handleEditorDidMount}
-        language={language}
-        value={code}
-        options={options}
-      />
-    </Stack>
+    <>
+      <CardHeader>
+        <Select
+          placeholder="Python"
+          w={{ base: "20%", sm: "40%" }}
+          variant={"filled"}
+          h={"10%"}
+          onChange={(e) => {
+            handleLanguageChange(e);
+          }}
+        >
+          <option>Java</option>
+          <option>C++</option>
+        </Select>
+      </CardHeader>
+      <Divider color="gray.300" />
+      <CardBody>
+        <Stack align={"center"}>
+          <div>
+            <input type="file" onChange={handleFileChange} />
+          </div>
+          <Editor
+            height={"50vh"}
+            width={"100%"}
+            theme={"vs-dark"}
+            onMount={handleEditorDidMount}
+            language={language}
+            value={code}
+            options={options}
+          />
+        </Stack>
+      </CardBody>
+    </>
   );
 };

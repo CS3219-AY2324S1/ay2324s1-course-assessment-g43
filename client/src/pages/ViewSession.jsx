@@ -14,13 +14,13 @@ import {
   CardBody,
   CardHeader,
   Select,
-  Textarea,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
+import { CodeEditor } from "../components/CodeEditor";
 import { useEffect } from "react";
 
 export const ViewSession = observer(() => {
@@ -93,30 +93,13 @@ export const ViewSession = observer(() => {
 
           <Stack
             spacing={4}
-            w={"100%"}
+            w={"50vw"}
             p={6}
             align={"start"}
             direction={"column"}
           >
             <Card w={"100%"} h={"100%"}>
-              <CardHeader>
-                <Select
-                  placeholder="Java"
-                  w={{ base: "20%", sm: "40%" }}
-                  variant={"filled"}
-                  h={"10%"}
-                >
-                  <option>Python</option>
-                  <option>C++</option>
-                </Select>
-              </CardHeader>
-              <Divider color="gray.300" />
-              <CardBody>
-                <Textarea
-                  placeholder="Enter your solution here"
-                  _placeholder={{ color: "gray.500" }}
-                />
-              </CardBody>
+              <CodeEditor />{" "}
             </Card>
             <Card w={"100%"} h={"30vh"}>
               <CardHeader>Peer Chat</CardHeader>

@@ -21,6 +21,6 @@ export const ScrollableText = ({ text }) => {
 };
 
 ScrollableText.propTypes = {
-  text: PropTypes.object,
+  text: PropTypes.string,
   split: PropTypes.object,
 };

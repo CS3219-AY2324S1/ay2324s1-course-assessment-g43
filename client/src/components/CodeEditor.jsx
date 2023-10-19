@@ -51,14 +51,16 @@ export const CodeEditor = () => {
   const [file, setFile] = useState();
   const [language, setLanguage] = useState("python");
 
-  const handleLanguageChange = (language) => {
-    if (language == "Python") {
+  const handleLanguageChange = (lang) => {
+    if (lang == "Python") {
       setLanguage("python");
-    } else if (language == "Java") {
+    } else if (lang == "Java") {
       setLanguage("javascript");
     } else {
       setLanguage("cpp");
     }
+    console.log(lang);
+    console.log(language);
   };
 
   const handleFileChange = (event) => {
@@ -96,7 +98,7 @@ export const CodeEditor = () => {
           variant={"filled"}
           h={"10%"}
           onChange={(e) => {
-            handleLanguageChange(e);
+            handleLanguageChange(e.target.value);
           }}
         >
           <option>Java</option>
@@ -110,7 +112,7 @@ export const CodeEditor = () => {
             <input type="file" onChange={handleFileChange} />
           </div>
           <Editor
-            height={"50vh"}
+            height={"40vh"}
             width={"100%"}
             theme={"vs-dark"}
             onMount={handleEditorDidMount}

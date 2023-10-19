@@ -149,9 +149,9 @@ export const ViewQuestionsUser = observer(() => {
                   {viewQuestionsStore.state.selectedQuestion.description &&
                     viewQuestionsStore.state.selectedQuestion.description
                       .split("\n")
-                      .map((p) => (
-                        <Text py={1} key="viewqu">
-                          {p}
+                      .map((line, i) => (
+                        <Text py={1} key={line + i}>
+                          {line}
                         </Text>
                       ))}
                 </ModalBody>

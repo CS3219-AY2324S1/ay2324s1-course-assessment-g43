@@ -13,10 +13,10 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Select,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
+import { Split } from "react-split";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
@@ -69,7 +69,7 @@ export const ViewSession = observer(() => {
           </Button>
         </HStack>
         <Divider />
-        <HStack>
+        <Split>
           <Stack spacing={4} w={"50%"} p={6} align={"start"}>
             <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
               {state.title}
@@ -89,8 +89,6 @@ export const ViewSession = observer(() => {
             </Box>
             <ScrollableText text={state.description} />
           </Stack>
-          <Divider orientation="vertical" />
-
           <Stack
             spacing={4}
             w={"50vw"}
@@ -109,7 +107,7 @@ export const ViewSession = observer(() => {
               </CardBody>
             </Card>
           </Stack>
-        </HStack>
+        </Split>
       </Stack>
     </PageContainer>
   );

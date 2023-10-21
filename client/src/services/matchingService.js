@@ -1,6 +1,6 @@
 import socketIOClient from "socket.io-client";
 import { getRandomQuestionByComplexity } from "../services/questionService";
-import { createSession} from "../services/sessionService";
+import { createSession} from "./collaborationService";
 
 const ENDPOINT = "http://localhost:5001";
 

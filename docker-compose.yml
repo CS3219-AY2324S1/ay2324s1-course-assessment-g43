@@ -1,9 +1,57 @@
 version: "3.7"
 
 services:
-  question-service:
-    image: cs3219-ay2324s1-g43/question-service
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+    ports:
+      - "5173:5173"
     environment:
-      - PEERPREP_ENV=${PEERPREP_ENV}
+      - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - user-service
+  question-service:
+    build:
+      context: ./src/question-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
     ports:
       - "3000:3000"
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-development}
+    volumes:
+      - ./src/question-service:/app
+    depends_on:
+      - user-service
+  user-service:
+    build:
+      context: ./src/user-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+    ports:
+      - "8000:8000"
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-development}
+    volumes:
+      - ./src/user-service:/app
+      - /app/node_modules
+  matching-service:
+    build:
+      context: ./src/matching-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+    ports:
+      - "5001:5001"
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-development}
+    volumes:
+      - ./src/matching-service:/app

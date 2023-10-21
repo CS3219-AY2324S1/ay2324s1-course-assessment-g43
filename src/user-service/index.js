@@ -5,7 +5,7 @@ const app = express();
 const port = 8000;
 const cors = require("cors");
 
-const userRouter = require("../user-service/routes/user-route.js");
+const userRouter = require("./routes/user-route.js");
 
 const options = {
   info: {

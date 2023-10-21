@@ -45,8 +45,8 @@ export const updateUser = async (id, req) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.put(`${basePath}/update/${id}`, req, {
     headers: {
-      authorization:`Bearer ${token}`,
-    }
+      authorization: `Bearer ${token}`,
+    },
   });
   console.log(res);
   return res;
@@ -56,8 +56,8 @@ export const deleteUser = async (id) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.delete(`${basePath}/delete/${id}`, {
     headers: {
-      authorization:`Bearer ${token}`,
-    }
+      authorization: `Bearer ${token}`,
+    },
   });
   console.log(res);
   localStorage.removeItem("jwt");

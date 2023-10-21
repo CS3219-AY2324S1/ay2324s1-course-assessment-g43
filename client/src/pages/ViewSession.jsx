@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
-import { Split } from "react-split";
+import Split from "react-split";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";

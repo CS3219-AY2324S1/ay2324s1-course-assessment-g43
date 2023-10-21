@@ -1,5 +1,4 @@
 import { Text, Heading, Flex, Stack, Icon } from "@chakra-ui/react";
-import { CodeEditor } from "../components/CodeEditor";
 import { PageContainer } from "../components/PageContainer";
 
 const Illustration = (props) => {
@@ -224,7 +223,6 @@ export const LandingPage = () => {
             paddingLeft={"15%"}
           />
         </Flex>
-        <CodeEditor />
       </Stack>
     </PageContainer>
   );

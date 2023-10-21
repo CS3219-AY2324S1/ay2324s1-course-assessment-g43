@@ -106,18 +106,17 @@ io.on("connection", (socket) => {
       // else pair the users up
       const firstRequest = JSON.parse(dequeuedMessage.content.toString());
       console.log("MATCHED:");
-      console.log(firstRequest);
 
       const question = JSON.parse(firstRequest.questionString);
-
-      io.to(firstRequest.socketId).emit("match-success", {
-        uid: uid,
-        ...question,
-      });
-      io.to(socket.id).emit("match-success", {
+      
+      const message = {
         uid: firstRequest.uid,
+        uid2: uid,
         ...question,
-      });
+      };
+
+      io.to(firstRequest.socketId).emit("match-success", message);
+      io.to(socket.id).emit("match-success", message);
     }
   });
 

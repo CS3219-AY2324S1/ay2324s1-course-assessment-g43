@@ -1,5 +1,6 @@
 import socketIOClient from "socket.io-client";
 import { getRandomQuestionByComplexity } from "../services/questionService";
+import { createSession} from "../services/sessionService";
 
 const ENDPOINT = "http://localhost:5001";
 
@@ -40,6 +41,11 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
     const question = await getRandomQuestionByComplexity(complexity);
     callback(question);
   });
+
+  socket.on("create-session", async (sessionDetails, callback) => {
+    const session = await createSession(sessionDetails);
+    callback(session.data);
+  })
 
   return socket;
 };

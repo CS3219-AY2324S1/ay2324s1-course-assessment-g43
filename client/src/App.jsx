@@ -26,7 +26,7 @@ function App() {
           exact={true}
           Component={UpdateQuestion}
         />
-        <Route path="/session" exact={true} Component={ViewSession} />
+        <Route path="/session/:id" exact={true} Component={ViewSession} />
       </Routes>
     </BrowserRouter>
   );

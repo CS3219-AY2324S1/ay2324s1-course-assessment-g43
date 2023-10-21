@@ -17,7 +17,7 @@ import {
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
 import Split from "react-split";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
@@ -26,6 +26,7 @@ import { useEffect } from "react";
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: roomId } = useParams();
   const store = viewSessionStore;
   const state = store.state;
 
@@ -36,6 +37,21 @@ export const ViewSession = observer(() => {
     store.setCategory(location.state.category);
     store.setComplexity(location.state.complexity);
   }, []);
+
+  useEffect(() => {
+    // TODO: Display error if connection fails?
+    store.setRoomId(roomId);
+    store.connectToServer();
+
+    return () => {
+      store.disconnectFromServer();
+    };
+  }, []);
+
+  const handleLeaveSession = () => {
+    store.disconnectFromServer();
+    navigate(-1);
+  };
 
   return (
     <PageContainer w={"100%"}>
@@ -63,7 +79,7 @@ export const ViewSession = observer(() => {
             colorScheme="red"
             variant="outline"
             mr={3}
-            onClick={() => navigate(-1)}
+            onClick={handleLeaveSession}
           >
             Leave Session
           </Button>

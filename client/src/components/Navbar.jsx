@@ -273,8 +273,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
     description,
     category,
     complexity,
+    roomId,
   }) => {
-    navigate("/session", {
+    navigate(`/session/${roomId}`, {
       state: {
         questionId,
         title,
@@ -390,8 +391,9 @@ const MobileNavItem = ({ label, children, href }) => {
     description,
     category,
     complexity,
+    roomId,
   }) => {
-    navigate("/session", {
+    navigate(`/session/${roomId}`, {
       state: {
         questionId: questionId,
         title: title,

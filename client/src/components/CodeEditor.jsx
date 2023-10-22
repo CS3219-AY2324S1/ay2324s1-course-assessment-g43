@@ -1,5 +1,5 @@
-import { Stack, CardHeader, CardBody, Divider, Select } from "@chakra-ui/react";
-import { useRef, useState, useEffect } from "react";
+import { Card, CardHeader, CardBody, Divider, Select } from "@chakra-ui/react";
+import { useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
@@ -47,7 +47,6 @@ export const CodeEditor = () => {
     console.log(provider.awareness, binding);
   }
 
-  const [file, setFile] = useState();
   const [language, setLanguage] = useState("python");
   const [code, setCode] = useState(getCodeTemplate(language, ""));
 
@@ -108,34 +107,8 @@ export const CodeEditor = () => {
     }
   };
 
-  const handleFileChange = (event) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
-    }
-  };
-
-  useEffect(() => {
-    if (file) {
-      var reader = new FileReader();
-      reader.onload = async (e) => {
-        setCode(e.target.result);
-      };
-      reader.readAsText(file);
-      let newLanguage = "javascript"; //default is javascript
-      const extension = file.name.split(".").pop();
-      // python language name diff from extension name
-      if (extension == "py") {
-        newLanguage = "python";
-      } else if (["cpp", "css", "html"].includes(extension)) {
-        // can add on other languages next time
-        newLanguage = extension;
-      }
-      setLanguage(newLanguage);
-    }
-  }, [file]);
-
   return (
-    <>
+    <Card>
       <CardHeader>
         <Select
           placeholder="Python"
@@ -154,22 +127,17 @@ export const CodeEditor = () => {
       </CardHeader>
       <Divider color="gray.300" />
       <CardBody>
-        <Stack align={"center"}>
-          <div>
-            <input type="file" onChange={handleFileChange} />
-          </div>
-          <Editor
-            height={"40vh"}
-            width={"100%"}
-            theme={"vs-dark"}
-            onMount={handleEditorDidMount}
-            onChange={handleEditorChange}
-            language={language}
-            value={code}
-            options={options}
-          />
-        </Stack>
+        <Editor
+          height={"40vh"}
+          width={"100%"}
+          theme={"vs-dark"}
+          onMount={handleEditorDidMount}
+          onChange={handleEditorChange}
+          language={language}
+          value={code}
+          options={options}
+        />
       </CardBody>
-    </>
+    </Card>
   );
 };

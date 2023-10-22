@@ -81,29 +81,29 @@ export const ViewSession = observer(() => {
           </Button>
         </HStack>
         <Divider />
-        <Stack spacing={4} w={"50%"} p={6} align={"start"}>
-          <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
-            {state.title}
-          </Heading>
-          <HStack spacing={2} paddingBlock={3}>
-            {state.category?.map((category) => (
-              <Tag key={category} borderRadius="full" variant="solid">
-                <TagLabel>{category}</TagLabel>
-              </Tag>
-            ))}
-          </HStack>
-          <Box position="relative" padding="3" w={"100%"}>
-            <Divider />
-            <AbsoluteCenter bg="white" px="4">
-              Task Discription
-            </AbsoluteCenter>
-          </Box>
-          <ScrollableText text={state.description} />
-        </Stack>
-        <Divider orientation="vertical" />
-        <Card w={"50vw"} align={"start"}>
+        <HStack>
+          <Stack spacing={4} w={"50%"} p={6} align={"start"}>
+            <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+              {state.title}
+            </Heading>
+            <HStack spacing={2} paddingBlock={3}>
+              {state.category?.map((category) => (
+                <Tag key={category} borderRadius="full" variant="solid">
+                  <TagLabel>{category}</TagLabel>
+                </Tag>
+              ))}
+            </HStack>
+            <Box position="relative" padding="3" w={"100%"}>
+              <Divider />
+              <AbsoluteCenter bg="white" px="4">
+                Task Discription
+              </AbsoluteCenter>
+            </Box>
+            <ScrollableText text={state.description} />
+          </Stack>
+          <Divider orientation="vertical" />
           <CodeEditor />{" "}
-        </Card>
+        </HStack>
       </Stack>
     </PageContainer>
   );

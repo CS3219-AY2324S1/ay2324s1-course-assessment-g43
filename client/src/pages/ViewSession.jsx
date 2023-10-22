@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
-import Split from "react-split";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
@@ -85,45 +84,44 @@ export const ViewSession = observer(() => {
           </Button>
         </HStack>
         <Divider />
-        <Split>
-          <Stack spacing={4} w={"50%"} p={6} align={"start"}>
-            <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
-              {state.title}
-            </Heading>
-            <HStack spacing={2} paddingBlock={3}>
-              {state.category?.map((category) => (
-                <Tag key={category} borderRadius="full" variant="solid">
-                  <TagLabel>{category}</TagLabel>
-                </Tag>
-              ))}
-            </HStack>
-            <Box position="relative" padding="3" w={"100%"}>
-              <Divider />
-              <AbsoluteCenter bg="white" px="4">
-                Task Discription
-              </AbsoluteCenter>
-            </Box>
-            <ScrollableText text={state.description} />
-          </Stack>
-          <Stack
-            spacing={4}
-            w={"50vw"}
-            p={6}
-            align={"start"}
-            direction={"column"}
-          >
-            <Card w={"100%"} h={"100%"}>
-              <CodeEditor />{" "}
-            </Card>
-            <Card w={"100%"} h={"30vh"}>
-              <CardHeader>Peer Chat</CardHeader>
-              <Divider color="gray.300" />
-              <CardBody>
-                <Text color={"gray.500"}>Chat with your partner here.</Text>
-              </CardBody>
-            </Card>
-          </Stack>
-        </Split>
+        <Stack spacing={4} w={"50%"} p={6} align={"start"}>
+          <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+            {state.title}
+          </Heading>
+          <HStack spacing={2} paddingBlock={3}>
+            {state.category?.map((category) => (
+              <Tag key={category} borderRadius="full" variant="solid">
+                <TagLabel>{category}</TagLabel>
+              </Tag>
+            ))}
+          </HStack>
+          <Box position="relative" padding="3" w={"100%"}>
+            <Divider />
+            <AbsoluteCenter bg="white" px="4">
+              Task Discription
+            </AbsoluteCenter>
+          </Box>
+          <ScrollableText text={state.description} />
+        </Stack>
+        <Divider orientation="vertical" />
+        <Stack
+          spacing={4}
+          w={"50vw"}
+          p={6}
+          align={"start"}
+          direction={"column"}
+        >
+          <Card w={"100%"} h={"100%"}>
+            <CodeEditor />{" "}
+          </Card>
+          <Card w={"100%"} h={"30vh"}>
+            <CardHeader>Peer Chat</CardHeader>
+            <Divider color="gray.300" />
+            <CardBody>
+              <Text color={"gray.500"}>Chat with your partner here.</Text>
+            </CardBody>
+          </Card>
+        </Stack>
       </Stack>
     </PageContainer>
   );

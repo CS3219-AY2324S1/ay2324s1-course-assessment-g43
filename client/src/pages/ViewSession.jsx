@@ -9,10 +9,7 @@ import {
   Divider,
   Box,
   AbsoluteCenter,
-  Text,
   Card,
-  CardBody,
-  CardHeader,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
@@ -104,24 +101,9 @@ export const ViewSession = observer(() => {
           <ScrollableText text={state.description} />
         </Stack>
         <Divider orientation="vertical" />
-        <Stack
-          spacing={4}
-          w={"50vw"}
-          p={6}
-          align={"start"}
-          direction={"column"}
-        >
-          <Card w={"100%"} h={"100%"}>
-            <CodeEditor />{" "}
-          </Card>
-          <Card w={"100%"} h={"30vh"}>
-            <CardHeader>Peer Chat</CardHeader>
-            <Divider color="gray.300" />
-            <CardBody>
-              <Text color={"gray.500"}>Chat with your partner here.</Text>
-            </CardBody>
-          </Card>
-        </Stack>
+        <Card w={"50vw"} align={"start"}>
+          <CodeEditor />{" "}
+        </Card>
       </Stack>
     </PageContainer>
   );

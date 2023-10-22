@@ -47,20 +47,65 @@ export const CodeEditor = () => {
     console.log(provider.awareness, binding);
   }
 
-  const [code, setCode] = useState("");
   const [file, setFile] = useState();
   const [language, setLanguage] = useState("python");
+  const [code, setCode] = useState(getCodeTemplate(language, ""));
 
-  const handleLanguageChange = (lang) => {
-    if (lang == "Python") {
-      setLanguage("python");
-    } else if (lang == "Java") {
-      setLanguage("javascript");
-    } else {
-      setLanguage("cpp");
+  const handleEditorChange = (currContent) => {
+    if (!currContent) return;
+    setCode(currContent);
+  };
+
+  const handleLanguageChange = (lang, questionTitle) => {
+    switch (lang) {
+      case "C++":
+        setLanguage("cpp");
+        setCode(getCodeTemplate("cpp", questionTitle));
+        break;
+      case "Java":
+        setLanguage("java");
+        setCode(getCodeTemplate("java", questionTitle));
+        break;
+      case "Python":
+        setLanguage("python");
+        setCode(getCodeTemplate("python", questionTitle));
+        break;
+      case "Javascript":
+        setLanguage("javascript");
+        setCode(getCodeTemplate("javascript", questionTitle));
+        break;
+      default:
+        break;
     }
-    console.log(lang);
-    console.log(language);
+  };
+
+  const convertTitleToFunctionName = (questionTitle) => {
+    const words = questionTitle.split(" ");
+    let formatted = "";
+    words.forEach((word, index) => {
+      if (index > 0) {
+        formatted += word[0].toUpperCase() + word.slice(1).toLowerCase();
+      } else {
+        formatted = word.toLowerCase();
+      }
+    });
+    return formatted;
+  };
+
+  const getCodeTemplate = (lang, questionTitle) => {
+    const functionName = convertTitleToFunctionName(questionTitle);
+    switch (lang) {
+      case "cpp":
+        return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
+      case "java":
+        return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
+      case "python":
+        return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
+      case "javascript":
+        return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
+      default:
+        return "";
+    }
   };
 
   const handleFileChange = (event) => {
@@ -98,11 +143,13 @@ export const CodeEditor = () => {
           variant={"filled"}
           h={"10%"}
           onChange={(e) => {
+            console.log(e.target.value);
             handleLanguageChange(e.target.value);
           }}
         >
           <option>Java</option>
           <option>C++</option>
+          <option>Javascript</option>
         </Select>
       </CardHeader>
       <Divider color="gray.300" />
@@ -116,6 +163,7 @@ export const CodeEditor = () => {
             width={"100%"}
             theme={"vs-dark"}
             onMount={handleEditorDidMount}
+            onChange={handleEditorChange}
             language={language}
             value={code}
             options={options}

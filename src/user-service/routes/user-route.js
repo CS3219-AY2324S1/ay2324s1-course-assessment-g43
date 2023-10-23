@@ -137,7 +137,7 @@ router.post("/logout", authFunctions.authenticateRequest, userController.userLog
  * GET /api/getUsers
  * @summary Gets a list of all users
  * @return {MessageUsersDocument} 200 - success response - application/json
- * @return {ErrorResponse} 500 - error response - aplication/json
+ * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
 {
 	"message": "Users retrieved",

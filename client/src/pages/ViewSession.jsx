@@ -9,7 +9,6 @@ import {
   Divider,
   Box,
   AbsoluteCenter,
-  Card,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
@@ -95,14 +94,17 @@ export const ViewSession = observer(() => {
             </HStack>
             <Box position="relative" padding="3" w={"100%"}>
               <Divider />
-              <AbsoluteCenter bg="white" px="4">
+              <AbsoluteCenter bg="white" px="4" textAlign={"center"}>
                 Task Discription
               </AbsoluteCenter>
             </Box>
             <ScrollableText text={state.description} />
           </Stack>
           <Divider orientation="vertical" />
-          <CodeEditor />{" "}
+          <CodeEditor
+            questionTitle={store.state.title}
+            roomId={store.roomId}
+          />{" "}
         </HStack>
       </Stack>
     </PageContainer>

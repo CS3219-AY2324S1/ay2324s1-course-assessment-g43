@@ -1,4 +1,21 @@
-import { Stack, Divider, Select } from "@chakra-ui/react";
+import {
+  Stack,
+  Divider,
+  Select,
+  useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  Flex,
+  ButtonGroup,
+  Button,
+  HStack,
+  IconButton,
+  Tooltip,
+} from "@chakra-ui/react";
+import { ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -17,6 +34,7 @@ export const CodeEditor = observer(
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -100,6 +118,10 @@ export const CodeEditor = observer(
       }
     }, []);
 
+    const resetCode = () => {
+      setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
+    };
+
     const handleEditorChange = (currContent) => {
       if (!currContent) return;
       setCode(currContent);
@@ -111,7 +133,7 @@ export const CodeEditor = observer(
       //Init YJS
       const doc = new Y.Doc(); //collection of shared objects
       const provider = new WebsocketProvider(WS_SERVER_URL, roomId, doc);
-      
+
       const type = doc.getText("monaco");
       // Bind YJS to monaco
       // eslint-disable-next-line no-unused-vars
@@ -128,22 +150,31 @@ export const CodeEditor = observer(
 
     return (
       <Stack w={"100%"} h={"100%"}>
-        <Select
-          // placeholder="Select Language"
-          // defaultValue={language}
-          value={userLanguage}
-          w={{ lg: "15%", sm: "20%" }}
-          variant={"filled"}
-          h={"100%"}
-          onChange={(e) => {
-            setUserLanguage(e.target.value);
-          }}
-        >
-          <option value="python">Python</option>
-          <option value="java">Java</option>
-          <option value="cpp">C++</option>
-          <option value="javascript">JavaScript</option>
-        </Select>
+        <HStack justifyContent={"space-between"}>
+          <Select
+            // placeholder="Select Language"
+            // defaultValue={language}
+            value={userLanguage}
+            w={{ lg: "15%", sm: "20%" }}
+            variant={"filled"}
+            h={"100%"}
+            onChange={(e) => {
+              setUserLanguage(e.target.value);
+            }}
+          >
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="cpp">C++</option>
+            <option value="javascript">JavaScript</option>
+          </Select>
+          <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
+            <IconButton
+              icon={<RepeatIcon />}
+              variant={"unstyled"}
+              onClick={resetCode}
+            />
+          </Tooltip>
+        </HStack>
         <Divider color="gray.300" />
         <Editor
           height={"70vh"}
@@ -155,6 +186,40 @@ export const CodeEditor = observer(
           value={code}
           options={options}
         />
+        <Divider />
+        <Flex justifyContent={"space-between"}>
+          <Button variant={"ghost"} onClick={onOpen}>
+            Console
+            <ChevronUpIcon />
+          </Button>
+          <Drawer
+            placement={"bottom"}
+            onClose={onClose}
+            isOpen={isOpen}
+            size={"md"}
+          >
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerHeader borderBottomWidth="1px">
+                Console for testing
+              </DrawerHeader>
+              <DrawerBody>
+                <p>Could be a popup instead, up to whatever we think is nice</p>
+                <p>I dont think I can replicate leetcode entirely...</p>
+                <p>
+                  Any ideas to have what leetcode has will be greatly
+                  appreciated!!
+                </p>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
+          <ButtonGroup>
+            <Button variant={"outline"}>Run</Button>
+            <Button variant={"solid"} color={"green"}>
+              Submit
+            </Button>
+          </ButtonGroup>
+        </Flex>
       </Stack>
     );
   }

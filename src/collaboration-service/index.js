@@ -12,6 +12,7 @@ const setupWSConnection = require("y-websocket/bin/utils").setupWSConnection;
 
 const app = express();
 const port = process.env.PORT || 8001;
+const wssPort = 8002;
 const databaseUrl = process.env.DATABASE_URL;
 
 const server = http.createServer(app);
@@ -29,11 +30,9 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("user-connected", userId);
   });
 
-  // Not implemented on FE yet
-  // Change params if needed
-  socket.on("code-change", (roomId, delta) => {
-    if (!roomId || !delta) return;
-    socket.to(roomId).emit("code-change", delta);
+  socket.on("change-language", (roomId, language) => {
+    if (!roomId || !language) return;
+    socket.broadcast.to(roomId).emit("change-language", language);
   });
 
   socket.on("disconnect", () => {
@@ -76,7 +75,7 @@ server.on("error", console.error);
 /**
  * Create a wss (Web Socket Secure) server
  */
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ port: wssPort });
 
 /**
  * On connection, use the utility file provided by y-websocket

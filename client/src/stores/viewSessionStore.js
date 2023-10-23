@@ -1,13 +1,12 @@
 import { makeAutoObservable } from "mobx";
 import {
-  setupSocket,
-  joinRoom,
+  initCollaborationSocket,
   leaveSession,
+  notifyPeerLanguageChange,
 } from "../services/collaborationService";
 
 class ViewSessionStore {
   socket = null;
-  roomId = "";
 
   state = {
     questionId: -1,
@@ -15,6 +14,9 @@ class ViewSessionStore {
     description: "",
     category: [],
     complexity: "",
+
+    roomId: "",
+    language: "",
   };
 
   constructor() {
@@ -42,22 +44,37 @@ class ViewSessionStore {
   }
 
   setRoomId(roomId) {
-    this.roomId = roomId;
+    this.state.roomId = roomId;
   }
 
   setLanguage(language) {
-    this.socket.setLanguage(this.roomId, language);
+    if (!language) return;
+    if (language === this.state.language) return;
+    this.state.language = language;
+    notifyPeerLanguageChange(this.socket, this.state.roomId, language.toLowerCase());
+  }
+
+  resetState() {
+    this.state = {
+      questionId: -1,
+      title: "",
+      description: "",
+      category: [],
+      complexity: "",
+      roomId: "",
+      language: "",
+    };
   }
 
   /**
-   * Sets up a socket connection to the collaboration service server.
+   * Sets up a socket connection to the collaboration service server and joins a room.
    */
-  connectToServer() {
+  initSocket() {
     const userId = JSON.parse(localStorage.getItem("user")).uid;
-    if (!this.socket) {
-      this.socket = setupSocket();
-    }
-    joinRoom(this.socket, this.roomId, userId);
+    this.socket = initCollaborationSocket(this.state.roomId, userId, (lang) => {
+      // Note: use arrow function for correct `this` binding
+      this.setLanguage(lang);
+    });
   }
 
   /**
@@ -66,13 +83,14 @@ class ViewSessionStore {
   async disconnectFromServer() {
     try {
       this.socket?.disconnect();
-      if (this.roomId) {
+      if (this.state.roomId) {
         const userId = JSON.parse(localStorage.getItem("user")).uid;
-        await leaveSession(this.roomId, userId);
+        await leaveSession(this.state.roomId, userId);
       }
     } catch (err) {
       console.log(err);
     }
+    this.socket = null;
   }
 }
 

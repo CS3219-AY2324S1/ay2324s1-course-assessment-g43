@@ -56,3 +56,13 @@ export const setupSocket = (onSocketDisconnect) => {
 export const joinRoom = (socket, roomId, userId) => {
   socket.emit("join-room", roomId, userId);
 };
+
+export const sendCodeChange = (roomId, content) => {
+  this.socket.emit("code-change", roomId, content);
+};
+
+export const receiveCodeUpdate = (setCurrCode) => {
+  this.socket.on("code-update", (content) => {
+    setCurrCode(content);
+  });
+};

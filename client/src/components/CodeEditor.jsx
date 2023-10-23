@@ -105,6 +105,8 @@ export const CodeEditor = ({ questionTitle, roomId }) => {
         setCode(getCodeTemplate("javascript", questionTitle));
         break;
       default:
+        setLanguage("text");
+        setCode(getCodeTemplate("text", questionTitle));
         break;
     }
   };
@@ -112,7 +114,7 @@ export const CodeEditor = ({ questionTitle, roomId }) => {
   return (
     <Stack w={"100%"} h={"100%"}>
       <Select
-        placeholder=""
+        placeholder="Select Language"
         w={{ lg: "15%", sm: "20%" }}
         variant={"filled"}
         h={"100%"}
@@ -133,7 +135,7 @@ export const CodeEditor = ({ questionTitle, roomId }) => {
         onMount={handleEditorDidMount}
         onChange={handleEditorChange}
         language={language}
-        defaultValue={code}
+        value={code}
         options={options}
       />
     </Stack>

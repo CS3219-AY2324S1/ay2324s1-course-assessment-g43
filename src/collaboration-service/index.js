@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const sessionController = require("./controllers/session-controller.js");
 const http = require("http");
 const { Server } = require("socket.io");
+const { WebSocketServer } = require("ws");
+const setupWSConnection = require("y-websocket/bin/utils").setupWSConnection;
 
 const app = express();
 const port = process.env.PORT || 8001;
@@ -19,7 +21,7 @@ const io = new Server(server, {
   },
 });
 
-// Websocket server
+// Socket.io server
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;
@@ -67,4 +69,19 @@ app.get("/api/hello", (req, res) => {
 // app.listen(port, () => console.log(`Listening on port ${port}`));
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
+});
+server.on("error", console.error);
+
+// https://dev.to/akormous/building-a-shared-code-editor-using-nodejs-websocket-and-crdt-4l0f
+/**
+ * Create a wss (Web Socket Secure) server
+ */
+const wss = new WebSocketServer({ server });
+
+/**
+ * On connection, use the utility file provided by y-websocket
+ */
+wss.on("connection", (ws, req) => {
+  console.log("wss:connection");
+  setupWSConnection(ws, req);
 });

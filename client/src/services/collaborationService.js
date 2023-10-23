@@ -53,6 +53,10 @@ export const setupSocket = (onSocketDisconnect) => {
   return socket;
 };
 
+export const changeLanguage = (socket, roomId, language) => {
+  socket.emit("change-language", roomId, language);
+}
+
 export const joinRoom = (socket, roomId, userId) => {
   socket.emit("join-room", roomId, userId);
 };

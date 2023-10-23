@@ -1,12 +1,16 @@
 import { Stack, Divider, Select } from "@chakra-ui/react";
+import { viewSessionStore } from "../stores/viewSessionStore";
 import { useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
+import { WebsocketProvider } from 'y-websocket';
 import { WebrtcProvider } from "y-webrtc";
 import { MonacoBinding } from "y-monaco";
 import { PropTypes } from "prop-types";
 
 export const CodeEditor = ({ questionTitle, roomId }) => {
+  const store = viewSessionStore;
+
   const editorRef = useRef(null);
 
   const options = {
@@ -31,25 +35,6 @@ export const CodeEditor = ({ questionTitle, roomId }) => {
     automaticLayout: true,
   };
 
-  // eslint-disable-next-line no-unused-vars
-  function handleEditorDidMount(editor, monaco) {
-    editorRef.current = editor;
-    //Init YJS
-    const doc = new Y.Doc(); //collection of shared objects
-    //Connect to peers with WebRTC, diff rooms for diff sessions
-    const provider = new WebrtcProvider(roomId, doc);
-    const type = doc.getText("user");
-    //Bind YJS to monaco
-    const binding = new MonacoBinding(
-      type,
-      editorRef.current.getModel(),
-      new Set([editorRef.current]),
-      provider.awareness
-    );
-    console.log(editorRef);
-    console.log(provider.awareness, binding);
-  }
-
   const convertTitleToFunctionName = (questionTitle) => {
     const words = questionTitle.split(" ");
     let formatted = "";
@@ -62,6 +47,7 @@ export const CodeEditor = ({ questionTitle, roomId }) => {
     });
     return formatted;
   };
+
   const getCodeTemplate = (lang, questionTitle) => {
     const functionName = convertTitleToFunctionName(questionTitle);
     switch (lang) {
@@ -110,6 +96,35 @@ export const CodeEditor = ({ questionTitle, roomId }) => {
         break;
     }
   };
+
+  // eslint-disable-next-line no-unused-vars
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor;
+    //Init YJS
+    const doc = new Y.Doc(); //collection of shared objects
+    //Connect to peers with WebRTC, diff rooms for diff sessions
+    // const provider = new WebrtcProvider("1698042045-18-19", doc, );
+    const serverWsUrl = "ws://localhost:1234";
+    const realRoomId = roomId;
+    // console.log("room id is");
+    // console.log(roomId);
+
+    const provider = new WebsocketProvider(serverWsUrl, realRoomId, doc);
+
+    const type = doc.getText("monaco");
+    //Bind YJS to monaco
+    const binding = new MonacoBinding(
+      type,
+      editorRef.current.getModel(),
+      new Set([editorRef.current]),
+      provider.awareness
+    );
+
+    console.log(editorRef);
+    console.log(provider.awareness, binding);
+  }
+
+
 
   return (
     <Stack w={"100%"} h={"100%"}>

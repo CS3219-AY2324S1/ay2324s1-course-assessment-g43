@@ -45,6 +45,10 @@ class ViewSessionStore {
     this.roomId = roomId;
   }
 
+  setLanguage(language) {
+    this.socket.setLanguage(this.roomId, language);
+  }
+
   /**
    * Sets up a socket connection to the collaboration service server.
    */

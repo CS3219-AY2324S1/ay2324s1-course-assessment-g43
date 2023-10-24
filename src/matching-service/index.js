@@ -106,17 +106,30 @@ io.on("connection", (socket) => {
       // else pair the users up
       const firstRequest = JSON.parse(dequeuedMessage.content.toString());
       console.log("MATCHED:");
-      console.log(firstRequest);
 
       const question = JSON.parse(firstRequest.questionString);
 
-      io.to(firstRequest.socketId).emit("match-success", {
-        uid: uid,
+      const timestamp = Math.floor(Date.now() / 1000);
+      const roomId = `${timestamp}-${firstRequest.uid}-${uid}`;
+
+      const sessionDetails = {
+        roomId: roomId,
+        firstUserId: firstRequest.uid,
+        secondUserId: uid,
         ...question,
-      });
-      io.to(socket.id).emit("match-success", {
-        uid: firstRequest.uid,
-        ...question,
+      };
+
+      socket.emit("create-session", sessionDetails, async (session) => {
+
+        if (!session) {
+          io.to(socket.id).emit("match-failure", "Error creating session");
+          return;
+        }
+
+        console.log(session);
+
+        io.to(firstRequest.socketId).emit("match-success", session);
+        io.to(socket.id).emit("match-success", session);
       });
     }
   });

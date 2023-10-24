@@ -273,8 +273,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
     description,
     category,
     complexity,
+    roomId,
   }) => {
-    navigate("/session", {
+    navigate(`/session/${roomId}`, {
       state: {
         questionId,
         title,
@@ -312,7 +313,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     modalComponentStore.closeModal();
                     redirectToSessionPage(data);
                     toast({
-                      title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                      title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
                       status: "success",
                       duration: 8000,
                       isClosable: true,
@@ -390,8 +391,9 @@ const MobileNavItem = ({ label, children, href }) => {
     description,
     category,
     complexity,
+    roomId,
   }) => {
-    navigate("/session", {
+    navigate(`/session/${roomId}`, {
       state: {
         questionId: questionId,
         title: title,
@@ -472,7 +474,7 @@ const MobileNavItem = ({ label, children, href }) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                               toast({
-                                title: `Successfully matched with User #${data.uid} on ${data.complexity} question - ${data.title}`,
+                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
                                 status: "success",
                                 duration: 8000,
                                 isClosable: true,

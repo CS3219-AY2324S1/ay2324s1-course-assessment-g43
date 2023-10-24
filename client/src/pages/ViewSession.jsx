@@ -9,24 +9,23 @@ import {
   Divider,
   Box,
   AbsoluteCenter,
-  Text,
-  Card,
-  CardBody,
-  CardHeader,
-  Select,
-  Textarea,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
-import { useEffect } from "react";
+import { ScrollableText } from "../components/ScrollableText";
+import { CodeEditor } from "../components/CodeEditor";
+import { useEffect, useState } from "react";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: roomId } = useParams();
+  const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
+  const DEFAULT_LANGUAGE = "text";
 
   useEffect(() => {
     store.setQuestionId(location.state.questionId);
@@ -34,7 +33,29 @@ export const ViewSession = observer(() => {
     store.setDescription(location.state.description);
     store.setCategory(location.state.category);
     store.setComplexity(location.state.complexity);
+    store.setLanguage(DEFAULT_LANGUAGE);
+    setIsDoneLoading(true);
+
+    return () => {
+      store.resetState();
+    };
   }, []);
+
+  useEffect(() => {
+    // TODO: Display error if connection fails?
+    store.setRoomId(roomId);
+    store.initSocket();
+
+    return () => {
+      store.disconnectFromServer();
+    };
+  }, []);
+
+  const handleLeaveSession = () => {
+    store.resetState();
+    store.disconnectFromServer();
+    navigate(-1);
+  };
 
   return (
     <PageContainer w={"100%"}>
@@ -62,14 +83,14 @@ export const ViewSession = observer(() => {
             colorScheme="red"
             variant="outline"
             mr={3}
-            onClick={() => navigate(-1)}
+            onClick={handleLeaveSession}
           >
             Leave Session
           </Button>
         </HStack>
         <Divider />
         <HStack>
-          <Stack spacing={4} w={"100%"} p={6} align={"start"}>
+          <Stack spacing={4} w={"50%"} p={6} align={"start"}>
             <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
               {state.title}
             </Heading>
@@ -82,49 +103,21 @@ export const ViewSession = observer(() => {
             </HStack>
             <Box position="relative" padding="3" w={"100%"}>
               <Divider />
-              <AbsoluteCenter bg="white" px="4">
+              <AbsoluteCenter bg="white" px="4" textAlign={"center"}>
                 Task Discription
               </AbsoluteCenter>
             </Box>
-            <Text paddingTop={"3"}>{state.description}</Text>
+            <ScrollableText text={state.description} />
           </Stack>
           <Divider orientation="vertical" />
-
-          <Stack
-            spacing={4}
-            w={"100%"}
-            p={6}
-            align={"start"}
-            direction={"column"}
-          >
-            <Card w={"100%"} h={"40vh"}>
-              <CardHeader>
-                <Select
-                  placeholder="Java"
-                  w={"20%"}
-                  variant={"filled"}
-                  h={"10%"}
-                >
-                  <option>Python</option>
-                  <option>C++</option>
-                </Select>
-              </CardHeader>
-              <Divider color="gray.300" />
-              <CardBody>
-                <Textarea
-                  placeholder="Enter your solution here"
-                  _placeholder={{ color: "gray.500" }}
-                />
-              </CardBody>
-            </Card>
-            <Card w={"100%"} h={"30vh"}>
-              <CardHeader>Peer Chat</CardHeader>
-              <Divider color="gray.300" />
-              <CardBody>
-                <Text color={"gray.500"}>Chat with your partner here.</Text>
-              </CardBody>
-            </Card>
-          </Stack>
+          {isDoneLoading && (
+            <CodeEditor
+              questionTitle={state.title}
+              roomId={roomId}
+              language={state.language}
+              onLanguageChange={(newLang) => store.setLanguage(newLang)}
+            />
+          )}{" "}
         </HStack>
       </Stack>
     </PageContainer>

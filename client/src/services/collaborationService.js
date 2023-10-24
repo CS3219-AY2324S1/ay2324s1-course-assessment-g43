@@ -20,6 +20,42 @@ export const createSession = async (req) => {
   }
 };
 
+/**
+ * Gets question from an existing session
+ * 
+ * @param {string} roomId 
+ * @returns {Object} question if the session is valid, else null.
+ */
+export const getQuestionFromSession = async (roomId) => {
+  try {
+    const token = localStorage.getItem("jwt");
+    const res = await axios.get(`${basePath}/api/session/${roomId}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    // Session is active if either user is still in the session
+    const isSessionActive =
+      res.data.firstUserStatus || res.data.secondUserStatus;
+
+    if (!isSessionActive) {
+      return null;
+    }
+    // Convert Session to Question
+    const question = {
+      questionId: res.data.questionId,
+      title: res.data.title,
+      description: res.data.description,
+      category: res.data.category,
+      complexity: res.data.complexity,
+    };
+    return question;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
 export const leaveSession = async (roomId, userId) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.put(`${basePath}/api/session/${roomId}/${userId}`, {

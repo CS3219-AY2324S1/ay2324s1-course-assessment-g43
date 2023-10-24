@@ -28,13 +28,34 @@ export const ViewSession = observer(() => {
   const DEFAULT_LANGUAGE = "text";
 
   useEffect(() => {
-    store.setQuestionId(location.state.questionId);
-    store.setTitle(location.state.title);
-    store.setDescription(location.state.description);
-    store.setCategory(location.state.category);
-    store.setComplexity(location.state.complexity);
-    store.setLanguage(DEFAULT_LANGUAGE);
-    setIsDoneLoading(true);
+    // Navigate back if no roomId specified
+    if (!roomId) {
+      console.log("No roomId specified");
+      navigate("/");
+    }
+    if (!location.state || !location.state.questionId) {
+      store
+        .fetchQuestion(roomId)
+        .then((question) => {
+          store.initQuestionState(question);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          alert("Session is invalid");
+          navigate("/");
+        })
+        .finally(() => {
+          setIsDoneLoading(true);
+        });
+    } else {
+      store.setQuestionId(location.state.questionId);
+      store.setTitle(location.state.title);
+      store.setDescription(location.state.description);
+      store.setCategory(location.state.category);
+      store.setComplexity(location.state.complexity);
+      store.setLanguage(DEFAULT_LANGUAGE);
+      setIsDoneLoading(true);
+    }
 
     return () => {
       store.resetState();

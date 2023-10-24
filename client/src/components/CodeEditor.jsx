@@ -152,6 +152,11 @@ export const CodeEditor = observer(
       setCode(currContent);
     };
 
+    function getEditorValue() {
+      console.log(editorRef.current.getValue());
+      return alert(editorRef.current.getValue());
+    }
+
     // eslint-disable-next-line no-unused-vars
     function handleEditorDidMount(editor, monaco) {
       editorRef.current = editor;
@@ -247,10 +252,19 @@ export const CodeEditor = observer(
             </DrawerContent>
           </Drawer>
           <ButtonGroup>
-            <Button variant={"outline"} isDisabled={isDisabled}>
+            <Button
+              variant={"outline"}
+              isDisabled={isDisabled}
+              onClick={getEditorValue}
+            >
               Run
             </Button>
-            <Button variant={"solid"} color={"green"} isDisabled={isDisabled}>
+            <Button
+              variant={"solid"}
+              color={"green"}
+              isDisabled={isDisabled}
+              onClick={getEditorValue}
+            >
               Submit
             </Button>
           </ButtonGroup>

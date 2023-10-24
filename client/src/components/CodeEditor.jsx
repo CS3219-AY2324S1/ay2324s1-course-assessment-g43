@@ -34,6 +34,7 @@ export const CodeEditor = observer(
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
+    const [isDisabled, setDisability] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -54,8 +55,13 @@ export const CodeEditor = observer(
       // This changes when USER changes language
       // console.log("userLanguage changed to: ", userLanguage);
       if (!userLanguage || userLanguage === language) return;
-      setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
-      onLanguageChange(userLanguage); // Notify peer
+      if (
+        confirm("Changing languages will erase any current code! Are you sure?")
+      ) {
+        setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
+        onLanguageChange(userLanguage); // Notify peer
+      }
+
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userLanguage]);
 
@@ -66,6 +72,11 @@ export const CodeEditor = observer(
       setUserLanguage(language);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [language]);
+
+    useEffect(() => {
+      userLanguage == "text" ? setDisability(true) : setDisability(false);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userLanguage, isDisabled]);
 
     const options = {
       autoIndent: "full",
@@ -106,20 +117,34 @@ export const CodeEditor = observer(
       const functionName = convertTitleToFunctionName(questionTitle);
       switch (lang) {
         case "cpp":
+          setDisability(false);
           return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
         case "java":
+          setDisability(false);
           return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
         case "python":
+          setDisability(false);
           return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
         case "javascript":
+          setDisability(false);
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
+        case "text":
+          setDisability(true);
+          return `Use this space for working.`;
         default:
-          return `Select your preferred language.`;
+          setDisability(true);
+          return ``;
       }
     }, []);
 
     const resetCode = () => {
-      setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
+      if (
+        confirm(
+          "Are you sure? Your current code will be discarded and reset to the default code!"
+        )
+      ) {
+        setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
+      }
     };
 
     const handleEditorChange = (currContent) => {
@@ -151,22 +176,30 @@ export const CodeEditor = observer(
     return (
       <Stack w={"100%"} h={"100%"}>
         <HStack justifyContent={"space-between"}>
-          <Select
-            // placeholder="Select Language"
-            // defaultValue={language}
-            value={userLanguage}
-            w={{ lg: "15%", sm: "20%" }}
-            variant={"filled"}
-            h={"100%"}
-            onChange={(e) => {
-              setUserLanguage(e.target.value);
-            }}
+          <Tooltip
+            label="Select your preferred language."
+            hasArrow
+            bg="gray.300"
+            color="black"
           >
-            <option value="python">Python</option>
-            <option value="java">Java</option>
-            <option value="cpp">C++</option>
-            <option value="javascript">JavaScript</option>
-          </Select>
+            <Select
+              // placeholder="Whiteboard"
+              // defaultValue={language}
+              value={userLanguage}
+              w={{ lg: "15%", sm: "40%" }}
+              variant={"filled"}
+              h={"100%"}
+              onChange={(e) => {
+                setUserLanguage(e.target.value);
+              }}
+            >
+              <option value="text">Whiteboard</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="cpp">C++</option>
+              <option value="javascript">JavaScript</option>
+            </Select>
+          </Tooltip>
           <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
             <IconButton
               icon={<RepeatIcon />}
@@ -214,8 +247,10 @@ export const CodeEditor = observer(
             </DrawerContent>
           </Drawer>
           <ButtonGroup>
-            <Button variant={"outline"}>Run</Button>
-            <Button variant={"solid"} color={"green"}>
+            <Button variant={"outline"} isDisabled={isDisabled}>
+              Run
+            </Button>
+            <Button variant={"solid"} color={"green"} isDisabled={isDisabled}>
               Submit
             </Button>
           </ButtonGroup>

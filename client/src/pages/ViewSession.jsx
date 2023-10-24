@@ -25,7 +25,7 @@ export const ViewSession = observer(() => {
   const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
-  const DEFAULT_LANGUAGE = "python";
+  const DEFAULT_LANGUAGE = "text";
 
   useEffect(() => {
     store.setQuestionId(location.state.questionId);

@@ -16,14 +16,16 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: roomId } = useParams();
+  const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
+  const DEFAULT_LANGUAGE = "python";
 
   useEffect(() => {
     store.setQuestionId(location.state.questionId);
@@ -31,12 +33,18 @@ export const ViewSession = observer(() => {
     store.setDescription(location.state.description);
     store.setCategory(location.state.category);
     store.setComplexity(location.state.complexity);
+    store.setLanguage(DEFAULT_LANGUAGE);
+    setIsDoneLoading(true);
+
+    return () => {
+      store.resetState();
+    };
   }, []);
 
   useEffect(() => {
     // TODO: Display error if connection fails?
     store.setRoomId(roomId);
-    store.connectToServer();
+    store.initSocket();
 
     return () => {
       store.disconnectFromServer();
@@ -44,6 +52,7 @@ export const ViewSession = observer(() => {
   }, []);
 
   const handleLeaveSession = () => {
+    store.resetState();
     store.disconnectFromServer();
     navigate(-1);
   };
@@ -101,10 +110,14 @@ export const ViewSession = observer(() => {
             <ScrollableText text={state.description} />
           </Stack>
           <Divider orientation="vertical" />
-          <CodeEditor
-            questionTitle={store.state.title}
-            roomId={store.roomId}
-          />{" "}
+          {isDoneLoading && (
+            <CodeEditor
+              questionTitle={state.title}
+              roomId={roomId}
+              language={state.language}
+              onLanguageChange={(newLang) => store.setLanguage(newLang)}
+            />
+          )}{" "}
         </HStack>
       </Stack>
     </PageContainer>

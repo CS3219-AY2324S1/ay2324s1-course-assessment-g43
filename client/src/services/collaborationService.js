@@ -32,16 +32,25 @@ export const leaveSession = async (roomId, userId) => {
 
 // Websocket functions
 /**
- * Sets up a socket connection to the collaboration service server.
+ * Initialises a socket connection to the collaboration service server.
+ * - Joins a room.
+ * - Set up custom event listeners.
  *
+ * @param {Function} onPeerLanguageChange - callback function for peer language change event
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
  * @returns {Socket} socket created
  */
-export const setupSocket = (onSocketDisconnect) => {
+export const initCollaborationSocket = (
+  roomId,
+  userId,
+  onPeerLanguageChange,
+  onSocketDisconnect
+) => {
   const socket = socketIOClient(basePath);
 
   socket.on("connect", () => {
-    console.log("socket connected");
+    console.log("Collab Service socket connected");
+    socket.emit("join-room", roomId, userId);
   });
 
   socket.on("disconnect", () => {
@@ -50,23 +59,16 @@ export const setupSocket = (onSocketDisconnect) => {
     }
   });
 
+  // Custom events
+  socket.on("change-language", (language) => {
+    if (onPeerLanguageChange) {
+      onPeerLanguageChange(language);
+    }
+  });
+
   return socket;
 };
 
-export const changeLanguage = (socket, roomId, language) => {
-  socket.emit("change-language", roomId, language);
-}
-
-export const joinRoom = (socket, roomId, userId) => {
-  socket.emit("join-room", roomId, userId);
-};
-
-export const sendCodeChange = (roomId, content) => {
-  this.socket.emit("code-change", roomId, content);
-};
-
-export const receiveCodeUpdate = (setCurrCode) => {
-  this.socket.on("code-update", (content) => {
-    setCurrCode(content);
-  });
+export const notifyPeerLanguageChange = (socket, roomId, language) => {
+  socket?.emit("change-language", roomId, language);
 };

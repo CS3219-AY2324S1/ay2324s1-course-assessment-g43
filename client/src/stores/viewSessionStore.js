@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import {
+  getQuestionFromSession,
   initCollaborationSocket,
   leaveSession,
   notifyPeerLanguageChange,
@@ -51,7 +52,22 @@ class ViewSessionStore {
     if (!language) return;
     if (language === this.state.language) return;
     this.state.language = language;
-    notifyPeerLanguageChange(this.socket, this.state.roomId, language.toLowerCase());
+    notifyPeerLanguageChange(
+      this.socket,
+      this.state.roomId,
+      language.toLowerCase()
+    );
+  }
+
+  initQuestionState(question) {
+    const { questionId, title, description, category, complexity } = question;
+    this.state = {
+      questionId,
+      title,
+      description,
+      category,
+      complexity,
+    };
   }
 
   resetState() {
@@ -64,6 +80,14 @@ class ViewSessionStore {
       roomId: "",
       language: "",
     };
+  }
+
+  async fetchQuestion(roomId) {
+    const question = await getQuestionFromSession(roomId);
+    if (!question) {
+      throw new Error("Session is invalid");
+    }
+    return question;
   }
 
   /**

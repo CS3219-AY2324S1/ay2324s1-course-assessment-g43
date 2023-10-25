@@ -18,6 +18,9 @@ spec:
           image: gcr.io/ay2324s1-cs3219-g43/client:1.0-SNAPSHOT
           ports:
             - containerPort: 5173
+          env:
+            - name: PEERPREP_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service
@@ -51,6 +54,9 @@ spec:
           image: gcr.io/ay2324s1-cs3219-g43/user-service:1.0-SNAPSHOT
           ports:
             - containerPort: 8000
+          env:
+            - name: PEERPREP_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service
@@ -83,6 +89,9 @@ spec:
           image: gcr.io/ay2324s1-cs3219-g43/question-service:1.0-SNAPSHOT
           ports:
             - containerPort: 3000
+          env:
+            - name: PEERPREP_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service
@@ -115,6 +124,9 @@ spec:
           image: gcr.io/ay2324s1-cs3219-g43/matching-service:1.0-SNAPSHOT
           ports:
             - containerPort: 5001
+          env:
+            - name: PEERPREP_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service

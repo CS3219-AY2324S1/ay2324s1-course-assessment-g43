@@ -30,9 +30,9 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("user-connected", userId);
   });
 
-  socket.on("change-language", (roomId, language) => {
-    if (!roomId || !language) return;
-    socket.broadcast.to(roomId).emit("change-language", language);
+  socket.on("change-language", (language) => {
+    if (!language) return;
+    socket.broadcast.emit("change-language", language);
   });
 
   socket.on("disconnect", () => {

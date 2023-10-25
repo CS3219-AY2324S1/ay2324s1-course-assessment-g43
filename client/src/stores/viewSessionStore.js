@@ -49,14 +49,9 @@ class ViewSessionStore {
   }
 
   setLanguage(language) {
-    if (!language) return;
-    if (language === this.state.language) return;
+    if (!language || language === this.state.language) return;
     this.state.language = language;
-    notifyPeerLanguageChange(
-      this.socket,
-      this.state.roomId,
-      language.toLowerCase()
-    );
+    notifyPeerLanguageChange(this.socket, language.toLowerCase());
   }
 
   initQuestionState(question) {

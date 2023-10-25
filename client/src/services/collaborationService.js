@@ -105,6 +105,6 @@ export const initCollaborationSocket = (
   return socket;
 };
 
-export const notifyPeerLanguageChange = (socket, roomId, language) => {
-  socket?.emit("change-language", roomId, language);
+export const notifyPeerLanguageChange = (socket, language) => {
+  socket?.emit("change-language", language);
 };

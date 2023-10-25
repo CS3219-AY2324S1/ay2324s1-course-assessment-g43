@@ -130,7 +130,7 @@ export const CodeEditor = observer(
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
         case "text":
           setDisability(true);
-          return `Use this space for working.`;
+          return ``;
         default:
           setDisability(true);
           return ``;
@@ -198,7 +198,7 @@ export const CodeEditor = observer(
                 setUserLanguage(e.target.value);
               }}
             >
-              <option value="text">Whiteboard</option>
+              <option value="text">Notes</option>
               <option value="python">Python</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>

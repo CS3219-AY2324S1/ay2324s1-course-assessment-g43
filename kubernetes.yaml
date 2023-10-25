@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: client-container
-          image: gcr.io/ay2324s1-cs3219-g43/client
+          image: gcr.io/ay2324s1-cs3219-g43/client:1.0-SNAPSHOT
           ports:
             - containerPort: 5173
 ---
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: user-service-container
-          image: ay2324s1-course-assessment-g43-user-service
+          image: gcr.io/ay2324s1-cs3219-g43/user-service:1.0-SNAPSHOT
           ports:
             - containerPort: 8000
 ---
@@ -80,7 +80,7 @@ spec:
     spec:
       containers:
         - name: question-service-container
-          image: ay2324s1-course-assessment-g43-question-service
+          image: gcr.io/ay2324s1-cs3219-g43/question-service:1.0-SNAPSHOT
           ports:
             - containerPort: 3000
 ---
@@ -112,7 +112,7 @@ spec:
     spec:
       containers:
         - name: matching-service-container
-          image: ay2324s1-course-assessment-g43-matching-service
+          image: gcr.io/ay2324s1-cs3219-g43/matching-service:1.0-SNAPSHOT
           ports:
             - containerPort: 5001
 ---

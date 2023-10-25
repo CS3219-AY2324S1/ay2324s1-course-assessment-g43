@@ -53,9 +53,9 @@ export const getQuestionFromSession = async (roomId) => {
   }
 }
 
-export const leaveSession = async (roomId, userId) => {
+export const leaveSession = async (roomId) => {
   const token = localStorage.getItem("jwt");
-  const res = await axios.put(`${basePath}/api/session/${roomId}/${userId}`, {
+  const res = await axios.delete(`${basePath}/api/session/${roomId}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -77,6 +77,7 @@ export const initCollaborationSocket = (
   roomId,
   userId,
   onPeerLanguageChange,
+  onLeaveRoomCallback,
   onSocketDisconnect
 ) => {
   const socket = socketIOClient(basePath);
@@ -99,8 +100,18 @@ export const initCollaborationSocket = (
     }
   });
 
+  socket.on("leave-room", () => {
+    onLeaveRoomCallback();
+    socket.disconnect();
+  });
+
   return socket;
 };
+
+export const initiateLeaveRoomRequest = (socket) => {
+  socket?.emit("leave-room");
+};
+
 
 export const notifyPeerLanguageChange = (socket, language) => {
   socket?.emit("change-language", language);

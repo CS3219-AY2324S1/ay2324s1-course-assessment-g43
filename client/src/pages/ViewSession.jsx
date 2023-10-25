@@ -9,6 +9,7 @@ import {
   Divider,
   Box,
   AbsoluteCenter,
+  useToast,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
@@ -21,13 +22,17 @@ import { useEffect, useState } from "react";
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id: roomId } = useParams();
+  const param = useParams();
+  const toast = useToast();
+
   const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
   const DEFAULT_LANGUAGE = "text";
 
   useEffect(() => {
+    const roomId = param.id;
+
     // Navigate back if no roomId specified
     if (!roomId) {
       console.log("No roomId specified");
@@ -37,7 +42,10 @@ export const ViewSession = observer(() => {
       store
         .fetchQuestion(roomId)
         .then((question) => {
+          //TODO can we refactor this to the case below?
+          store.setRoomId(roomId);
           store.initQuestionState(question);
+          store.initSocket(leaveSessionCallback);
         })
         .catch((err) => {
           console.log(err.message);
@@ -48,6 +56,7 @@ export const ViewSession = observer(() => {
           setIsDoneLoading(true);
         });
     } else {
+      store.setRoomId(roomId);
       store.setQuestionId(location.state.questionId);
       store.setTitle(location.state.title);
       store.setDescription(location.state.description);
@@ -55,6 +64,8 @@ export const ViewSession = observer(() => {
       store.setComplexity(location.state.complexity);
       store.setLanguage(DEFAULT_LANGUAGE);
       setIsDoneLoading(true);
+
+      store.initSocket(leaveSessionCallback);
     }
 
     return () => {
@@ -64,18 +75,31 @@ export const ViewSession = observer(() => {
 
   useEffect(() => {
     // TODO: Display error if connection fails?
-    store.setRoomId(roomId);
-    store.initSocket();
-
+    // store.setRoomId(roomId);
     return () => {
       store.disconnectFromServer();
     };
   }, []);
 
-  const handleLeaveSession = () => {
+  const leaveSessionCallback = () => {
     store.resetState();
-    store.disconnectFromServer();
     navigate(-1);
+    toast({
+      title: `Session has ended. Hope you enjoyed your coding session!`,
+      status: "success",
+      duration: 8000,
+      isClosable: true,
+    });
+  }
+
+  const handleLeaveSession = async () => {
+    if (
+      confirm("You and your partner will be disconnected from the session Are you sure?")
+    ) {
+      await store.initLeaveRoom();
+      leaveSessionCallback();
+    }
+
   };
 
   return (
@@ -134,7 +158,7 @@ export const ViewSession = observer(() => {
           {isDoneLoading && (
             <CodeEditor
               questionTitle={state.title}
-              roomId={roomId}
+              roomId={state.roomId}
               language={state.language}
               onLanguageChange={(newLang) => store.setLanguage(newLang)}
             />

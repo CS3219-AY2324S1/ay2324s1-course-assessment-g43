@@ -63,7 +63,6 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -96,7 +95,6 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -129,4 +127,3 @@ spec:
     - protocol: TCP
       port: 5001
       targetPort: 5001
-  type: LoadBalancer

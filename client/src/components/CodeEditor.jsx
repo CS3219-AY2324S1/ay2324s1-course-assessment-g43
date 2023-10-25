@@ -198,7 +198,7 @@ export const CodeEditor = observer(
                 setUserLanguage(e.target.value);
               }}
             >
-              <option value="text">Whiteboard</option>
+              <option value="text">Notes</option>
               <option value="python">Python</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const basePath =
   import.meta.env.VITE_QUESTION_BASE_PATH ||
-  "http://question-service-service:3000/api/questions";
+  "http://34.87.120.150:31000/api/questions";
 
 export const createQuestion = async (req) => {
   try {

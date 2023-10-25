@@ -21,6 +21,12 @@ spec:
           env:
             - name: PEERPREP_ENV
               value: production
+            - name: VITE_USER_BASE_PATH
+              value: http://34.87.120.150:30000/api
+            - name: VITE_QUESTION_BASE_PATH
+              value: http://34.87.120.150:31000/api/questions
+            - name: VITE_MATCHING_ENDPOINT
+              value: http://34.87.120.150:32000
 ---
 apiVersion: v1
 kind: Service
@@ -57,18 +63,32 @@ spec:
           env:
             - name: PEERPREP_ENV
               value: production
+            - name: PORT
+              value: "8000"
+            - name: PSQL_HOST
+              value: rain.db.elephantsql.com
+            - name: PSQL_PASSWORD
+              value: 6VxB3a2Z28_bVdbdqM5Rp1yBfALxy2KZ
+            - name: PSQL_USER
+              value: lcvbizby
+            - name: PSQL_DATABASE
+              value: lcvbizby
+            - name: ACCESS_TOKEN_SECRET
+              value: f98a32dcd04ff509254e8a71183503a5090626c5164aa5904ee3f243e9d64b201d005dbe4a2de932d3ea71ec724a9214bfc7ae90ca6f81dbe935e03ac3500a13
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: user-service-service
 spec:
+  type: NodePort
   selector:
     app: user-service
   ports:
     - protocol: TCP
       port: 8000
       targetPort: 8000
+      nodePort: 30000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -91,19 +111,27 @@ spec:
             - containerPort: 3000
           env:
             - name: PEERPREP_ENV
-              value: development
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_URL
+              value: "mongodb+srv://group43:hioEhOo1o2t67bhX@peerprep.69rbrct.mongodb.net/question-service"
+            - name: USER_BASE_PATH
+              value: http://34.87.120.150:30000/api
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: question-service-service
 spec:
+  type: NodePort
   selector:
     app: question-service
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+      nodePort: 31000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -127,15 +155,21 @@ spec:
           env:
             - name: PEERPREP_ENV
               value: production
+            - name: PORT
+              value: "5001"
+            - name: AMPQ_HOST
+              value: amqps://wevlszxo:WBogrJvrldUmrCPHfD7tETFVK7pdCIjj@armadillo.rmq.cloudamqp.com/wevlszxo
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: matching-service-service
 spec:
+  type: NodePort
   selector:
     app: matching-service
   ports:
     - protocol: TCP
       port: 5001
       targetPort: 5001
+      nodePort: 32000

@@ -91,7 +91,7 @@ spec:
             - containerPort: 3000
           env:
             - name: PEERPREP_ENV
-              value: production
+              value: development
 ---
 apiVersion: v1
 kind: Service

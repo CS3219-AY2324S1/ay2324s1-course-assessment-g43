@@ -24,7 +24,13 @@ const io = new Server(server, {
 
 // Socket.io server
 io.on("connection", (socket) => {
+
+  console.log("some socket lol");
+
   socket.on("join-room", (roomId, userId) => {
+
+    console.log("someone joined room lol");
+
     if (!roomId || !userId) return;
     socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);
@@ -36,6 +42,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    console.log("someone disconnected lol");
+
     socket.broadcast.emit("user-disconnected");
   });
 });
@@ -58,8 +66,9 @@ mongoose.connect(databaseUrl, {
 
 app.post("/api/session", sessionController.createSession);
 app.get("/api/session/:roomId", sessionController.getSession);
-app.put("/api/session/:roomId/:userId", sessionController.leaveSession);
 app.put("/api/session/:roomId", sessionController.saveAttempt);
+app.delete("/api/session/:roomId", sessionController.deleteSession);
+
 
 app.get("/api/hello", (req, res) => {
   res.send("Hello world");

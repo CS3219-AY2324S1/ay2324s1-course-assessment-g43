@@ -16,7 +16,6 @@ export const createSession = async (req) => {
     return res;
   } catch (err) {
     console.log(err);
-    throw err;
   }
 };
 
@@ -34,13 +33,11 @@ export const getQuestionFromSession = async (roomId) => {
         authorization: `Bearer ${token}`,
       },
     });
-    // Session is active if either user is still in the session
-    const isSessionActive =
-      res.data.firstUserStatus || res.data.secondUserStatus;
 
-    if (!isSessionActive) {
+    if (res.status == 404) {
       return null;
     }
+
     // Convert Session to Question
     const question = {
       questionId: res.data.questionId,

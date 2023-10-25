@@ -120,9 +120,9 @@ io.on("connection", (socket) => {
       };
 
       socket.emit("create-session", sessionDetails, async (session) => {
-
         if (!session) {
-          io.to(socket.id).emit("match-failure", "Error creating session");
+          io.to(socket.id).emit("match-failure", "Failed to create session! User is possibly in another room");
+          io.to(firstRequest.socketId).emit("match-failure", "Failed to create session! User is possibly in another room");
           return;
         }
 

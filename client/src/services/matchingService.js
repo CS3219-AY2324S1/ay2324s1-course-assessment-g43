@@ -44,6 +44,11 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
 
   socket.on("create-session", async (sessionDetails, callback) => {
     const session = await createSession(sessionDetails);
+
+    if (!session) {
+      callback(null);
+    }
+
     callback(session.data);
   })
 

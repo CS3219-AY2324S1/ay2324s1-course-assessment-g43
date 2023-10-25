@@ -1,5 +1,5 @@
-const Pool = require('pg').Pool;
-require("dotenv").config();
+const Pool = require("pg").Pool;
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const host = process.env.PSQL_HOST;
 const password = process.env.PSQL_PASSWORD;
@@ -11,7 +11,7 @@ const pool = new Pool({
   password,
   host,
   port: 5432,
-  database
+  database,
 });
 
 module.exports = pool;

@@ -6,11 +6,11 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "5173:5173"
     environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -21,11 +21,11 @@ services:
       context: ./src/question-service
       dockerfile: Dockerfile
       args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "3000:3000"
     environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-development}
+      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./src/question-service:/app
     depends_on:
@@ -35,11 +35,11 @@ services:
       context: ./src/user-service
       dockerfile: Dockerfile
       args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "8000:8000"
     environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-development}
+      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./src/user-service:/app
       - /app/node_modules
@@ -48,10 +48,10 @@ services:
       context: ./src/matching-service
       dockerfile: Dockerfile
       args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-deployment}
+        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "5001:5001"
     environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-development}
+      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./src/matching-service:/app

@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const basePath = "http://localhost:8000/api";
+const basePath =
+  import.meta.env.VITE_USER_BASE_PATH || "http://user-service-service:8000/api";
 
 export const getUserById = async (id) => {
   const token = localStorage.getItem("jwt");

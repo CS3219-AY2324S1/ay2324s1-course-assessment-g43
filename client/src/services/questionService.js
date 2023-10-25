@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const basePath = "http://localhost:3000/api/questions";
+const basePath =
+  import.meta.env.VITE_QUESTION_BASE_PATH ||
+  "http://question-service-service:3000/api/questions";
 
 export const createQuestion = async (req) => {
   try {

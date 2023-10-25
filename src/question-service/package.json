@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "PEERPREP_ENV=development node index.js",
-    "dev": "PEERPREP_ENV=development nodemon index.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "jest"
   },
   "author": "",

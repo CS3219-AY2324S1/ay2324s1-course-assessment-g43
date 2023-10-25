@@ -7,10 +7,10 @@ const { Server } = require("socket.io");
 const { EASY_QUEUE, MEDIUM_QUEUE, HARD_QUEUE, TIMEOUT_MS } = require("./constants.js");
 const { getQueue, listenToQueue, listenToReplies } = require("./matching.js");
 
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const app = express();
-const port = 5001;
+const port = process.env.PORT || 5001;
 
 const init = async () => {
 

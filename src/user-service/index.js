@@ -1,8 +1,9 @@
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 const cors = require("cors");
 
 const userRouter = require("./routes/user-route.js");

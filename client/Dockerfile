@@ -2,8 +2,8 @@
 FROM node:18
 
 # Set a default environment variable for PEERPREP_ENV
-ARG PEERPREP_ENV=development
-ENV PEERPREP_ENV=$PEERPREP_ENV
+ARG PEERPREP_ENV
+ENV PEERPREP_ENV ${PEERPREP_ENV:-production}
 
 # Set the working directory
 WORKDIR /app

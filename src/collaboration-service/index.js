@@ -24,17 +24,23 @@ const io = new Server(server, {
 
 // Socket.io server
 io.on("connection", (socket) => {
+  // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;
     socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);
   });
 
-  socket.on("change-language", (roomId, language) => {
-    if (!roomId || !language) return;
-    socket.broadcast.to(roomId).emit("change-language", language);
+  socket.on("change-language", (language) => {
+    if (!language) return;
+    socket.broadcast.emit("change-language", language);
   });
 
+  socket.on("leave-room", () => {
+    socket.broadcast.emit("leave-room");
+  });
+
+  // Not in use by FE presently
   socket.on("disconnect", () => {
     socket.broadcast.emit("user-disconnected");
   });
@@ -58,8 +64,9 @@ mongoose.connect(databaseUrl, {
 
 app.post("/api/session", sessionController.createSession);
 app.get("/api/session/:roomId", sessionController.getSession);
-app.put("/api/session/:roomId/:userId", sessionController.leaveSession);
 app.put("/api/session/:roomId", sessionController.saveAttempt);
+app.delete("/api/session/:roomId", sessionController.deleteSession);
+
 
 app.get("/api/hello", (req, res) => {
   res.send("Hello world");

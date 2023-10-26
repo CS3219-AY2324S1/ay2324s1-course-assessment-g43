@@ -16,15 +16,15 @@ export const createSession = async (req) => {
     return res;
   } catch (err) {
     console.log(err);
-    throw err;
+    return null;
   }
 };
 
 /**
  * Gets question from an existing session
- * 
- * @param {string} roomId 
- * @returns {Object} question if the session is valid, else null.
+ *
+ * @param {string} roomId
+ * @returns {Object} question if the session is valid, else throws Error.
  */
 export const getQuestionFromSession = async (roomId) => {
   try {
@@ -34,13 +34,6 @@ export const getQuestionFromSession = async (roomId) => {
         authorization: `Bearer ${token}`,
       },
     });
-    // Session is active if either user is still in the session
-    const isSessionActive =
-      res.data.firstUserStatus || res.data.secondUserStatus;
-
-    if (!isSessionActive) {
-      return null;
-    }
     // Convert Session to Question
     const question = {
       questionId: res.data.questionId,
@@ -51,14 +44,17 @@ export const getQuestionFromSession = async (roomId) => {
     };
     return question;
   } catch (err) {
-    console.log(err);
-    return null;
+    if (err.response.status === 404) {
+      throw new Error("Session is invalid.");
+    } else {
+      throw new Error("Error getting session info, please try again later.");
+    }
   }
-}
+};
 
-export const leaveSession = async (roomId, userId) => {
+export const leaveSession = async (roomId) => {
   const token = localStorage.getItem("jwt");
-  const res = await axios.put(`${basePath}/api/session/${roomId}/${userId}`, {
+  const res = await axios.delete(`${basePath}/api/session/${roomId}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -80,6 +76,7 @@ export const initCollaborationSocket = (
   roomId,
   userId,
   onPeerLanguageChange,
+  onLeaveRoomCallback,
   onSocketDisconnect
 ) => {
   const socket = socketIOClient(basePath);
@@ -102,9 +99,19 @@ export const initCollaborationSocket = (
     }
   });
 
+  socket.on("leave-room", () => {
+    onLeaveRoomCallback();
+    socket.disconnect();
+  });
+
   return socket;
 };
 
-export const notifyPeerLanguageChange = (socket, roomId, language) => {
-  socket?.emit("change-language", roomId, language);
+export const initiateLeaveRoomRequest = (socket) => {
+  socket?.emit("leave-room");
+};
+
+
+export const notifyPeerLanguageChange = (socket, language) => {
+  socket?.emit("change-language", language);
 };

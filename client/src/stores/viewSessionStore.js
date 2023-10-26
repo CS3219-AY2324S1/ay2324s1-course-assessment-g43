@@ -3,6 +3,7 @@ import {
   getQuestionFromSession,
   initCollaborationSocket,
   leaveSession,
+  initiateLeaveRoomRequest,
   notifyPeerLanguageChange,
 } from "../services/collaborationService";
 
@@ -45,29 +46,34 @@ class ViewSessionStore {
   }
 
   setRoomId(roomId) {
+    console.log("trying to set room ")
+
     this.state.roomId = roomId;
   }
 
   setLanguage(language) {
-    if (!language) return;
-    if (language === this.state.language) return;
+    if (!language || language === this.state.language) return;
     this.state.language = language;
-    notifyPeerLanguageChange(
-      this.socket,
-      this.state.roomId,
-      language.toLowerCase()
-    );
+    notifyPeerLanguageChange(this.socket, language.toLowerCase());
   }
 
   initQuestionState(question) {
     const { questionId, title, description, category, complexity } = question;
     this.state = {
+      ...this.state,
       questionId,
       title,
       description,
       category,
       complexity,
     };
+  }
+
+  async initLeaveRoom() {
+    if (this.state.roomId) {
+      await leaveSession(this.state.roomId);
+      initiateLeaveRoomRequest(this.socket);
+    }
   }
 
   resetState() {
@@ -84,6 +90,7 @@ class ViewSessionStore {
 
   async fetchQuestion(roomId) {
     const question = await getQuestionFromSession(roomId);
+    // question should never be null -- just a defensive measure
     if (!question) {
       throw new Error("Session is invalid");
     }
@@ -93,12 +100,17 @@ class ViewSessionStore {
   /**
    * Sets up a socket connection to the collaboration service server and joins a room.
    */
-  initSocket() {
+  initSocket(onLeaveRoomCallback) {
     const userId = JSON.parse(localStorage.getItem("user")).uid;
-    this.socket = initCollaborationSocket(this.state.roomId, userId, (lang) => {
-      // Note: use arrow function for correct `this` binding
-      this.setLanguage(lang);
-    });
+    this.socket = initCollaborationSocket(
+      this.state.roomId,
+      userId,
+      (lang) => {
+        // Note: use arrow function for correct `this` binding
+        this.setLanguage(lang);
+      },
+      onLeaveRoomCallback
+    );
   }
 
   /**

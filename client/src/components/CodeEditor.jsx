@@ -81,13 +81,13 @@ export const CodeEditor = observer(
       // console.log("PEER changed language changed to: ", language);
       if (language === userLanguage) return;
       setUserLanguage(language);
+      if (language == "text") {
+        setDisability(true);
+      } else {
+        setDisability(false);
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [language]);
-
-    useEffect(() => {
-      userLanguage == "text" ? setDisability(true) : setDisability(false);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userLanguage, isDisabled]);
 
     const options = {
       autoIndent: "full",
@@ -145,8 +145,12 @@ export const CodeEditor = observer(
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
         case "text":
           setDisability(true);
+<<<<<<< HEAD
           store.setLanguageId(0); //shouldn't set? because by right submit/run button will be invalid right?
           return `Use this space for working.`;
+=======
+          return ``;
+>>>>>>> 89da4043c38b76ea6e60a1a8fa56b0fed613d25b
         default:
           setDisability(true);
           store.setLanguageId(0); //shouldn't set? because by right submit/run button will be invalid right?
@@ -249,6 +253,7 @@ export const CodeEditor = observer(
       // console.log(editorRef);
       // console.log(provider.awareness, binding);
     }
+    // console.log(isDisabled);
 
     return (
       <Stack w={"100%"} h={"100%"}>
@@ -270,7 +275,7 @@ export const CodeEditor = observer(
                 setUserLanguage(e.target.value);
               }}
             >
-              <option value="text">Whiteboard</option>
+              <option value="text">Notes</option>
               <option value="python">Python</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>

@@ -90,6 +90,7 @@ class ViewSessionStore {
 
   async fetchQuestion(roomId) {
     const question = await getQuestionFromSession(roomId);
+    // question should never be null -- just a defensive measure
     if (!question) {
       throw new Error("Session is invalid");
     }
@@ -102,13 +103,14 @@ class ViewSessionStore {
   initSocket(onLeaveRoomCallback) {
     const userId = JSON.parse(localStorage.getItem("user")).uid;
     this.socket = initCollaborationSocket(
-      this.state.roomId, 
-      userId, 
+      this.state.roomId,
+      userId,
       (lang) => {
-      // Note: use arrow function for correct `this` binding
-      this.setLanguage(lang);
+        // Note: use arrow function for correct `this` binding
+        this.setLanguage(lang);
       },
-      onLeaveRoomCallback);
+      onLeaveRoomCallback
+    );
   }
 
   /**

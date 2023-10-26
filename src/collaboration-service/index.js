@@ -24,7 +24,7 @@ const io = new Server(server, {
 
 // Socket.io server
 io.on("connection", (socket) => {
-
+  // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;
     socket.join(roomId);
@@ -40,6 +40,7 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("leave-room");
   });
 
+  // Not in use by FE presently
   socket.on("disconnect", () => {
     socket.broadcast.emit("user-disconnected");
   });

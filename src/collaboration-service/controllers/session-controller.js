@@ -1,7 +1,16 @@
 const Session = require("../models/session-model");
 
 exports.createSession = async (req, res) => {
-  const { roomId, firstUserId, secondUserId, questionId, title, description, category, complexity } = req.body;
+  const {
+    roomId,
+    firstUserId,
+    secondUserId,
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+  } = req.body;
 
   try {
     if (firstUserId === secondUserId) {
@@ -10,15 +19,17 @@ exports.createSession = async (req, res) => {
 
     const otherActiveSession = await Session.findOne({
       $or: [
-        { firstUserId: firstUserId }, 
-        { firstUserId: secondUserId }, 
-        { secondUserId: firstUserId},
-        { secondUserId: secondUserId }
+        { firstUserId: firstUserId },
+        { firstUserId: secondUserId },
+        { secondUserId: firstUserId },
+        { secondUserId: secondUserId },
       ],
     });
 
     if (otherActiveSession) {
-      return res.status(400).json({ message: "User already in another session" });
+      return res
+        .status(400)
+        .json({ message: "User already in another session" });
     }
 
     DEFAULT_ACTIVE_ROOM_STATUS = true; // by implementation, room will never be inactive. leaving here for compatibility issues moving forward
@@ -56,12 +67,11 @@ exports.getSession = async (req, res) => {
     }
 
     return res.status(200).json(session);
-
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Error fetching session" });
   }
-}
+};
 
 exports.deleteSession = async (req, res) => {
   try {

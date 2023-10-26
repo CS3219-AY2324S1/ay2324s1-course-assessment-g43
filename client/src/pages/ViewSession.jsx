@@ -49,7 +49,7 @@ export const ViewSession = observer(() => {
         })
         .catch((err) => {
           console.log(err.message);
-          alert("Session is invalid");
+          alert(`Error: ${err.message}`);
           navigate("/");
         })
         .finally(() => {
@@ -90,7 +90,7 @@ export const ViewSession = observer(() => {
       duration: 8000,
       isClosable: true,
     });
-  }
+  };
 
   const handleLeaveSession = async () => {
     if (

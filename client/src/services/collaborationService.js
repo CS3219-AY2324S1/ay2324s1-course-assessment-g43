@@ -16,14 +16,15 @@ export const createSession = async (req) => {
     return res;
   } catch (err) {
     console.log(err);
+    return null;
   }
 };
 
 /**
  * Gets question from an existing session
- * 
- * @param {string} roomId 
- * @returns {Object} question if the session is valid, else null.
+ *
+ * @param {string} roomId
+ * @returns {Object} question if the session is valid, else throws Error.
  */
 export const getQuestionFromSession = async (roomId) => {
   try {
@@ -33,11 +34,6 @@ export const getQuestionFromSession = async (roomId) => {
         authorization: `Bearer ${token}`,
       },
     });
-
-    if (res.status == 404) {
-      return null;
-    }
-
     // Convert Session to Question
     const question = {
       questionId: res.data.questionId,
@@ -48,10 +44,13 @@ export const getQuestionFromSession = async (roomId) => {
     };
     return question;
   } catch (err) {
-    console.log(err);
-    return null;
+    if (err.status === 404) {
+      throw new Error("Session is invalid.");
+    } else {
+      throw new Error("Error getting session info, please try again later.");
+    }
   }
-}
+};
 
 export const leaveSession = async (roomId) => {
   const token = localStorage.getItem("jwt");

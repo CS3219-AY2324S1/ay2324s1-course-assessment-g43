@@ -23,6 +23,8 @@ import { observer } from "mobx-react";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
 import { PropTypes } from "prop-types";
+import { createSubmissionStore } from "../stores/createSubmissionStore";
+import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
 
 /**
  * `language` prop changes when PEER changes language
@@ -34,13 +36,19 @@ export const CodeEditor = observer(
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
-    const [isDisabled, setDisability] = useState(false);
+    const [isDisabled, setDisability] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const store = createSubmissionStore;
+    const resultStore = getSubmissionResultStore;
+    const [isRunLoading, setRunLoading] = useState(false);
+    const [isSubmitLoading, setSubmitLoading] = useState(false);
+    const [isPressed, setPressed] = useState(false);
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
       const template = getCodeTemplate(language, questionTitle);
       setCode(template);
+      store.setSourceCode(code);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -58,7 +66,10 @@ export const CodeEditor = observer(
       if (
         confirm("Changing languages will erase any current code! Are you sure?")
       ) {
-        setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
+        const newCode = getCodeTemplate(userLanguage.toLowerCase(), questionTitle);
+        setCode(newCode);
+        store.setSourceCode(newCode);
+    
         onLanguageChange(userLanguage); // Notify peer
       }
 
@@ -118,21 +129,27 @@ export const CodeEditor = observer(
       switch (lang) {
         case "cpp":
           setDisability(false);
+          store.setLanguageId(54);
           return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
         case "java":
           setDisability(false);
+          store.setLanguageId(62);
           return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
         case "python":
           setDisability(false);
+          store.setLanguageId(71);
           return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
         case "javascript":
           setDisability(false);
+          store.setLanguageId(93);
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
         case "text":
           setDisability(true);
+          store.setLanguageId(0); //shouldn't set? because by right submit/run button will be invalid right?
           return `Use this space for working.`;
         default:
           setDisability(true);
+          store.setLanguageId(0); //shouldn't set? because by right submit/run button will be invalid right?
           return ``;
       }
     }, []);
@@ -143,18 +160,73 @@ export const CodeEditor = observer(
           "Are you sure? Your current code will be discarded and reset to the default code!"
         )
       ) {
-        setCode(getCodeTemplate(userLanguage.toLowerCase(), questionTitle));
-      }
+        const newCode = getCodeTemplate(userLanguage.toLowerCase(), questionTitle);
+        setCode(newCode);
+        store.setSourceCode(newCode);
+      };
     };
 
     const handleEditorChange = (currContent) => {
       if (!currContent) return;
       setCode(currContent);
+      store.setSourceCode(currContent);
     };
 
-    function getEditorValue() {
+    async function getEditorValue() {
       console.log(editorRef.current.getValue());
-      return alert(editorRef.current.getValue());
+    
+      try {
+        const token = await store.createSubmission();
+        console.log(token);
+        resultStore.setToken(token);
+        // Delay for 2 seconds to avoid rate limit (2000 milliseconds)
+      setTimeout(async () => {
+        const result = await resultStore.getSubmissionResult();
+        console.log(result);
+        // alert("Code Executed!");
+      }, 2000); // 2000 milliseconds (2 seconds)
+        // alert(editorRef.current.getValue());
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    
+    function delayForFiveSeconds() {
+      return new Promise((resolve) => {
+        setTimeout(resolve, 5000); // 5000 milliseconds = 5 seconds
+      });
+    }
+
+    async function handleRunButtonClick() {
+      setPressed(true);
+      setRunLoading(true);    
+      try {
+        // await getEditorValue();
+        // Call the function to set the timeout
+        await delayForFiveSeconds();   
+      } catch (error) {
+        // Handle errors here
+        console.error(error);
+      } finally {
+        setPressed(false);
+        setRunLoading(false);
+      }
+    }
+    
+    async function handleSubmitButtonClick() {
+      setPressed(true);
+      setSubmitLoading(true);
+      try {
+        // await getEditorValue();
+        // Call the function to set the timeout
+        await delayForFiveSeconds();   
+      } catch (error) {
+        // Handle errors here
+        console.error(error);
+      } finally {
+        setPressed(false);
+        setSubmitLoading(false);
+      }
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -242,30 +314,28 @@ export const CodeEditor = observer(
                 Console for testing
               </DrawerHeader>
               <DrawerBody>
-                <p>Could be a popup instead, up to whatever we think is nice</p>
-                <p>I dont think I can replicate leetcode entirely...</p>
-                <p>
-                  Any ideas to have what leetcode has will be greatly
-                  appreciated!!
-                </p>
+                <p>Status: {resultStore.state.status}</p>
+                <p>Stdout: {resultStore.state.stdout}</p>
+                <p style={{ color: 'red' }}>Stderr: {resultStore.state.stderr}</p>
               </DrawerBody>
             </DrawerContent>
           </Drawer>
           <ButtonGroup>
             <Button
               variant={"outline"}
-              isDisabled={isDisabled}
-              onClick={getEditorValue}
+              isDisabled={isDisabled || isPressed}
+              onClick={handleRunButtonClick}
             >
-              Run
+              {isRunLoading ? 'Running...' : 'Run'}
             </Button>
             <Button
               variant={"solid"}
               color={"green"}
-              isDisabled={isDisabled}
-              onClick={getEditorValue}
+              isDisabled={isDisabled || isPressed}
+              onClick={handleSubmitButtonClick}
             >
-              Submit
+              {/* {isSubmitLoading  ? 'Submitting...' : 'Submit'} */}
+              {isDisabled ? 'Disabled' : (isSubmitLoading ? 'Submitting...' : 'Submit')}
             </Button>
           </ButtonGroup>
         </Flex>

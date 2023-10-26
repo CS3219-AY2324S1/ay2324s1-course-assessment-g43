@@ -86,7 +86,9 @@ exports.getStatuses = async (req, res) => {
 }
 
 exports.createSubmission = async (req, res) => {
+  // console.log(req);
   const {language_id, source_code, stdin, expected_output} = req.body;
+  // console.log(language_id, source_code, stdin, expected_output);
 
   if (!language_id || !source_code || !stdin || !expected_output) {
     return res.status(401).json({
@@ -101,7 +103,6 @@ exports.createSubmission = async (req, res) => {
   const base64StdIn = Buffer.from(stdin).toString('base64');
   const base64ExpectedOutput = Buffer.from(expected_output).toString('base64');
 
-  console.log("entered");
   const options = {
     method: 'POST',
     url: baseURL + "/submissions",
@@ -140,7 +141,9 @@ exports.createSubmission = async (req, res) => {
 }
 
 exports.getSubmissionResult = async (req, res) => {
-  const {token} = req.body;
+  console.log("inside")
+  const token = req.params.token;
+  console.log(token);
   if (!token) {
     return res.status(401).json({
       message:

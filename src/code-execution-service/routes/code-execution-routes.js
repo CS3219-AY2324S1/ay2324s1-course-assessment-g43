@@ -499,6 +499,6 @@ router.post("/createSubmission", codeExecutionController.createSubmission);
 }
 */
 
-router.get("/getSubmissionResult", codeExecutionController.getSubmissionResult);
+router.get("/getSubmissionResult/:token", codeExecutionController.getSubmissionResult);
 
 module.exports = router;

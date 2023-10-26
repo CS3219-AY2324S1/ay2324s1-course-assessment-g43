@@ -44,7 +44,7 @@ export const getQuestionFromSession = async (roomId) => {
     };
     return question;
   } catch (err) {
-    if (err.status === 404) {
+    if (err.response.status === 404) {
       throw new Error("Session is invalid.");
     } else {
       throw new Error("Error getting session info, please try again later.");

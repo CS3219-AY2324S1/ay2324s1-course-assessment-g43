@@ -143,7 +143,7 @@ export const ViewQuestionsUser = observer(() => {
                   <Box position="relative" padding="3">
                     <Divider />
                     <AbsoluteCenter bg="white" px="4">
-                      Task Discription
+                      Task Description
                     </AbsoluteCenter>
                   </Box>
                   {viewQuestionsStore.state.selectedQuestion.description &&

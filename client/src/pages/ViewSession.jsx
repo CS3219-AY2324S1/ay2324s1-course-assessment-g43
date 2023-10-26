@@ -161,7 +161,7 @@ export const ViewSession = observer(() => {
             <Box position="relative" padding="3" w={"100%"}>
               <Divider />
               <AbsoluteCenter bg="white" px="4" textAlign={"center"}>
-                Task Discription
+                Task Description
               </AbsoluteCenter>
             </Box>
             <ScrollableText text={state.description} />

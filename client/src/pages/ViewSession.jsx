@@ -48,6 +48,13 @@ export const ViewSession = observer(() => {
           store.initSocket(leaveSessionCallback);
         })
         .catch((err) => {
+          // If GET /session/:roomId returns 404, delete roomId from localStorage
+          // * Be careful when updating the err.message string
+          if (err.message === "Session is invalid.") {
+            if (localStorage.getItem("roomId") === roomId) {
+              localStorage.removeItem("roomId");
+            }
+          }
           console.log(err.message);
           alert(`Error: ${err.message}`);
           navigate("/");

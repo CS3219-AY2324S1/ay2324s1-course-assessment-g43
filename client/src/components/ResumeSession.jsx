@@ -7,18 +7,24 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Tooltip,
 } from "@chakra-ui/react";
 
 import { observer } from "mobx-react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ResumeSession = observer(() => {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     onOpen();
   }, [onOpen]);
+
+  const handleResumeSession = () => {
+    const roomId = localStorage.getItem("roomId");
+    navigate("/session/" + roomId);
+  };
 
   return (
     <Modal
@@ -35,7 +41,7 @@ const ResumeSession = observer(() => {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="green" onClick={onClose}>
+          <Button colorScheme="green" onClick={handleResumeSession}>
             Resume
           </Button>
         </ModalFooter>

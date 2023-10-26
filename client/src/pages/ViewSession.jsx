@@ -81,7 +81,10 @@ export const ViewSession = observer(() => {
     };
   }, []);
 
+  // This callback only runs upon a successful DELETE from the Sessions collection
   const leaveSessionCallback = () => {
+    // Remove roomId from localStorage
+    localStorage.removeItem("roomId");
     store.resetState();
     navigate(-1);
     toast({

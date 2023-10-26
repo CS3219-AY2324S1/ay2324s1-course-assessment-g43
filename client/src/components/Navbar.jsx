@@ -267,6 +267,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
   const toast = useToast();
   const modalComponentStore = useModalComponentStore();
 
+  // This only runs on successful POST to Sessions collection
   const redirectToSessionPage = ({
     questionId,
     title,
@@ -275,6 +276,8 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
     complexity,
     roomId,
   }) => {
+    // Write roomId to localStorage
+    localStorage.setItem("roomId", roomId);
     navigate(`/session/${roomId}`, {
       state: {
         questionId,
@@ -309,7 +312,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
 
-                  const successCallback = (data) => {
+                  const matchSuccessCallback = (data) => {
                     modalComponentStore.closeModal();
                     redirectToSessionPage(data);
                     toast({
@@ -319,7 +322,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                       isClosable: true,
                     });
                   };
-                  const failureCallback = (rejectionReason) => {
+                  const matchFailureCallback = (rejectionReason) => {
                     toast({
                       title: rejectionReason,
                       status: "warning",
@@ -328,10 +331,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     });
                   };
 
-                  matchingFormStore.startLoading().then(null, failureCallback);
+                  matchingFormStore
+                    .startLoading()
+                    .then(null, matchFailureCallback);
                   matchingFormStore.sendMatchRequest(
-                    successCallback,
-                    failureCallback
+                    matchSuccessCallback,
+                    matchFailureCallback
                   );
                 },
                 () => matchingFormStore.resetState()
@@ -383,8 +388,9 @@ const MobileNavItem = ({ label, children, href }) => {
   const { isOpen: isToggleOpen, onToggle } = useDisclosure();
   const modalComponentStore = useModalComponentStore();
   const toast = useToast();
-
   const navigate = useNavigate();
+
+  // This only runs on successful POST to Sessions collection
   const redirectToSessionPage = ({
     questionId,
     title,
@@ -393,6 +399,8 @@ const MobileNavItem = ({ label, children, href }) => {
     complexity,
     roomId,
   }) => {
+    // Write roomId to localStorage
+    localStorage.setItem("roomId", roomId);
     navigate(`/session/${roomId}`, {
       state: {
         questionId: questionId,
@@ -470,7 +478,7 @@ const MobileNavItem = ({ label, children, href }) => {
                             ).uid;
                             matchingFormStore.setUid(uid);
 
-                            const successCallback = (data) => {
+                            const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                               toast({
@@ -480,7 +488,7 @@ const MobileNavItem = ({ label, children, href }) => {
                                 isClosable: true,
                               });
                             };
-                            const failureCallback = (rejectionReason) => {
+                            const matchFailureCallback = (rejectionReason) => {
                               toast({
                                 title: rejectionReason,
                                 status: "warning",
@@ -491,10 +499,10 @@ const MobileNavItem = ({ label, children, href }) => {
 
                             matchingFormStore
                               .startLoading()
-                              .then(null, failureCallback);
+                              .then(null, matchFailureCallback);
                             matchingFormStore.sendMatchRequest(
-                              successCallback,
-                              failureCallback
+                              matchSuccessCallback,
+                              matchFailureCallback
                             );
                           },
                           () => matchingFormStore.resetState()

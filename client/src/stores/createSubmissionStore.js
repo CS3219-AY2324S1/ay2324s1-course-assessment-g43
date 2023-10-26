@@ -5,8 +5,8 @@ class CreateSubmissionStore {
   state = {
     language_id: "",
     source_code: "",
-    stdin: "hardcode",
-    expected_output: "True",
+    stdin: "hardcode", //MUST CHANGE
+    expected_output: "True", //MUST CHANGE
   }
 
   constructor() {
@@ -33,7 +33,6 @@ class CreateSubmissionStore {
     try {
       const res = await createSubmission(JSON.stringify(this.state));
       console.log(res.data.data.token)
-      const token = res.data.data.token
       return res.data.data.token;
     } catch (err) {
       console.log(err);

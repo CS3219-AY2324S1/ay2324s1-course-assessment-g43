@@ -145,15 +145,11 @@ export const CodeEditor = observer(
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
         case "text":
           setDisability(true);
-<<<<<<< HEAD
-          store.setLanguageId(0); //shouldn't set? because by right submit/run button will be invalid right?
-          return `Use this space for working.`;
-=======
+          store.setLanguageId(0); //invalid ID because not supposed to run/submit
           return ``;
->>>>>>> 89da4043c38b76ea6e60a1a8fa56b0fed613d25b
         default:
           setDisability(true);
-          store.setLanguageId(0); //shouldn't set? because by right submit/run button will be invalid right?
+          store.setLanguageId(0); //invalid ID because not supposed to run/submit
           return ``;
       }
     }, []);
@@ -183,31 +179,22 @@ export const CodeEditor = observer(
         const token = await store.createSubmission();
         console.log(token);
         resultStore.setToken(token);
-        // Delay for 2 seconds to avoid rate limit (2000 milliseconds)
-      setTimeout(async () => {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 2000); // 2000 milliseconds (2 seconds)
+        });
+    
         const result = await resultStore.getSubmissionResult();
         console.log(result);
-        // alert("Code Executed!");
-      }, 2000); // 2000 milliseconds (2 seconds)
-        // alert(editorRef.current.getValue());
       } catch (error) {
         console.error(error);
       }
-    }
-    
-    function delayForFiveSeconds() {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 5000); // 5000 milliseconds = 5 seconds
-      });
     }
 
     async function handleRunButtonClick() {
       setPressed(true);
       setRunLoading(true);    
       try {
-        // await getEditorValue();
-        // Call the function to set the timeout
-        await delayForFiveSeconds();   
+        await getEditorValue(); 
       } catch (error) {
         // Handle errors here
         console.error(error);
@@ -221,9 +208,7 @@ export const CodeEditor = observer(
       setPressed(true);
       setSubmitLoading(true);
       try {
-        // await getEditorValue();
-        // Call the function to set the timeout
-        await delayForFiveSeconds();   
+        await getEditorValue();
       } catch (error) {
         // Handle errors here
         console.error(error);
@@ -339,8 +324,7 @@ export const CodeEditor = observer(
               isDisabled={isDisabled || isPressed}
               onClick={handleSubmitButtonClick}
             >
-              {/* {isSubmitLoading  ? 'Submitting...' : 'Submit'} */}
-              {isDisabled ? 'Disabled' : (isSubmitLoading ? 'Submitting...' : 'Submit')}
+              {isSubmitLoading  ? 'Submitting...' : 'Submit'}
             </Button>
           </ButtonGroup>
         </Flex>

@@ -34,7 +34,7 @@ export const CodeEditor = observer(
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
-    const [isDisabled, setDisability] = useState(false);
+    const [isDisabled, setDisability] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
@@ -70,13 +70,13 @@ export const CodeEditor = observer(
       // console.log("PEER changed language changed to: ", language);
       if (language === userLanguage) return;
       setUserLanguage(language);
+      if (language == "text") {
+        setDisability(true);
+      } else {
+        setDisability(false);
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [language]);
-
-    useEffect(() => {
-      userLanguage == "text" ? setDisability(true) : setDisability(false);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userLanguage, isDisabled]);
 
     const options = {
       autoIndent: "full",
@@ -177,6 +177,7 @@ export const CodeEditor = observer(
       // console.log(editorRef);
       // console.log(provider.awareness, binding);
     }
+    console.log(isDisabled);
 
     return (
       <Stack w={"100%"} h={"100%"}>

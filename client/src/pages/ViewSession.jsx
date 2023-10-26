@@ -97,12 +97,13 @@ export const ViewSession = observer(() => {
 
   const handleLeaveSession = async () => {
     if (
-      confirm("You and your partner will be disconnected from the session Are you sure?")
+      confirm(
+        "You and your partner will be disconnected from the session Are you sure?"
+      )
     ) {
       await store.initLeaveRoom();
       leaveSessionCallback();
     }
-
   };
 
   return (
@@ -158,14 +159,16 @@ export const ViewSession = observer(() => {
             <ScrollableText text={state.description} />
           </Stack>
           <Divider orientation="vertical" />
-          {isDoneLoading && (
-            <CodeEditor
-              questionTitle={state.title}
-              roomId={state.roomId}
-              language={state.language}
-              onLanguageChange={(newLang) => store.setLanguage(newLang)}
-            />
-          )}{" "}
+          <Stack w={"50%"}>
+            {isDoneLoading && (
+              <CodeEditor
+                questionTitle={state.title}
+                roomId={state.roomId}
+                language={state.language}
+                onLanguageChange={(newLang) => store.setLanguage(newLang)}
+              />
+            )}{" "}
+          </Stack>
         </HStack>
       </Stack>
     </PageContainer>

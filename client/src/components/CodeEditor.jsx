@@ -177,7 +177,7 @@ export const CodeEditor = observer(
       // console.log(editorRef);
       // console.log(provider.awareness, binding);
     }
-    console.log(isDisabled);
+    // console.log(isDisabled);
 
     return (
       <Stack w={"100%"} h={"100%"}>

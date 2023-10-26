@@ -6,20 +6,13 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure,
 } from "@chakra-ui/react";
 
 import { observer } from "mobx-react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ResumeSession = observer(() => {
   const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    onOpen();
-  }, [onOpen]);
 
   const handleResumeSession = () => {
     const roomId = localStorage.getItem("roomId");
@@ -29,7 +22,7 @@ const ResumeSession = observer(() => {
   return (
     <Modal
       closeOnOverlayClick={false}
-      isOpen={isOpen}
+      isOpen={true}
       closeOnEsc={false}
       isCentered
     >

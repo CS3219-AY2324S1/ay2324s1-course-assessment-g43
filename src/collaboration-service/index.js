@@ -25,12 +25,7 @@ const io = new Server(server, {
 // Socket.io server
 io.on("connection", (socket) => {
 
-  console.log("some socket lol");
-
   socket.on("join-room", (roomId, userId) => {
-
-    console.log("someone joined room lol");
-
     if (!roomId || !userId) return;
     socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);
@@ -41,9 +36,11 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("change-language", language);
   });
 
-  socket.on("disconnect", () => {
-    console.log("someone disconnected lol");
+  socket.on("leave-room", () => {
+    socket.broadcast.emit("leave-room");
+  });
 
+  socket.on("disconnect", () => {
     socket.broadcast.emit("user-disconnected");
   });
 });

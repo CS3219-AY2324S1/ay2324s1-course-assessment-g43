@@ -17,8 +17,14 @@ import {
   Text,
   Card,
   CardBody,
+  Modal,
+  ModalHeader,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
-import { ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
+import { ChatIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -40,11 +46,20 @@ export const CodeEditor = observer(
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
     const [isDisabled, setDisability] = useState(true);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+      isOpen: { isConsoleOpen },
+      onOpen: { onConsoleOpen },
+      onClose: { onConsoleClose },
+    } = useDisclosure();
     const store = createSubmissionStore;
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
+    const {
+      isOpen: { isChatOpen },
+      onOpen: { onChatOpen },
+      onClose: { onChatClose },
+    } = useDisclosure();
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -209,7 +224,7 @@ export const CodeEditor = observer(
       } finally {
         setPressed(false);
         setRunLoading(false);
-        onOpen();
+        onConsoleOpen();
       }
     }
 
@@ -264,6 +279,13 @@ export const CodeEditor = observer(
           </Tooltip>
           <ButtonGroup>
             <Button variant={"solid"}>Get Random Question</Button>
+            <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
+              <IconButton
+                icon={<ChatIcon />}
+                variant={"outline"}
+                onClick={onChatOpen}
+              />
+            </Tooltip>
             <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
               <IconButton
                 icon={<RepeatIcon />}
@@ -272,6 +294,14 @@ export const CodeEditor = observer(
               />
             </Tooltip>
           </ButtonGroup>
+          <Modal isOpen={isChatOpen} isCentered onClose={onChatClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Peer Chat</ModalHeader>
+              <ModalCloseButton onClick={onChatClose} />
+              <ModalBody pb={6}>Chat here</ModalBody>
+            </ModalContent>
+          </Modal>
         </HStack>
         <Divider color="gray.300" />
         <Editor
@@ -286,14 +316,14 @@ export const CodeEditor = observer(
         />
         <Divider />
         <Flex justifyContent={"space-between"}>
-          <Button variant={"ghost"} onClick={onOpen}>
+          <Button variant={"ghost"} onClick={onConsoleOpen}>
             Console
             <ChevronUpIcon />
           </Button>
           <Drawer
             placement={"bottom"}
-            onClose={onClose}
-            isOpen={isOpen}
+            onClose={onConsoleClose}
+            isOpen={isConsoleOpen}
             size={"md"}
           >
             <DrawerOverlay />

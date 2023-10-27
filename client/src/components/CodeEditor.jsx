@@ -14,6 +14,9 @@ import {
   HStack,
   IconButton,
   Tooltip,
+  Text,
+  Card,
+  CardBody,
 } from "@chakra-ui/react";
 import { ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -41,7 +44,6 @@ export const CodeEditor = observer(
     const store = createSubmissionStore;
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
-    const [isSubmitLoading, setSubmitLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
 
     useEffect(() => {
@@ -66,10 +68,13 @@ export const CodeEditor = observer(
       if (
         confirm("Changing languages will erase any current code! Are you sure?")
       ) {
-        const newCode = getCodeTemplate(userLanguage.toLowerCase(), questionTitle);
+        const newCode = getCodeTemplate(
+          userLanguage.toLowerCase(),
+          questionTitle
+        );
         setCode(newCode);
         store.setSourceCode(newCode);
-    
+
         onLanguageChange(userLanguage); // Notify peer
       }
 
@@ -160,10 +165,13 @@ export const CodeEditor = observer(
           "Are you sure? Your current code will be discarded and reset to the default code!"
         )
       ) {
-        const newCode = getCodeTemplate(userLanguage.toLowerCase(), questionTitle);
+        const newCode = getCodeTemplate(
+          userLanguage.toLowerCase(),
+          questionTitle
+        );
         setCode(newCode);
         store.setSourceCode(newCode);
-      };
+      }
     };
 
     const handleEditorChange = (currContent) => {
@@ -174,7 +182,7 @@ export const CodeEditor = observer(
 
     async function getEditorValue() {
       console.log(editorRef.current.getValue());
-    
+
       try {
         const token = await store.createSubmission();
         console.log(token);
@@ -182,7 +190,7 @@ export const CodeEditor = observer(
         await new Promise((resolve) => {
           setTimeout(resolve, 2000); // 2000 milliseconds (2 seconds)
         });
-    
+
         const result = await resultStore.getSubmissionResult();
         console.log(result);
       } catch (error) {
@@ -192,21 +200,7 @@ export const CodeEditor = observer(
 
     async function handleRunButtonClick() {
       setPressed(true);
-      setRunLoading(true);    
-      try {
-        await getEditorValue(); 
-      } catch (error) {
-        // Handle errors here
-        console.error(error);
-      } finally {
-        setPressed(false);
-        setRunLoading(false);
-      }
-    }
-    
-    async function handleSubmitButtonClick() {
-      setPressed(true);
-      setSubmitLoading(true);
+      setRunLoading(true);
       try {
         await getEditorValue();
       } catch (error) {
@@ -214,7 +208,8 @@ export const CodeEditor = observer(
         console.error(error);
       } finally {
         setPressed(false);
-        setSubmitLoading(false);
+        setRunLoading(false);
+        onOpen();
       }
     }
 
@@ -300,31 +295,60 @@ export const CodeEditor = observer(
           >
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerHeader borderBottomWidth="1px">
-                Console for testing
+              <DrawerHeader borderBottomWidth="1px" fontSize={"2xl"}>
+                Testing Console
               </DrawerHeader>
               <DrawerBody>
-                <p>Status: {resultStore.state.status}</p>
-                <p>Stdout: {resultStore.state.stdout}</p>
-                <p style={{ color: 'red' }}>Stderr: {resultStore.state.stderr}</p>
+                <Stack spacing={"2"}>
+                  {resultStore.state.stdout ? (
+                    <>
+                      <Text as={"b"} fontSize={"xl"} color={"gray"}>
+                        Output {}
+                      </Text>
+                      <Card backgroundColor={"gray.100"} variant={"filled"}>
+                        <CardBody>
+                          <Text color={"gray.600"}>Hello</Text>
+                          <Text>{resultStore.state.stdout}</Text>
+                        </CardBody>
+                      </Card>
+                    </>
+                  ) : (
+                    <Text as={"b"} fontSize={"xl"} color={"gray"}>
+                      No output generated
+                    </Text>
+                  )}
+                  {resultStore.state.stderr ? (
+                    <>
+                      <Text as={"b"} fontSize={"xl"} color={"red"}>
+                        Error {}
+                      </Text>
+                      <Card
+                        colorScheme={"red"}
+                        variant={"filled"}
+                        backgroundColor={"red.100"}
+                      >
+                        <CardBody>
+                          <Text color={"red.600"}>
+                            {resultStore.state.stderr}
+                          </Text>
+                        </CardBody>
+                      </Card>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </Stack>
               </DrawerBody>
             </DrawerContent>
           </Drawer>
           <ButtonGroup>
             <Button
-              variant={"outline"}
-              isDisabled={isDisabled || isPressed}
-              onClick={handleRunButtonClick}
-            >
-              {isRunLoading ? 'Running...' : 'Run'}
-            </Button>
-            <Button
               variant={"solid"}
               color={"green"}
               isDisabled={isDisabled || isPressed}
-              onClick={handleSubmitButtonClick}
+              onClick={handleRunButtonClick}
             >
-              {isSubmitLoading  ? 'Submitting...' : 'Submit'}
+              {isRunLoading ? "Running..." : "Run"}
             </Button>
           </ButtonGroup>
         </Flex>

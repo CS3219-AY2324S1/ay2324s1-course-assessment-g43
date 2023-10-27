@@ -5,7 +5,7 @@ import { RegisterUser } from "./pages/RegisterUser";
 import { UpdateUser } from "./pages/UpdateUser";
 import { ViewUser } from "./pages/ViewUser";
 import { ViewQuestions } from "./pages/ViewQuestions";
-import { ViewQuestionsUser } from "./pages/ViewQuestionsUser";
+import { History } from "./pages/History";
 import { UpdateQuestion } from "./pages/UpdateQuestion";
 import { ViewSession } from "./pages/ViewSession";
 
@@ -19,7 +19,7 @@ function App() {
         <Route path="/update-user" exact={true} Component={UpdateUser} />
         <Route path="/me" exact={true} Component={ViewUser} />
         <Route path="/browse-admin" exact={true} Component={ViewQuestions} />
-        <Route path="/browse-user" exact={true} Component={ViewQuestionsUser} />
+        <Route path="/history" exact={true} Component={History} />
 
         <Route
           path="/update-question"

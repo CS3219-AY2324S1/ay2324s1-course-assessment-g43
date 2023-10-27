@@ -55,19 +55,27 @@ const Navbar = observer(() => {
   const navItems =
     !!localStorageUser && localStorageUser !== "undefined"
       ? [
-          {
-            label: "Questions",
-            children: [
-              {
-                label: "Browse",
-                subLabel: "Explore the question pool",
-                href: userRole === "admin" ? "/browse-admin" : "/browse-user",
-              },
-              {
+          userRole === "admin"
+            ? {
+                label: "Questions",
+                children: [
+                  {
+                    label: "Browse",
+                    subLabel: "Explore the question pool",
+                    href: "/browse-admin",
+                  },
+                  {
+                    label: "Match",
+                    subLabel: "Get matched with a peer",
+                  },
+                ],
+              }
+            : {
                 label: "Match",
-                subLabel: "Get matched with a peer",
               },
-            ],
+          {
+            label: "History",
+            href: "/history",
           },
           {
             label: "My Profile",

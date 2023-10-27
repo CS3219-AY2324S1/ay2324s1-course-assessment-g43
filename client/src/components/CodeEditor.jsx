@@ -262,13 +262,16 @@ export const CodeEditor = observer(
               <option value="javascript">JavaScript</option>
             </Select>
           </Tooltip>
-          <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
-            <IconButton
-              icon={<RepeatIcon />}
-              variant={"unstyled"}
-              onClick={resetCode}
-            />
-          </Tooltip>
+          <ButtonGroup>
+            <Button variant={"solid"}>Get Random Question</Button>
+            <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
+              <IconButton
+                icon={<RepeatIcon />}
+                variant={"outline"}
+                onClick={resetCode}
+              />
+            </Tooltip>
+          </ButtonGroup>
         </HStack>
         <Divider color="gray.300" />
         <Editor

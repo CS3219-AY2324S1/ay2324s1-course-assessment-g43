@@ -5,8 +5,8 @@ class CreateSubmissionStore {
   state = {
     language_id: "",
     source_code: "",
-    stdin: "hardcode", //MUST CHANGE
-    expected_output: "True", //MUST CHANGE
+    // stdin: "hardcode", //MUST CHANGE
+    // expected_output: "True", //MUST CHANGE
   }
 
   constructor() {
@@ -21,13 +21,13 @@ class CreateSubmissionStore {
     this.state.source_code = sourceCode;
   }
 
-  setStdin(stdin) {
-    this.state.stdin = stdin;
-  }
+  // setStdin(stdin) {
+  //   this.state.stdin = stdin;
+  // }
 
-  setExpectedOutput(expectedOutput) {
-    this.state.expected_output = expectedOutput;
-  }
+  // setExpectedOutput(expectedOutput) {
+  //   this.state.expected_output = expectedOutput;
+  // }
 
   async createSubmission() {
     try {

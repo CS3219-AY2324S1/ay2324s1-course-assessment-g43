@@ -405,8 +405,6 @@ router.get("/getStatuses", codeExecutionController.getStatuses);
  * @typedef {object} SubmissionPayload
  * @property {string} language_id - Id of the language of the source code
  * @property {string} source_code - Source code for compilation
- * @property {string} stdin - Input for source code
- * @property {string} expectedOutput - 	Expected output of program
  */
 
 /**
@@ -417,10 +415,9 @@ router.get("/getStatuses", codeExecutionController.getStatuses);
  * @return {ErrorResponse} 401 - unauthorized response - application/json
  * @return {ErrorResponse} 500 - error response - aplication/json
  * @example request - example payload
- {
+{
   "language_id": "71",
-  "source_code": "print(input())",
-  "stdin": "this is the input"
+  "source_code": "print(\"hello world\")"
 }
  * @example response - 200 - example 200 response
 {
@@ -431,7 +428,7 @@ router.get("/getStatuses", codeExecutionController.getStatuses);
 }
  * @example response - 401 - example 401 response
 {
-	"message": "Language ID, source code, stdin and expected output are necessary for a submission.",
+	"message": "Language ID and source code are necessary for a submission.",
 	"data": {}
 }
  * @example response - 500 - example 500 response
@@ -451,7 +448,6 @@ router.post("/createSubmission", codeExecutionController.createSubmission);
 /**
  * A Submission Result Data Document
  * @typedef {object} SubmissionResultDocument
- * @property {string} expectedOutput - 	Expected output of program
  * @property {string} stdOut - Standard output of the program after execution
  * @property {string} stderr - Standard error of the program after execution
  * @property {string} status - Submission Status
@@ -465,26 +461,16 @@ router.post("/createSubmission", codeExecutionController.createSubmission);
  */
 
 /**
- * GET /api/getSubmissionResult
+ * GET /api/getSubmissionResult/{token}
  * @summary Gets relevant data from submission result
  * @param {SubmissionResultPayload} request.body.required - The submission token
  * @return {MessageSubmissionResultDocument} 200 - success response - application/json
  * @return {ErrorResponse} 500 - error response - application/json
- * @example request - example payload
-{
-	"token": "79143ebf-18f9-468d-bb40-6a1fa1d3bf98"
-}
  * @example response - 200 - example 200 response
 {
-	"message": "Successful retrieval of submission",
+	"message": "Successful submission",
 	"data": {
-		"expected_output": "123\nthis is the input\n",
-		"stdout": "123\nthis is the input\n",
-		"stderr": null,
-		"status": {
-			"id": 3,
-			"description": "Accepted"
-		}
+		"token": "91c484c8-52f1-43d8-8540-36b4b903da15"
 	}
 }
  * @example response - 401 - example 401 response

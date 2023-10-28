@@ -50,7 +50,7 @@ export const CodeEditor = observer(
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
       const template = getCodeTemplate(language, questionTitle);
       setCode(template);
-      store.setSourceCode(code);
+      store.setSourceCode(template);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -150,11 +150,11 @@ export const CodeEditor = observer(
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
         case "text":
           setDisability(true);
-          store.setLanguageId(0); //invalid ID because not supposed to run/submit
+          // store.setLanguageId(0); //invalid ID because not supposed to run/submit
           return ``;
         default:
           setDisability(true);
-          store.setLanguageId(0); //invalid ID because not supposed to run/submit
+          // store.setLanguageId(0); //invalid ID because not supposed to run/submit
           return ``;
       }
     }, []);

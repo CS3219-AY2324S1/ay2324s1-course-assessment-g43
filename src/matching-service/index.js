@@ -54,6 +54,9 @@ const init = async () => {
     }, TIMEOUT_MS);
   
     socket.on("match-request", async (message) => {
+
+      console.log("Received match request");
+
       const parsedMessage = JSON.parse(message);
       const { uid, complexity } = parsedMessage;
       if (!uid || !complexity) {
@@ -73,7 +76,9 @@ const init = async () => {
         userId: uid,
         socketId: socket.id,
       }
-  
+
+      console.log("send request message to queue");
+
       channel.sendToQueue(queueName, Buffer.from(JSON.stringify(messageMatchRequest)));
     });
   

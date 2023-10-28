@@ -15,6 +15,9 @@ const getQueue = (complexity) => {
 };
 
 const handleCancelRequest = async (channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts) => {
+  
+  console.log("cancel request");
+
   await channel.assertQueue(MATCH_REPLY_QUEUE, { durable: false, messageTtl: 30000 });
 
   if (!pendingSocketRequests[index]) {
@@ -27,13 +30,17 @@ const handleCancelRequest = async (channel, index, socketId, userId, pendingSock
 
     const matchCancelMesssage = {
       isMatchCancel: true,
-      socketId,
+      firstUserSocketId: socketId,
+      firstUserId: userId,
     }
     channel.sendToQueue(MATCH_REPLY_QUEUE, Buffer.from(JSON.stringify(matchCancelMesssage)));
   }
 }
 
 const handleSaveMatchRequest = async (channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts) => {
+  
+  console.log("save match request");
+
   const messageTimeout = setTimeout(() => {
     pendingSocketRequests[index] = null;
   }, TIMEOUT_MS);
@@ -44,6 +51,9 @@ const handleSaveMatchRequest = async (channel, index, socketId, userId, pendingS
 }
 
 const handleSuccessMatchRequest = async (channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts) => {
+
+  console.log("success match request");
+
   await channel.assertQueue(MATCH_REPLY_QUEUE, { durable: false, messageTtl: 30000 });
 
   clearTimeout(pendingTimeouts[index]);
@@ -87,28 +97,43 @@ exports.listenToQueue = async (channel) => {
       if (!message) {
         return;
       }
+
+      // console.log(message)
+      
+      console.log("consumed queue message");
+
       const { isCancelRequest, userId, socketId } = JSON.parse(message.content.toString());
 
       if (isCancelRequest) {
         handleCancelRequest(channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts);
-      } else if (!messageRequests[index]) {
+      } else if (!pendingSocketRequests[index]) {
         handleSaveMatchRequest(channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts);
       } else {
         handleSuccessMatchRequest(channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts);
       }
-    });
+    }, { noAck: true});
     
   }
 }
 
 exports.listenToReplies = async (channel, io) => {
+
   await channel.assertQueue(MATCH_REPLY_QUEUE, { durable: false, messageTtl: 30000 });
 
   channel.consume(MATCH_REPLY_QUEUE, (message) => {
+
+    console.log("received reply")
+
     const parsedReply = JSON.parse(message.content.toString());
 
     if (parsedReply.isMatchCancel) {
-      io.to(socket.id).emit("match-cancelled", "Match cancelled");
+      const socketId = parsedReply.firstUserSocketId;
+      io.to(socketId).emit("match-cancelled", "Match cancelled");
+
+      if (io.sockets.sockets.get(socketId)) {
+        io.sockets.sockets.get(socketId).disconnect(true);
+      }
+
       return;
     }
 
@@ -130,6 +155,7 @@ exports.listenToReplies = async (channel, io) => {
       complexity,
     };
 
+
     io.to(firstUserSocketId).emit("create-session", sessionCreationRequest, async (session) => {
       if (!session) {
         io.to(firstUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
@@ -137,10 +163,10 @@ exports.listenToReplies = async (channel, io) => {
         return;
       }
 
-      io.to(firstRequest.socketId).emit("match-success", session);
-      io.to(socket.id).emit("match-success", session);
+      io.to(firstUserSocketId).emit("match-success", session);
+      io.to(secondUserSocketId).emit("match-success", session);
     });
-  });
+  }, { noAck: true});
 }
 
 exports.getQueue = getQueue;

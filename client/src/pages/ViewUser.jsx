@@ -19,7 +19,7 @@ export const ViewUser = observer(() => {
   const toast = useToast();
   const store = viewUserStore;
   const state = store.state;
-  const userId = JSON.parse(localStorage.getItem("user")).uid;
+  const userId = JSON.parse(localStorage.getItem("user"))?.uid;
 
   const redirectToUpdateUserPage = () => {
     navigate("/update-user");

@@ -1,8 +1,8 @@
 export const errorCodeContent = {
-  401: {
-    title: "Unauthorized",
+  403: {
+    title: "Forbidden",
     description:
-      "You are not authorized to access this page, please login and try again",
+      "You don't have permission to access this resource, please login and try again",
     buttonText: "Login",
     redirectUrl: "/login-user",
   },

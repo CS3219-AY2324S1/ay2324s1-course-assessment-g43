@@ -544,12 +544,23 @@ const MobileNavItem = ({ label, children, href }) => {
                               });
                             };
 
+                            const matchCancelCallback = () => {
+                              modalComponentStore.setClosable(true);
+                              toast({
+                                title: `Cancelled match successfully`,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+          
                             matchingFormStore
                               .startLoading()
                               .then(null, matchFailureCallback);
                             matchingFormStore.sendMatchRequest(
                               matchSuccessCallback,
-                              matchFailureCallback
+                              matchFailureCallback,
+                              matchCancelCallback
                             );
                           },
                           () => matchingFormStore.resetState()

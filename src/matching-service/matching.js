@@ -172,21 +172,6 @@ exports.listenToReplies = async (channel, io) => {
       io.to(secondUserSocketId).emit("match-success", firstSession);
     });
 
-    // io.timeout(5000).to(firstUserSocketId).emit("create-session", sessionCreationRequest, async (error, session) => {
-    //   if (error || !session) {
-    //     io.to(firstUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
-    //     io.to(secondUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
-    //     return;
-    //   }
-
-    //   const firstSession = session[0];
-
-    //   console.log("i go session")
-    //   console.log(firstSession);
-
-    //   io.to(firstUserSocketId).emit("match-success", firstSession);
-    //   io.to(secondUserSocketId).emit("match-success", firstSession);
-    // });
   }, { noAck: true});
 }
 

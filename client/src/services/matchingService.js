@@ -12,7 +12,7 @@ const ENDPOINT = "http://localhost:5001";
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
  * @returns {Socket} socket created
  */
-const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
+const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisconnect) => {
   const socket = socketIOClient(ENDPOINT);
 
   socket.on("connect", () => {
@@ -36,6 +36,10 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
     if (onMatchFailure) {
       onMatchFailure(errorMsg);
     }
+  });
+
+  socket.on("match-cancelled", (cancelMsg) => {
+    onMatchCancel();
   });
 
   socket.on("create-session", async (sessionCreationRequest, callback) => {

@@ -25,6 +25,7 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";
@@ -205,8 +206,27 @@ const MatchingModalBody = observer(() => {
 });
 
 const MatchingModalFooter = observer(() => {
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+
+    matchingFormStore.setIsCancelLoading(true);
+    matchingFormStore.sendMatchCancelRequest();
+  };
+
   return (
-    <Button
+    <>
+      <Button
+        colorScheme="red"
+        mr={3}
+        isLoading={matchingFormStore.isCancelLoading}
+        isDisabled={!matchingFormStore.isLoading}
+        onClick={handleCancel}
+      >
+        Cancel
+      </Button>
+
+      <Button
       colorScheme="green"
       mr={3}
       type="submit"
@@ -216,6 +236,9 @@ const MatchingModalFooter = observer(() => {
     >
       Match
     </Button>
+
+    </>
+
   );
 });
 
@@ -317,6 +340,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                 <MatchingModalFooter />,
                 (e) => {
                   e.preventDefault();
+
+                  modalComponentStore.setClosable(false);
+
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
 
@@ -339,12 +365,23 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     });
                   };
 
+                  const matchCancelCallback = () => {
+                    modalComponentStore.setClosable(true);
+                    toast({
+                      title: `Cancelled match successfully`,
+                      status: "warning",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  };
+
                   matchingFormStore
                     .startLoading()
                     .then(null, matchFailureCallback);
                   matchingFormStore.sendMatchRequest(
                     matchSuccessCallback,
-                    matchFailureCallback
+                    matchFailureCallback,
+                    matchCancelCallback
                   );
                 },
                 () => matchingFormStore.resetState()
@@ -480,6 +517,8 @@ const MobileNavItem = ({ label, children, href }) => {
                           <MatchingModalFooter />,
                           (e) => {
                             e.preventDefault();
+
+                            modalComponentStore.setClosable(false);
 
                             const uid = JSON.parse(
                               localStorage.getItem("user")

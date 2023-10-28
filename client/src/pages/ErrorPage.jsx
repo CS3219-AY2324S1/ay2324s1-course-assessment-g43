@@ -7,7 +7,10 @@ export const ErrorPage = () => {
   const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
   });
-  const statusCode = params.statusCode;
+  let statusCode = params.statusCode ?? 404;
+  if (!!!errorCodeContent[statusCode]) {
+    statusCode = 404;
+  }
   return (
     <PageContainer>
       <Box textAlign="center" py={10} px={6}>

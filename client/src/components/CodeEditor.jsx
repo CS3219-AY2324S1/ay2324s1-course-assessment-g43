@@ -310,7 +310,7 @@ export const CodeEditor = observer(
                       </Text>
                       <Card backgroundColor={"gray.100"} variant={"filled"}>
                         <CardBody>
-                          <Text color={"gray.600"}>Hello</Text>
+                          {/* <Text color={"gray.600"}>Hello</Text> */}
                           <Text>{resultStore.state.stdout}</Text>
                         </CardBody>
                       </Card>
@@ -322,8 +322,11 @@ export const CodeEditor = observer(
                   )}
                   {resultStore.state.stderr ? (
                     <>
-                      <Text as={"b"} fontSize={"xl"} color={"red"}>
+                      {/* <Text as={"b"} fontSize={"xl"} color={"red"}>
                         Error {}
+                      </Text> */}
+                      <Text as={"b"} fontSize={"xl"} color={"red"}>
+                        {resultStore.state.status} {}
                       </Text>
                       <Card
                         colorScheme={"red"}

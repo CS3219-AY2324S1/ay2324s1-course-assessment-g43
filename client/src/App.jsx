@@ -8,6 +8,8 @@ import { ViewQuestions } from "./pages/ViewQuestions";
 import { History } from "./pages/History";
 import { UpdateQuestion } from "./pages/UpdateQuestion";
 import { ViewSession } from "./pages/ViewSession";
+import { AxiosErrorMiddleware } from "./middleware/AxiosErrorMiddleware";
+import { ErrorPage } from "./pages/ErrorPage";
 
 function App() {
   return (

@@ -31,19 +31,31 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
       onMatchSuccess(successMsg);
     }
   });
+
   socket.on("match-failure", (errorMsg) => {
     if (onMatchFailure) {
       onMatchFailure(errorMsg);
     }
   });
 
-  socket.on("fetch-question", async (complexity, callback) => {
-    const question = await getRandomQuestionByComplexity(complexity);
-    callback(question);
-  });
+  socket.on("create-session", async (sessionCreationRequest, callback) => {
 
-  socket.on("create-session", async (sessionDetails, callback) => {
+    const { roomId, firstUserId, secondUserId, complexity } = sessionCreationRequest;
+
+    const question = await getRandomQuestionByComplexity(complexity);
+
+    const sessionDetails = {
+      roomId,
+      firstUserId,
+      secondUserId,
+      ...question,
+    };
+
     const session = await createSession(sessionDetails);
+
+    console.log("session")
+    console.log(session)
+    
     callback(session?.data);
   })
 

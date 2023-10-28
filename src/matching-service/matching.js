@@ -120,7 +120,7 @@ exports.listenToReplies = async (channel, io) => {
 
   await channel.assertQueue(MATCH_REPLY_QUEUE, { durable: false, messageTtl: 30000 });
 
-  channel.consume(MATCH_REPLY_QUEUE, (message) => {
+  channel.consume(MATCH_REPLY_QUEUE, async (message) => {
 
     console.log("received reply")
 
@@ -155,17 +155,38 @@ exports.listenToReplies = async (channel, io) => {
       complexity,
     };
 
-
-    io.to(firstUserSocketId).emit("create-session", sessionCreationRequest, async (session) => {
+    const firstUserSocket = io.sockets.sockets.get(firstUserSocketId);
+    
+    firstUserSocket.emit("create-session", sessionCreationRequest, async (session) => {
       if (!session) {
         io.to(firstUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
         io.to(secondUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
         return;
       }
 
-      io.to(firstUserSocketId).emit("match-success", session);
-      io.to(secondUserSocketId).emit("match-success", session);
+      const firstSession = session;
+
+      console.log("i go session");
+
+      io.to(firstUserSocketId).emit("match-success", firstSession);
+      io.to(secondUserSocketId).emit("match-success", firstSession);
     });
+
+    // io.timeout(5000).to(firstUserSocketId).emit("create-session", sessionCreationRequest, async (error, session) => {
+    //   if (error || !session) {
+    //     io.to(firstUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
+    //     io.to(secondUserSocketId).emit("match-failure", "Failed to create session! User is possibly in another room");
+    //     return;
+    //   }
+
+    //   const firstSession = session[0];
+
+    //   console.log("i go session")
+    //   console.log(firstSession);
+
+    //   io.to(firstUserSocketId).emit("match-success", firstSession);
+    //   io.to(secondUserSocketId).emit("match-success", firstSession);
+    // });
   }, { noAck: true});
 }
 

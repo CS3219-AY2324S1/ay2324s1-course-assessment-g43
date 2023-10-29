@@ -1,12 +1,3 @@
-// import { connect } from "amqplib";
-// import cors from "cors";
-// import dotenv from "dotenv";
-// import express from "express";
-// import http from "http";
-// import { Server } from "socket.io";
-// import { EASY_QUEUE, MEDIUM_QUEUE, HARD_QUEUE, TIMEOUT_MS } from "./constants.js";
-// import { getQueue, listenToQueue } from "./matching.js";
-
 const { connect } = require("amqplib");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -86,7 +77,6 @@ const init = async () => {
       const parsedMessage = JSON.parse(message);
       const { uid, complexity } = parsedMessage;
       if (!uid || !complexity) {
-        // TODO: Emit different event for cancel failure (+ handle event in FE)
         io.to(socket.id).emit("match-failure", "Missing arguments");
         return;
       }
@@ -113,7 +103,10 @@ const init = async () => {
     });
   });
 
+  // Matcher listens to the queues, pairs requests and sends matched pairs to the MATCH_REPLY_QUEUE
   listenToQueue(channel);
+
+  // Server listens to the MATCH_REPLY_QUEUE and sends the matched pairs to the clients
   listenToReplies(channel, io);
 
   server.listen(port, () => {

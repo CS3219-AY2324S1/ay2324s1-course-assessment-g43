@@ -1,4 +1,3 @@
-// import { EASY_QUEUE, HARD_QUEUE, MEDIUM_QUEUE, MATCH_REPLY_QUEUE, QUESTION_COMPLEXITY_LIST, TIMEOUT_MS } from "./constants.js";
 const { EASY_QUEUE, HARD_QUEUE, MEDIUM_QUEUE, MATCH_REPLY_QUEUE, QUESTION_COMPLEXITY_LIST, TIMEOUT_MS } = require("./constants.js");
 
 const getQueue = (complexity) => {
@@ -137,14 +136,8 @@ exports.listenToReplies = async (channel, io) => {
       return;
     }
 
-    const firstUserSocketId = parsedReply.firstUserSocketId;
-    const firstUserId = parsedReply.firstUserId;
-
-    const secondUserSocketId = parsedReply.secondUserSocketId;
-    const secondUserId = parsedReply.secondUserId;
-
-    const complexity = parsedReply.complexity;
-
+    const { firstUserSocketId, firstUserId, secondUserSocketId, secondUserId, complexity } = parsedReply;
+    
     const timestamp = Math.floor(Date.now() / 1000);
     const roomId = `${timestamp}-${firstUserId}-${secondUserId}`;
 

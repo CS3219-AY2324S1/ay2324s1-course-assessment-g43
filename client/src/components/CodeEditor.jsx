@@ -46,9 +46,9 @@ export const CodeEditor = observer(
     const [code, setCode] = useState("");
     const [isDisabled, setDisability] = useState(true);
     const {
-      isOpen: { isConsoleOpen },
-      onOpen: { onConsoleOpen },
-      onClose: { onConsoleClose },
+      isOpen: isConsoleOpen,
+      onOpen: onConsoleOpen,
+      onClose: onConsoleClose,
     } = useDisclosure();
     const store = createSubmissionStore;
     const resultStore = getSubmissionResultStore;

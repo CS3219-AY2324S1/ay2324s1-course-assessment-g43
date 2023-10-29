@@ -24,7 +24,12 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { ChatIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
+import {
+  ArrowForwardIcon,
+  ChatIcon,
+  ChevronUpIcon,
+  RepeatIcon,
+} from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -278,7 +283,14 @@ export const CodeEditor = observer(
             </Select>
           </Tooltip>
           <ButtonGroup>
-            <Button variant={"solid"}>Get Random Question</Button>
+            <Tooltip
+              label="Get New Random Question"
+              hasArrow
+              bg="gray.300"
+              color="black"
+            >
+              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
+            </Tooltip>
             <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
               <IconButton
                 icon={<ChatIcon />}

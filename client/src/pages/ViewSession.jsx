@@ -39,6 +39,7 @@ export const ViewSession = observer(() => {
       navigate("/");
     }
     if (!location.state || !location.state.questionId) {
+      // Case when user resumes an existing session
       store
         .fetchQuestion(roomId)
         .then((question) => {
@@ -46,6 +47,9 @@ export const ViewSession = observer(() => {
           store.setRoomId(roomId);
           store.initQuestionState(question);
           store.initSocket(leaveSessionCallback);
+          store.setLanguage(
+            localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
+          );
         })
         .catch((err) => {
           let message = err.message;
@@ -64,13 +68,16 @@ export const ViewSession = observer(() => {
           setIsDoneLoading(true);
         });
     } else {
+      // Case when user comes from on the successful creation of a new session
       store.setRoomId(roomId);
       store.setQuestionId(location.state.questionId);
       store.setTitle(location.state.title);
       store.setDescription(location.state.description);
       store.setCategory(location.state.category);
       store.setComplexity(location.state.complexity);
-      store.setLanguage(DEFAULT_LANGUAGE);
+      store.setLanguage(
+        localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
+      );
       setIsDoneLoading(true);
 
       store.initSocket(leaveSessionCallback);
@@ -78,21 +85,15 @@ export const ViewSession = observer(() => {
 
     return () => {
       store.resetState();
-    };
-  }, []);
-
-  useEffect(() => {
-    // TODO: Display error if connection fails?
-    // store.setRoomId(roomId);
-    return () => {
       store.disconnectFromServer();
     };
   }, []);
 
   // This callback only runs upon a successful DELETE from the Sessions collection
   const leaveSessionCallback = () => {
-    // Remove roomId from localStorage
+    // Remove roomId & sessionLanguage from localStorage
     localStorage.removeItem("roomId");
+    localStorage.removeItem("sessionLanguage");
     store.resetState();
     navigate(-1);
     toast({

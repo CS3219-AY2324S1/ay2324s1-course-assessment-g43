@@ -108,6 +108,8 @@ class ViewSessionStore {
       (lang) => {
         // Note: use arrow function for correct `this` binding
         this.setLanguage(lang);
+        // Save language to local storage -- useful when user resumes session
+        localStorage.setItem("sessionLanguage", lang);
       },
       onLeaveRoomCallback
     );

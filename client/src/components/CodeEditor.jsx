@@ -18,7 +18,12 @@ import {
   Card,
   CardBody,
 } from "@chakra-ui/react";
-import { ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
+import {
+  ArrowForwardIcon,
+  ChatIcon,
+  ChevronUpIcon,
+  RepeatIcon,
+} from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -40,7 +45,11 @@ export const CodeEditor = observer(
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
     const [isDisabled, setDisability] = useState(true);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+      isOpen: isConsoleOpen,
+      onOpen: onConsoleOpen,
+      onClose: onConsoleClose,
+    } = useDisclosure();
     const store = createSubmissionStore;
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
@@ -209,7 +218,7 @@ export const CodeEditor = observer(
       } finally {
         setPressed(false);
         setRunLoading(false);
-        onOpen();
+        onConsoleOpen();
       }
     }
 
@@ -263,7 +272,17 @@ export const CodeEditor = observer(
             </Select>
           </Tooltip>
           <ButtonGroup>
-            <Button variant={"solid"}>Get Random Question</Button>
+            <Tooltip
+              label="Get New Random Question"
+              hasArrow
+              bg="gray.300"
+              color="black"
+            >
+              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
+            </Tooltip>
+            <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
+              <IconButton icon={<ChatIcon />} variant={"outline"} />
+            </Tooltip>
             <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
               <IconButton
                 icon={<RepeatIcon />}
@@ -286,14 +305,14 @@ export const CodeEditor = observer(
         />
         <Divider />
         <Flex justifyContent={"space-between"}>
-          <Button variant={"ghost"} onClick={onOpen}>
+          <Button variant={"ghost"} onClick={onConsoleOpen}>
             Console
             <ChevronUpIcon />
           </Button>
           <Drawer
             placement={"bottom"}
-            onClose={onClose}
-            isOpen={isOpen}
+            onClose={onConsoleClose}
+            isOpen={isConsoleOpen}
             size={"md"}
           >
             <DrawerOverlay />

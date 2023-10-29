@@ -246,6 +246,31 @@ const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  const navigate = useNavigate();
+  const toast = useToast();
+  const modalComponentStore = useModalComponentStore();
+
+  // This only runs on successful POST to Sessions collection
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+    roomId,
+  }) => {
+    // Write roomId to localStorage
+    localStorage.setItem("roomId", roomId);
+    navigate(`/session/${roomId}`, {
+      state: {
+        questionId,
+        title,
+        description,
+        category,
+        complexity,
+      },
+    });
+  };
 
   return (
     <Stack direction={"row"} spacing={4}>
@@ -264,6 +289,51 @@ const DesktopNav = ({ navItems }) => {
                   textDecoration: "none",
                   color: linkHoverColor,
                 }}
+                onClick={
+                  navItem.label != "Match"
+                    ? () => {}
+                    : () =>
+                        modalComponentStore.openModal(
+                          matchingModalTitle,
+                          <MatchingModalBody />,
+                          <MatchingModalFooter />,
+                          (e) => {
+                            e.preventDefault();
+                            const uid = JSON.parse(
+                              localStorage.getItem("user")
+                            ).uid;
+                            matchingFormStore.setUid(uid);
+
+                            const matchSuccessCallback = (data) => {
+                              modalComponentStore.closeModal();
+                              redirectToSessionPage(data);
+                              toast({
+                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                                status: "success",
+                                duration: 8000,
+                                isClosable: true,
+                              });
+                            };
+                            const matchFailureCallback = (rejectionReason) => {
+                              toast({
+                                title: rejectionReason,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+
+                            matchingFormStore
+                              .startLoading()
+                              .then(null, matchFailureCallback);
+                            matchingFormStore.sendMatchRequest(
+                              matchSuccessCallback,
+                              matchFailureCallback
+                            );
+                          },
+                          () => matchingFormStore.resetState()
+                        )
+                }
               >
                 {navItem.label}
               </Box>
@@ -466,6 +536,50 @@ const MobileNavItem = ({ label, children, href }) => {
         _hover={{
           textDecoration: "none",
         }}
+        onClick={
+          label != "Match"
+            ? () => {}
+            : () =>
+                modalComponentStore.openModal(
+                  matchingModalTitle,
+                  <MatchingModalBody />,
+                  <MatchingModalFooter />,
+                  (e) => {
+                    e.preventDefault();
+
+                    const uid = JSON.parse(localStorage.getItem("user")).uid;
+                    matchingFormStore.setUid(uid);
+
+                    const matchSuccessCallback = (data) => {
+                      modalComponentStore.closeModal();
+                      redirectToSessionPage(data);
+                      toast({
+                        title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                        status: "success",
+                        duration: 8000,
+                        isClosable: true,
+                      });
+                    };
+                    const matchFailureCallback = (rejectionReason) => {
+                      toast({
+                        title: rejectionReason,
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    };
+
+                    matchingFormStore
+                      .startLoading()
+                      .then(null, matchFailureCallback);
+                    matchingFormStore.sendMatchRequest(
+                      matchSuccessCallback,
+                      matchFailureCallback
+                    );
+                  },
+                  () => matchingFormStore.resetState()
+                )
+        }
       >
         <Flex justifyContent={"space-between"} alignItems={"center"}>
           <Text

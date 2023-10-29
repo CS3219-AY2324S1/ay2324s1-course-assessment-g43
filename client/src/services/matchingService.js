@@ -9,6 +9,7 @@ const ENDPOINT = "http://localhost:5001";
  *
  * @param {Function} onMatchSuccess - callback function for successful match
  * @param {Function} onMatchFailure - callback function for failed match
+ * @param {Function} onMatchCancel - callback function for successful match cancellation
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
  * @returns {Socket} socket created
  */
@@ -20,26 +21,20 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
   });
 
   socket.on("disconnect", () => {
-    if (onSocketDisconnect) {
-      onSocketDisconnect();
-    }
+    onSocketDisconnect?.();
   });
 
   // Custom events
   socket.on("match-success", (successMsg) => {
-    if (onMatchSuccess) {
-      onMatchSuccess(successMsg);
-    }
+    onMatchSuccess?.(successMsg);
   });
 
   socket.on("match-failure", (errorMsg) => {
-    if (onMatchFailure) {
-      onMatchFailure(errorMsg);
-    }
+    onMatchFailure?.(errorMsg);
   });
 
   socket.on("match-cancelled", (cancelMsg) => {
-    onMatchCancel();
+    onMatchCancel?.();
   });
 
   socket.on("create-session", async (sessionCreationRequest, callback) => {

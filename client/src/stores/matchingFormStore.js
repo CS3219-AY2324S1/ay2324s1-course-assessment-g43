@@ -68,36 +68,36 @@ class MatchingFormStore {
    *
    * @param {Function} onMatchSuccess - callback function for successful match
    * @param {Function} onMatchFailure - callback function for failed match
+   * @param {Function} onMatchCancel - callback function for successful match cancellation
    * @param {Function} onSocketDisconnect - callback function for socket disconnect
    * @returns null
    */
-  sendMatchRequest(onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisconnect) {
+  sendMatchRequest(
+    onMatchSuccess,
+    onMatchFailure,
+    onMatchCancel,
+    onSocketDisconnect
+  ) {
     this.socket = setupSocket(
       (data) => {
         console.log(data);
         this.setLoading(false);
-        if (onMatchSuccess) {
-          onMatchSuccess(data);
-        }
+        onMatchSuccess?.(data);
       },
       (error) => {
         console.log("Match failed: " + error);
         this.setLoading(false);
-        if (onMatchFailure) {
-          onMatchFailure(error);
-        }
+        onMatchFailure?.(error);
       },
       () => {
         this.setLoading(false);
         this.setIsCancelLoading(false);
-        onMatchCancel();
+        onMatchCancel?.();
       },
       () => {
         console.log("socket closed");
         this.setLoading(false);
-        if (onSocketDisconnect) {
-          onSocketDisconnect();
-        }
+        onSocketDisconnect?.();
       }
     );
 

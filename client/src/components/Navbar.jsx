@@ -25,7 +25,6 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";

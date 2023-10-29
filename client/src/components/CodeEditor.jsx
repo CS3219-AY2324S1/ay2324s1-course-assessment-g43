@@ -17,12 +17,6 @@ import {
   Text,
   Card,
   CardBody,
-  Modal,
-  ModalHeader,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import {
   ArrowForwardIcon,
@@ -60,11 +54,6 @@ export const CodeEditor = observer(
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
-    const {
-      isOpen: { isChatOpen },
-      onOpen: { onChatOpen },
-      onClose: { onChatClose },
-    } = useDisclosure();
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -292,11 +281,7 @@ export const CodeEditor = observer(
               <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
             </Tooltip>
             <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
-              <IconButton
-                icon={<ChatIcon />}
-                variant={"outline"}
-                onClick={onChatOpen}
-              />
+              <IconButton icon={<ChatIcon />} variant={"outline"} />
             </Tooltip>
             <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
               <IconButton
@@ -306,14 +291,6 @@ export const CodeEditor = observer(
               />
             </Tooltip>
           </ButtonGroup>
-          <Modal isOpen={isChatOpen} isCentered onClose={onChatClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Peer Chat</ModalHeader>
-              <ModalCloseButton onClick={onChatClose} />
-              <ModalBody pb={6}>Chat here</ModalBody>
-            </ModalContent>
-          </Modal>
         </HStack>
         <Divider color="gray.300" />
         <Editor

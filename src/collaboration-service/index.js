@@ -40,6 +40,12 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("leave-room");
   });
 
+  socket.on("new-chat-message", (message) => {
+    // Message is a JS object.
+    if (!message) return;
+    socket.broadcast.emit("new-chat-message", message);
+  });
+
   // Not in use by FE presently
   socket.on("disconnect", () => {
     socket.broadcast.emit("user-disconnected");
@@ -67,12 +73,6 @@ app.get("/api/session/:roomId", sessionController.getSession);
 app.put("/api/session/:roomId", sessionController.saveAttempt);
 app.delete("/api/session/:roomId", sessionController.deleteSession);
 
-
-app.get("/api/hello", (req, res) => {
-  res.send("Hello world");
-});
-
-// app.listen(port, () => console.log(`Listening on port ${port}`));
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

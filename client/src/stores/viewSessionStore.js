@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx";
 import {
   getQuestionFromSession,
   initCollaborationSocket,
-  leaveSession,
+  deleteSession,
   initiateLeaveRoomRequest,
   notifyPeerLanguageChange,
 } from "../services/collaborationService";
@@ -19,6 +19,16 @@ class ViewSessionStore {
 
     roomId: "",
     language: "",
+
+    /*
+    Array of objects with the following structure:
+      {
+        sender: string, // 'self' or 'peer'
+        message: string,
+        timestamp: string,
+      }
+    */
+    chat: [],
   };
 
   constructor() {
@@ -46,8 +56,6 @@ class ViewSessionStore {
   }
 
   setRoomId(roomId) {
-    console.log("trying to set room ")
-
     this.state.roomId = roomId;
   }
 
@@ -55,6 +63,11 @@ class ViewSessionStore {
     if (!language || language === this.state.language) return;
     this.state.language = language;
     notifyPeerLanguageChange(this.socket, language.toLowerCase());
+  }
+
+  setChat(message) {
+    // Note: message deletions not supported.
+    this.state.chat.push(message);
   }
 
   initQuestionState(question) {
@@ -71,7 +84,7 @@ class ViewSessionStore {
 
   async initLeaveRoom() {
     if (this.state.roomId) {
-      await leaveSession(this.state.roomId);
+      await deleteSession(this.state.roomId);
       initiateLeaveRoomRequest(this.socket);
     }
   }
@@ -111,7 +124,12 @@ class ViewSessionStore {
         // Save language to local storage -- useful when user resumes session
         localStorage.setItem("sessionLanguage", lang);
       },
-      onLeaveRoomCallback
+      onLeaveRoomCallback,
+      (message) => {
+        this.setChat(message);
+        // Save chat to local storage -- useful when user resumes session
+        localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
+      }
     );
   }
 
@@ -123,7 +141,7 @@ class ViewSessionStore {
       this.socket?.disconnect();
       if (this.state.roomId) {
         const userId = JSON.parse(localStorage.getItem("user")).uid;
-        await leaveSession(this.state.roomId, userId);
+        await deleteSession(this.state.roomId, userId);
       }
     } catch (err) {
       console.log(err);

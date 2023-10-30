@@ -1,6 +1,5 @@
 import {
   Stack,
-  Divider,
   Select,
   useDisclosure,
   Drawer,
@@ -18,12 +17,7 @@ import {
   Card,
   CardBody,
 } from "@chakra-ui/react";
-import {
-  ArrowForwardIcon,
-  ChatIcon,
-  ChevronUpIcon,
-  RepeatIcon,
-} from "@chakra-ui/icons";
+import { ArrowForwardIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -138,35 +132,38 @@ export const CodeEditor = observer(
       return formatted;
     };
 
-    const getCodeTemplate = useCallback((lang, questionTitle) => {
-      const functionName = convertTitleToFunctionName(questionTitle);
-      switch (lang) {
-        case "cpp":
-          setDisability(false);
-          store.setLanguageId(54);
-          return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
-        case "java":
-          setDisability(false);
-          store.setLanguageId(62);
-          return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
-        case "python":
-          setDisability(false);
-          store.setLanguageId(71);
-          return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
-        case "javascript":
-          setDisability(false);
-          store.setLanguageId(93);
-          return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
-        case "text":
-          setDisability(true);
-          store.setLanguageId(0); //invalid ID because not supposed to run/submit
-          return ``;
-        default:
-          setDisability(true);
-          store.setLanguageId(0); //invalid ID because not supposed to run/submit
-          return ``;
-      }
-    }, []);
+    const getCodeTemplate = useCallback(
+      (lang, questionTitle) => {
+        const functionName = convertTitleToFunctionName(questionTitle);
+        switch (lang) {
+          case "cpp":
+            setDisability(false);
+            store.setLanguageId(54);
+            return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
+          case "java":
+            setDisability(false);
+            store.setLanguageId(62);
+            return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
+          case "python":
+            setDisability(false);
+            store.setLanguageId(71);
+            return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
+          case "javascript":
+            setDisability(false);
+            store.setLanguageId(93);
+            return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
+          case "text":
+            setDisability(true);
+            store.setLanguageId(0); //invalid ID because not supposed to run/submit
+            return ``;
+          default:
+            setDisability(true);
+            store.setLanguageId(0); //invalid ID because not supposed to run/submit
+            return ``;
+        }
+      },
+      [store]
+    );
 
     const resetCode = () => {
       if (
@@ -245,7 +242,7 @@ export const CodeEditor = observer(
     // console.log(isDisabled);
 
     return (
-      <Stack w={"100%"} h={"100%"}>
+      <Stack w={"100%"} h={"50%"}>
         <HStack justifyContent={"space-between"}>
           <Tooltip
             label="Select your preferred language."
@@ -280,9 +277,6 @@ export const CodeEditor = observer(
             >
               <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
             </Tooltip>
-            <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
-              <IconButton icon={<ChatIcon />} variant={"outline"} />
-            </Tooltip>
             <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
               <IconButton
                 icon={<RepeatIcon />}
@@ -292,9 +286,8 @@ export const CodeEditor = observer(
             </Tooltip>
           </ButtonGroup>
         </HStack>
-        <Divider color="gray.300" />
         <Editor
-          height={"70vh"}
+          height={"40vh"}
           width={"100%"}
           theme={"vs-dark"}
           onMount={handleEditorDidMount}
@@ -303,7 +296,6 @@ export const CodeEditor = observer(
           value={code}
           options={options}
         />
-        <Divider />
         <Flex justifyContent={"space-between"}>
           <Button variant={"ghost"} onClick={onConsoleOpen}>
             Console

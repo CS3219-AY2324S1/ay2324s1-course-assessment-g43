@@ -18,6 +18,7 @@ import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
 import { useEffect, useState } from "react";
+import { ChatBox } from "../components/ChatBox";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
@@ -120,7 +121,7 @@ export const ViewSession = observer(() => {
       <Stack w={"100%"}>
         <HStack justifyContent={"space-between"}>
           <Heading
-            lineHeight={1.1}
+            lineHeight={1}
             fontSize={{ base: "l", sm: "xl" }}
             fontWeight={"semibold"}
           >
@@ -177,6 +178,8 @@ export const ViewSession = observer(() => {
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
               />
             )}{" "}
+            <Divider />
+            <ChatBox />
           </Stack>
         </HStack>
       </Stack>

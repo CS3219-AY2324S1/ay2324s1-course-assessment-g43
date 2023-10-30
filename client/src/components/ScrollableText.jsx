@@ -3,7 +3,7 @@ import { PropTypes } from "prop-types";
 
 const scrollStyle = {
   overflowY: "auto",
-  maxHeight: "50vh",
+  maxHeight: "65vh",
   maxWidth: "100%",
 };
 

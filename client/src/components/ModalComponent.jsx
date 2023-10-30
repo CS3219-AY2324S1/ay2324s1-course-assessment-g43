@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -18,13 +17,16 @@ const ModalComponent = observer(() => {
     <Modal
       isOpen={modalComponentStore.isOpen}
       onClose={modalComponentStore.closeModal}
+      closeOnEsc = {modalComponentStore.isClosable}
+      closeOnOverlayClick = {modalComponentStore.isClosable}
       isCentered
+      scrollBehavior="inside"
     >
       <ModalOverlay />
       <form onSubmit={modalComponentStore.onSubmit}>
         <ModalContent>
           <ModalHeader>{modalComponentStore.modalTitle}</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton isDisabled={!modalComponentStore.isClosable}/>
           <ModalBody>{modalComponentStore.modalBody}</ModalBody>
           <ModalFooter>{modalComponentStore.modalFooter}</ModalFooter>
         </ModalContent>

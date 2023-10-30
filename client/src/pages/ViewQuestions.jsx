@@ -321,7 +321,11 @@ const ViewQuestionDetailsModalBody = observer(() => {
       {viewQuestionsStore.state.selectedQuestion.description &&
         viewQuestionsStore.state.selectedQuestion.description
           .split("\n")
-          .map((p) => <Text py={1}>{p}</Text>)}
+          .map((line, i) => (
+            <Text py={1} key={line + i}>
+              {line}
+            </Text>
+          ))}
     </>
   );
 });

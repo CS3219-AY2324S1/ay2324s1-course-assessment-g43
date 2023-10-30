@@ -1,5 +1,6 @@
 import socketIOClient from "socket.io-client";
 import { getRandomQuestionByComplexity } from "../services/questionService";
+import { createSession} from "./collaborationService";
 
 const ENDPOINT = "http://localhost:5001";
 
@@ -8,10 +9,11 @@ const ENDPOINT = "http://localhost:5001";
  *
  * @param {Function} onMatchSuccess - callback function for successful match
  * @param {Function} onMatchFailure - callback function for failed match
+ * @param {Function} onMatchCancel - callback function for successful match cancellation
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
  * @returns {Socket} socket created
  */
-const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
+const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisconnect) => {
   const socket = socketIOClient(ENDPOINT);
 
   socket.on("connect", () => {
@@ -19,27 +21,42 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onSocketDisconnect) => {
   });
 
   socket.on("disconnect", () => {
-    if (onSocketDisconnect) {
-      onSocketDisconnect();
-    }
+    onSocketDisconnect?.();
   });
 
   // Custom events
   socket.on("match-success", (successMsg) => {
-    if (onMatchSuccess) {
-      onMatchSuccess(successMsg);
-    }
-  });
-  socket.on("match-failure", (errorMsg) => {
-    if (onMatchFailure) {
-      onMatchFailure(errorMsg);
-    }
+    onMatchSuccess?.(successMsg);
   });
 
-  socket.on("fetch-question", async (complexity, callback) => {
-    const question = await getRandomQuestionByComplexity(complexity);
-    callback(question);
+  socket.on("match-failure", (errorMsg) => {
+    onMatchFailure?.(errorMsg);
   });
+
+  socket.on("match-cancelled", (cancelMsg) => {
+    onMatchCancel?.();
+  });
+
+  socket.on("create-session", async (sessionCreationRequest, callback) => {
+
+    const { roomId, firstUserId, secondUserId, complexity } = sessionCreationRequest;
+
+    const question = await getRandomQuestionByComplexity(complexity);
+
+    const sessionDetails = {
+      roomId,
+      firstUserId,
+      secondUserId,
+      ...question,
+    };
+
+    const session = await createSession(sessionDetails);
+
+    console.log("session")
+    console.log(session)
+    
+    callback(session?.data);
+  })
 
   return socket;
 };

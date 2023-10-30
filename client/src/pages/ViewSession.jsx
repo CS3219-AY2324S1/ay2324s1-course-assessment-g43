@@ -9,32 +9,111 @@ import {
   Divider,
   Box,
   AbsoluteCenter,
-  Text,
-  Card,
-  CardBody,
-  CardHeader,
-  Select,
-  Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
-import { useEffect } from "react";
+import { ScrollableText } from "../components/ScrollableText";
+import { CodeEditor } from "../components/CodeEditor";
+import { useEffect, useState } from "react";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  const param = useParams();
+  const toast = useToast();
+
+  const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
+  const DEFAULT_LANGUAGE = "text";
 
   useEffect(() => {
-    store.setQuestionId(location.state.questionId);
-    store.setTitle(location.state.title);
-    store.setDescription(location.state.description);
-    store.setCategory(location.state.category);
-    store.setComplexity(location.state.complexity);
+    const roomId = param.id;
+
+    // Navigate back if no roomId specified
+    if (!roomId) {
+      console.log("No roomId specified");
+      navigate("/");
+    }
+    if (!location.state || !location.state.questionId) {
+      // Case when user resumes an existing session
+      store
+        .fetchQuestion(roomId)
+        .then((question) => {
+          //TODO can we refactor this to the case below?
+          store.setRoomId(roomId);
+          store.initQuestionState(question);
+          store.initSocket(leaveSessionCallback);
+          store.setLanguage(
+            localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
+          );
+        })
+        .catch((err) => {
+          let message = err.message;
+          // If GET /session/:roomId returns 404, delete roomId from localStorage
+          // * Be careful when updating the err.message string
+          if (err.message === "Session is invalid.") {
+            if (localStorage.getItem("roomId") === roomId) {
+              localStorage.removeItem("roomId");
+              message = "This session has been closed by your partner.";
+            }
+          }
+          alert(`Error: ${message}`);
+          navigate("/");
+        })
+        .finally(() => {
+          setIsDoneLoading(true);
+        });
+    } else {
+      // Case when user comes from on the successful creation of a new session
+      store.setRoomId(roomId);
+      store.setQuestionId(location.state.questionId);
+      store.setTitle(location.state.title);
+      store.setDescription(location.state.description);
+      store.setCategory(location.state.category);
+      store.setComplexity(location.state.complexity);
+      store.setLanguage(
+        localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
+      );
+      setIsDoneLoading(true);
+
+      store.initSocket(leaveSessionCallback);
+    }
+
+    return () => {
+      store.resetState();
+      store.disconnectFromServer();
+    };
   }, []);
+
+  // This callback only runs upon a successful DELETE from the Sessions collection
+  const leaveSessionCallback = () => {
+    // Remove roomId & sessionLanguage from localStorage
+    localStorage.removeItem("roomId");
+    localStorage.removeItem("sessionLanguage");
+    store.resetState();
+    navigate(-1);
+    toast({
+      title: `Session has ended. Hope you enjoyed your coding session!`,
+      status: "success",
+      duration: 8000,
+      isClosable: true,
+    });
+  };
+
+  const handleLeaveSession = async () => {
+    if (
+      confirm(
+        "You and your partner will be disconnected from the session Are you sure?"
+      )
+    ) {
+      await store.initLeaveRoom();
+      leaveSessionCallback();
+    }
+  };
 
   return (
     <PageContainer w={"100%"}>
@@ -62,14 +141,14 @@ export const ViewSession = observer(() => {
             colorScheme="red"
             variant="outline"
             mr={3}
-            onClick={() => navigate(-1)}
+            onClick={handleLeaveSession}
           >
             Leave Session
           </Button>
         </HStack>
         <Divider />
         <HStack>
-          <Stack spacing={4} w={"100%"} p={6} align={"start"}>
+          <Stack spacing={4} w={"50%"} p={6} align={"start"}>
             <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
               {state.title}
             </Heading>
@@ -82,48 +161,22 @@ export const ViewSession = observer(() => {
             </HStack>
             <Box position="relative" padding="3" w={"100%"}>
               <Divider />
-              <AbsoluteCenter bg="white" px="4">
-                Task Discription
+              <AbsoluteCenter bg="white" px="4" textAlign={"center"}>
+                Task Description
               </AbsoluteCenter>
             </Box>
-            <Text paddingTop={"3"}>{state.description}</Text>
+            <ScrollableText text={state.description} />
           </Stack>
           <Divider orientation="vertical" />
-
-          <Stack
-            spacing={4}
-            w={"100%"}
-            p={6}
-            align={"start"}
-            direction={"column"}
-          >
-            <Card w={"100%"} h={"40vh"}>
-              <CardHeader>
-                <Select
-                  placeholder="Java"
-                  w={"20%"}
-                  variant={"filled"}
-                  h={"10%"}
-                >
-                  <option>Python</option>
-                  <option>C++</option>
-                </Select>
-              </CardHeader>
-              <Divider color="gray.300" />
-              <CardBody>
-                <Textarea
-                  placeholder="Enter your solution here"
-                  _placeholder={{ color: "gray.500" }}
-                />
-              </CardBody>
-            </Card>
-            <Card w={"100%"} h={"30vh"}>
-              <CardHeader>Peer Chat</CardHeader>
-              <Divider color="gray.300" />
-              <CardBody>
-                <Text color={"gray.500"}>Chat with your partner here.</Text>
-              </CardBody>
-            </Card>
+          <Stack w={"50%"}>
+            {isDoneLoading && (
+              <CodeEditor
+                questionTitle={state.title}
+                roomId={state.roomId}
+                language={state.language}
+                onLanguageChange={(newLang) => store.setLanguage(newLang)}
+              />
+            )}{" "}
           </Stack>
         </HStack>
       </Stack>

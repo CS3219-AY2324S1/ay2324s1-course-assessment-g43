@@ -1,6 +1,7 @@
 export const createModalComponentStore = () => {
   return {
     isOpen: false,
+    isClosable: true,
     modalTitle: null,
     modalBody: null,
     modalFooter: null,
@@ -25,11 +26,15 @@ export const createModalComponentStore = () => {
       // close the modal then clear all content
       this.resetContentState?.();
       this.isOpen = false;
+      this.isClosable = true;
       this.setModalTitle(null);
       this.setModalBody(null);
       this.setModalFooter(null);
       this.setOnSubmit(() => {});
       this.setResetContentState(() => {});
+    },
+    setClosable(closable) {
+      this.isClosable = closable;
     },
     setModalTitle(content) {
       this.modalTitle = content;

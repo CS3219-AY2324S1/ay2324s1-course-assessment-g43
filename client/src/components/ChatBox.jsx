@@ -7,6 +7,7 @@ import {
   Button,
   Avatar,
   AvatarBadge,
+  Card,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -74,17 +75,21 @@ export const ChatBox = observer(() => {
             if (item.from === "me") {
               return (
                 <Flex key={index} w="100%" justify="flex-end">
-                  <Flex bg="black" color="white" maxW="45%" my="1" p="3">
-                    <Text maxW="100%">{item.text}</Text>
-                  </Flex>
+                  <Card bg={"black"} maxW={"45%"} my="1" p="3" color="white">
+                    <Flex>
+                      <Text maxW="100%">{item.text}</Text>
+                    </Flex>
+                  </Card>
                 </Flex>
               );
             } else {
               return (
                 <Flex key={index} w="100%">
-                  <Flex bg="gray.100" color="black" maxW="45%" my="1" p="3">
-                    <Text maxW="100%">{item.text}</Text>
-                  </Flex>
+                  <Card bg={"gray.100"} color="black" maxW="45%" my="1" p="3">
+                    <Flex>
+                      <Text maxW="100%">{item.text}</Text>
+                    </Flex>
+                  </Card>
                 </Flex>
               );
             }

@@ -68,13 +68,25 @@ spec:
             - name: PSQL_HOST
               value: rain.db.elephantsql.com
             - name: PSQL_PASSWORD
-              value: 6VxB3a2Z28_bVdbdqM5Rp1yBfALxy2KZ
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: PSQL_PASSWORD
             - name: PSQL_USER
-              value: lcvbizby
-            - name: PSQL_DATABASE
-              value: lcvbizby
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: PSQL_DATABASE
+            - name: PSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: PSQL_USER
             - name: ACCESS_TOKEN_SECRET
-              value: f98a32dcd04ff509254e8a71183503a5090626c5164aa5904ee3f243e9d64b201d005dbe4a2de932d3ea71ec724a9214bfc7ae90ca6f81dbe935e03ac3500a13
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: ACCESS_TOKEN_SECRET
 ---
 apiVersion: v1
 kind: Service
@@ -115,7 +127,10 @@ spec:
             - name: PORT
               value: "3000"
             - name: DATABASE_URL
-              value: "mongodb+srv://group43:hioEhOo1o2t67bhX@peerprep.69rbrct.mongodb.net/question-service"
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: DATABASE_URL
             - name: USER_BASE_PATH
               value: http://34.87.120.150:30000/api
 ---
@@ -158,7 +173,10 @@ spec:
             - name: PORT
               value: "5001"
             - name: AMPQ_HOST
-              value: amqps://wevlszxo:WBogrJvrldUmrCPHfD7tETFVK7pdCIjj@armadillo.rmq.cloudamqp.com/wevlszxo
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: AMPQ_HOST
 ---
 apiVersion: v1
 kind: Service

@@ -12,21 +12,12 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 
-export const ChatBox = observer(() => {
+export const ChatBox = observer(({ chat, onSendMessage }) => {
   const scrollStyle = {
     overflowY: "auto",
     maxHeight: "20vh",
     maxWidth: "100%",
   };
-
-  const [messages, setMessages] = useState([
-    { from: "peer", text: "Hi, I'm your Peer" },
-    { from: "me", text: "Hey there" },
-    {
-      from: "peer",
-      text: "Nice to meet you. You can send me message and i'll reply you with same message.",
-    },
-  ]);
 
   const [inputMessage, setInputMessage] = useState("");
 
@@ -34,14 +25,8 @@ export const ChatBox = observer(() => {
     if (!inputMessage.trim().length) {
       return;
     }
-    const data = inputMessage;
-
-    setMessages((old) => [...old, { from: "me", text: data }]);
+    onSendMessage(inputMessage);
     setInputMessage("");
-
-    setTimeout(() => {
-      setMessages((old) => [...old, { from: "computer", text: data }]);
-    }, 1000);
   };
 
   const AlwaysScrollToBottom = () => {
@@ -71,13 +56,13 @@ export const ChatBox = observer(() => {
       <Divider />
       <Flex w={["100%", "100%"]} h="50%" flexDir="column">
         <div style={scrollStyle}>
-          {messages.map((item, index) => {
-            if (item.from === "me") {
+          {chat?.map((message, index) => {
+            if (message.sender === "self") {
               return (
                 <Flex key={index} w="100%" justify="flex-end">
                   <Card bg={"black"} maxW={"45%"} my="1" p="3" color="white">
                     <Flex>
-                      <Text maxW="100%">{item.text}</Text>
+                      <Text maxW="100%">{message.text}</Text>
                     </Flex>
                   </Card>
                 </Flex>
@@ -87,7 +72,7 @@ export const ChatBox = observer(() => {
                 <Flex key={index} w="100%">
                   <Card bg={"gray.100"} color="black" maxW="45%" my="1" p="3">
                     <Flex>
-                      <Text maxW="100%">{item.text}</Text>
+                      <Text maxW="100%">{message.text}</Text>
                     </Flex>
                   </Card>
                 </Flex>

@@ -40,10 +40,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("leave-room");
   });
 
-  socket.on("new-chat-message", (message) => {
+  socket.on("new-chat-message", (roomId, message) => {
     // Message is a JS object.
     if (!message) return;
-    socket.broadcast.emit("new-chat-message", message);
+    socket.to(roomId).emit("new-chat-message", message);
   });
 
   // Not in use by FE presently

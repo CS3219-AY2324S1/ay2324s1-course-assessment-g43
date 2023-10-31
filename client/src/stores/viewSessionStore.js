@@ -5,6 +5,7 @@ import {
   deleteSession,
   initiateLeaveRoomRequest,
   notifyPeerLanguageChange,
+  sendChatMessage,
 } from "../services/collaborationService";
 
 class ViewSessionStore {
@@ -24,7 +25,7 @@ class ViewSessionStore {
     Array of objects with the following structure:
       {
         sender: string, // 'self' or 'peer'
-        message: string,
+        text: string,
         timestamp: string,
       }
     */
@@ -65,9 +66,43 @@ class ViewSessionStore {
     notifyPeerLanguageChange(this.socket, language.toLowerCase());
   }
 
-  setChat(message) {
-    // Note: message deletions not supported.
-    this.state.chat.push(message);
+  setChat(jsonStringChat) {
+    this.state.chat = jsonStringChat ? JSON.parse(jsonStringChat) : [];
+  }
+
+  /**
+   * Pushes message into `state.chat`. Call this for messages from PEER.
+   *
+   * @param {Object} receivedMsg - Message received from peer
+   */
+  pushMessage(receivedMsg) {
+    this.state.chat.push({
+      sender: "peer",
+      ...receivedMsg,
+    });
+    // Save chat to local storage -- useful when user resumes session
+    localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
+  }
+
+  /**
+   * Pushes messages into `state.chat`, and sends message via websocket.
+   * Call this for messages sent by USER.
+   * Note: message deletions not supported.
+   *
+   * @param {string} messageString - sent by User.
+   */
+  pushAndSendMessage(messageString) {
+    const socketMessage = {
+      text: messageString,
+      timestamp: Date.now(),
+    };
+    this.state.chat.push({
+      sender: "self",
+      ...socketMessage,
+    });
+    sendChatMessage(this.socket, this.state?.roomId, socketMessage);
+    // Save chat to local storage -- useful when user resumes session
+    localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
   }
 
   initQuestionState(question) {
@@ -98,6 +133,7 @@ class ViewSessionStore {
       complexity: "",
       roomId: "",
       language: "",
+      chat: [],
     };
   }
 
@@ -126,9 +162,7 @@ class ViewSessionStore {
       },
       onLeaveRoomCallback,
       (message) => {
-        this.setChat(message);
-        // Save chat to local storage -- useful when user resumes session
-        localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
+        this.pushMessage(message);
       }
     );
   }

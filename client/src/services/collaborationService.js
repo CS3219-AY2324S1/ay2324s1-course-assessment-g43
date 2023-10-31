@@ -122,6 +122,6 @@ export const notifyPeerLanguageChange = (socket, language) => {
   socket?.emit("change-language", language);
 };
 
-export const sendChatMessage = (socket, message) => {
-  socket?.emit("new-chat-message", message);
+export const sendChatMessage = (socket, roomId, message) => {
+  socket?.emit("new-chat-message", roomId, message);
 };

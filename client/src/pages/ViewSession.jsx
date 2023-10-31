@@ -51,6 +51,7 @@ export const ViewSession = observer(() => {
           store.setLanguage(
             localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
           );
+          store.setChat(localStorage.getItem("sessionChat"));
         })
         .catch((err) => {
           let message = err.message;
@@ -59,6 +60,8 @@ export const ViewSession = observer(() => {
           if (err.message === "Session is invalid.") {
             if (localStorage.getItem("roomId") === roomId) {
               localStorage.removeItem("roomId");
+              localStorage.removeItem("sessionLanguage");
+              localStorage.removeItem("sessionChat");
               message = "This session has been closed by your partner.";
             }
           }
@@ -95,6 +98,7 @@ export const ViewSession = observer(() => {
     // Remove roomId & sessionLanguage from localStorage
     localStorage.removeItem("roomId");
     localStorage.removeItem("sessionLanguage");
+    localStorage.removeItem("sessionChat");
     store.resetState();
     navigate(-1);
     toast({
@@ -179,7 +183,12 @@ export const ViewSession = observer(() => {
               />
             )}{" "}
             <Divider />
-            <ChatBox />
+            <ChatBox
+              chat={state.chat}
+              onSendMessage={(newMessage) => {
+                store.pushAndSendMessage(newMessage);
+              }}
+            />
           </Stack>
         </HStack>
       </Stack>

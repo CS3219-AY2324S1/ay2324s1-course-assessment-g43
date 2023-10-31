@@ -5,6 +5,7 @@ class MatchingFormStore {
   uid = "";
   complexity = "";
   isLoading = false;
+  isCancelLoading = false;
   countdown = 0;
   socket = null;
 
@@ -14,6 +15,7 @@ class MatchingFormStore {
 
   resetState() {
     this.isLoading = false;
+    this.isCancelLoading = false;
     this.countdown = 0;
 
     const message = JSON.stringify({
@@ -49,6 +51,10 @@ class MatchingFormStore {
     this.isLoading = loading;
   }
 
+  setIsCancelLoading(loading) {
+    this.isCancelLoading = loading;
+  }
+
   setUid(uid) {
     this.uid = uid;
   }
@@ -62,31 +68,36 @@ class MatchingFormStore {
    *
    * @param {Function} onMatchSuccess - callback function for successful match
    * @param {Function} onMatchFailure - callback function for failed match
+   * @param {Function} onMatchCancel - callback function for successful match cancellation
    * @param {Function} onSocketDisconnect - callback function for socket disconnect
    * @returns null
    */
-  sendMatchRequest(onMatchSuccess, onMatchFailure, onSocketDisconnect) {
+  sendMatchRequest(
+    onMatchSuccess,
+    onMatchFailure,
+    onMatchCancel,
+    onSocketDisconnect
+  ) {
     this.socket = setupSocket(
       (data) => {
         console.log(data);
         this.setLoading(false);
-        if (onMatchSuccess) {
-          onMatchSuccess(data);
-        }
+        onMatchSuccess?.(data);
       },
       (error) => {
         console.log("Match failed: " + error);
         this.setLoading(false);
-        if (onMatchFailure) {
-          onMatchFailure(error);
-        }
+        onMatchFailure?.(error);
+      },
+      () => {
+        this.setLoading(false);
+        this.setIsCancelLoading(false);
+        onMatchCancel?.();
       },
       () => {
         console.log("socket closed");
         this.setLoading(false);
-        if (onSocketDisconnect) {
-          onSocketDisconnect();
-        }
+        onSocketDisconnect?.();
       }
     );
 
@@ -96,6 +107,15 @@ class MatchingFormStore {
       complexity: this.complexity,
     });
     this.socket.emit("match-request", message);
+  }
+
+  sendMatchCancelRequest() {
+    const message = JSON.stringify({
+      uid: this.uid,
+      complexity: this.complexity,
+    });
+
+    this.socket?.emit("cancel-request", message);
   }
 }
 

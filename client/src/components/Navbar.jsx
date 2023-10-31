@@ -205,8 +205,27 @@ const MatchingModalBody = observer(() => {
 });
 
 const MatchingModalFooter = observer(() => {
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+
+    matchingFormStore.setIsCancelLoading(true);
+    matchingFormStore.sendMatchCancelRequest();
+  };
+
   return (
-    <Button
+    <>
+      <Button
+        colorScheme="red"
+        mr={3}
+        isLoading={matchingFormStore.isCancelLoading}
+        isDisabled={!matchingFormStore.isLoading}
+        onClick={handleCancel}
+      >
+        Cancel
+      </Button>
+
+      <Button
       colorScheme="green"
       mr={3}
       type="submit"
@@ -216,6 +235,9 @@ const MatchingModalFooter = observer(() => {
     >
       Match
     </Button>
+
+    </>
+
   );
 });
 
@@ -223,6 +245,31 @@ const DesktopNav = ({ navItems }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  const navigate = useNavigate();
+  const toast = useToast();
+  const modalComponentStore = useModalComponentStore();
+
+  // This only runs on successful POST to Sessions collection
+  const redirectToSessionPage = ({
+    questionId,
+    title,
+    description,
+    category,
+    complexity,
+    roomId,
+  }) => {
+    // Write roomId to localStorage
+    localStorage.setItem("roomId", roomId);
+    navigate(`/session/${roomId}`, {
+      state: {
+        questionId,
+        title,
+        description,
+        category,
+        complexity,
+      },
+    });
+  };
 
   return (
     <Stack direction={"row"} spacing={4}>
@@ -241,6 +288,65 @@ const DesktopNav = ({ navItems }) => {
                   textDecoration: "none",
                   color: linkHoverColor,
                 }}
+                onClick={
+                  navItem.label != "Match"
+                    ? () => {}
+                    : () =>
+                        modalComponentStore.openModal(
+                          matchingModalTitle,
+                          <MatchingModalBody />,
+                          <MatchingModalFooter />,
+                          (e) => {
+                            e.preventDefault();
+
+                            modalComponentStore.setClosable(false);
+
+                            const uid = JSON.parse(
+                              localStorage.getItem("user")
+                            ).uid;
+                            matchingFormStore.setUid(uid);
+
+                            const matchSuccessCallback = (data) => {
+                              modalComponentStore.closeModal();
+                              redirectToSessionPage(data);
+                              toast({
+                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                                status: "success",
+                                duration: 8000,
+                                isClosable: true,
+                              });
+                            };
+                            const matchFailureCallback = (rejectionReason) => {
+                              toast({
+                                title: rejectionReason,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+
+                            const matchCancelCallback = () => {
+                              modalComponentStore.setClosable(true);
+                              toast({
+                                title: `Cancelled match successfully`,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+
+                            matchingFormStore
+                              .startLoading()
+                              .then(null, matchFailureCallback);
+                            matchingFormStore.sendMatchRequest(
+                              matchSuccessCallback,
+                              matchFailureCallback,
+                              matchCancelCallback,
+                            );
+                          },
+                          () => matchingFormStore.resetState()
+                        )
+                }
               >
                 {navItem.label}
               </Box>
@@ -317,6 +423,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                 <MatchingModalFooter />,
                 (e) => {
                   e.preventDefault();
+
+                  modalComponentStore.setClosable(false);
+
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
 
@@ -339,12 +448,23 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     });
                   };
 
+                  const matchCancelCallback = () => {
+                    modalComponentStore.setClosable(true);
+                    toast({
+                      title: `Cancelled match successfully`,
+                      status: "warning",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  };
+
                   matchingFormStore
                     .startLoading()
                     .then(null, matchFailureCallback);
                   matchingFormStore.sendMatchRequest(
                     matchSuccessCallback,
-                    matchFailureCallback
+                    matchFailureCallback,
+                    matchCancelCallback
                   );
                 },
                 () => matchingFormStore.resetState()
@@ -429,6 +549,63 @@ const MobileNavItem = ({ label, children, href }) => {
         _hover={{
           textDecoration: "none",
         }}
+        onClick={
+          label != "Match"
+            ? () => {}
+            : () =>
+                modalComponentStore.openModal(
+                  matchingModalTitle,
+                  <MatchingModalBody />,
+                  <MatchingModalFooter />,
+                  (e) => {
+                    e.preventDefault();
+
+                    modalComponentStore.setClosable(false);
+
+                    const uid = JSON.parse(localStorage.getItem("user")).uid;
+                    matchingFormStore.setUid(uid);
+
+                    const matchSuccessCallback = (data) => {
+                      modalComponentStore.closeModal();
+                      redirectToSessionPage(data);
+                      toast({
+                        title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                        status: "success",
+                        duration: 8000,
+                        isClosable: true,
+                      });
+                    };
+                    const matchFailureCallback = (rejectionReason) => {
+                      toast({
+                        title: rejectionReason,
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    };
+
+                    const matchCancelCallback = () => {
+                      modalComponentStore.setClosable(true);
+                      toast({
+                        title: `Cancelled match successfully`,
+                        status: "warning",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    };
+
+                    matchingFormStore
+                      .startLoading()
+                      .then(null, matchFailureCallback);
+                    matchingFormStore.sendMatchRequest(
+                      matchSuccessCallback,
+                      matchFailureCallback,
+                      matchCancelCallback,
+                    );
+                  },
+                  () => matchingFormStore.resetState()
+                )
+        }
       >
         <Flex justifyContent={"space-between"} alignItems={"center"}>
           <Text
@@ -481,6 +658,8 @@ const MobileNavItem = ({ label, children, href }) => {
                           (e) => {
                             e.preventDefault();
 
+                            modalComponentStore.setClosable(false);
+
                             const uid = JSON.parse(
                               localStorage.getItem("user")
                             ).uid;
@@ -505,12 +684,23 @@ const MobileNavItem = ({ label, children, href }) => {
                               });
                             };
 
+                            const matchCancelCallback = () => {
+                              modalComponentStore.setClosable(true);
+                              toast({
+                                title: `Cancelled match successfully`,
+                                status: "warning",
+                                duration: 5000,
+                                isClosable: true,
+                              });
+                            };
+          
                             matchingFormStore
                               .startLoading()
                               .then(null, matchFailureCallback);
                             matchingFormStore.sendMatchRequest(
                               matchSuccessCallback,
-                              matchFailureCallback
+                              matchFailureCallback,
+                              matchCancelCallback
                             );
                           },
                           () => matchingFormStore.resetState()

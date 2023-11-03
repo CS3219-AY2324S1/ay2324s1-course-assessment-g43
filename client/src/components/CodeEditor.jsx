@@ -40,7 +40,7 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange }) => {
+  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
@@ -172,9 +172,7 @@ export const CodeEditor = observer(
 
     const initiateNextQuestionRequest = () => {
       viewSessionStore.initChangeQuestion();
-
-
-
+      viewSessionStore.setIsGetQuestionLoading(true);
     }
 
     const resetCode = () => {
@@ -289,6 +287,7 @@ export const CodeEditor = observer(
             >
               <IconButton 
                 icon={<ArrowForwardIcon />} 
+                isLoading={isGetNextQuestionLoading}
                 variant={"outline"} 
                 onClick={initiateNextQuestionRequest}
               />

@@ -123,6 +123,9 @@ exports.getRandomQuestion = async (req, res) => {
         { $match: { questionId: { $ne: idNum }, complexity} },
         { $sample: { size: 1 } },
       ])
+
+      // If no question is found, return the current question.
+      randomQuestion[0] = randomQuestion.length === 1 ? randomQuestion[0] : await Question.find({ questionId: idNum });
     }
 
     return randomQuestion.length === 1

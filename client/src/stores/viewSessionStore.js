@@ -24,6 +24,7 @@ class ViewSessionStore {
 
     roomId: "",
     language: "",
+    isGetNextQuestionLoading: false,
   };
 
   constructor() {
@@ -62,6 +63,13 @@ class ViewSessionStore {
     notifyPeerLanguageChange(this.socket, language.toLowerCase());
   }
 
+  setIsGetQuestionLoading(isLoading) {
+    console.log("i am inside qn loading");
+    console.log(isLoading);
+
+    this.state.isGetNextQuestionLoading = isLoading;
+  }
+
   initQuestionState(question) {
     const { questionId, title, description, category, complexity } = question;
     this.state = {
@@ -96,6 +104,12 @@ class ViewSessionStore {
     }
   }
 
+  rejectChangeQuestion() {
+    if (this.state.roomId) {
+      rejectNextQuestionRequest(this.socket);
+    }
+  }
+
   resetState() {
     this.state = {
       questionId: -1,
@@ -105,6 +119,7 @@ class ViewSessionStore {
       complexity: "",
       roomId: "",
       language: "",
+      isGetNextQuestionLoading: false,
     };
   }
 
@@ -139,9 +154,6 @@ class ViewSessionStore {
       onLeaveRoomCallback,
       () => {
         // code for onSocketDisconnect but not in use
-
-        // this.socket = null;
-        // this.resetState();
       },
       receiveRequestCallback,
       changeQuestionCallback,

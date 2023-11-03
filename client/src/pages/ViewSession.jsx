@@ -114,7 +114,9 @@ export const ViewSession = observer(() => {
     
     const handleCancel = (e) => {
       e.preventDefault();
-      // matchingFormStore.sendMatchCancelRequest();
+
+      store.rejectChangeQuestion();
+      modalComponentStore.closeModal();
     };
 
     return (
@@ -157,7 +159,13 @@ export const ViewSession = observer(() => {
   }
 
   const rejectRequestCallback = () => {
-
+    store.setIsGetQuestionLoading(false);
+    toast({
+      title: `Your partner has rejected your request, try again later.`,
+      status: "warning",
+      duration: 8000,
+      isClosable: true,
+    });
   }
 
   const handleLeaveSession = async () => {
@@ -231,6 +239,7 @@ export const ViewSession = observer(() => {
                 roomId={state.roomId}
                 language={state.language}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
+                isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
               />
             )}{" "}
           </Stack>

@@ -33,6 +33,45 @@ import { MonacoBinding } from "y-monaco";
 import { PropTypes } from "prop-types";
 import { createSubmissionStore } from "../stores/createSubmissionStore";
 import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
+import { useModalComponentStore } from "../contextProviders/modalContext";
+
+
+
+const nextQuestionModalTitle = "Accept Request?";
+
+const nextQuestionModalBody = "Your partner has requested to move on to the next question. Do you agree?";
+
+const NextQuestionModalFooter = observer(() => {
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+
+    // matchingFormStore.sendMatchCancelRequest();
+  };
+
+  return (
+    <>
+      <Button
+        colorScheme="red"
+        mr={3}
+        onClick={handleCancel}
+      >
+        Decline
+      </Button>
+
+      <Button
+      colorScheme="green"
+      mr={3}
+      type="submit"
+    >
+      Accept
+    </Button>
+
+    </>
+
+  );
+});
+
 
 /**
  * `language` prop changes when PEER changes language
@@ -54,6 +93,7 @@ export const CodeEditor = observer(
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
+    const modalComponentStore = useModalComponentStore();
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -168,6 +208,18 @@ export const CodeEditor = observer(
       }
     }, []);
 
+    const initiateNextQuestionRequest = () => {
+      modalComponentStore.openModal(
+        nextQuestionModalTitle,
+        nextQuestionModalBody,
+        <NextQuestionModalFooter />,
+        (e) => {
+
+        }
+      );
+
+    }
+
     const resetCode = () => {
       if (
         confirm(
@@ -278,7 +330,11 @@ export const CodeEditor = observer(
               bg="gray.300"
               color="black"
             >
-              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
+              <IconButton 
+                icon={<ArrowForwardIcon />} 
+                variant={"outline"} 
+                onClick={initiateNextQuestionRequest}
+              />
             </Tooltip>
             <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
               <IconButton icon={<ChatIcon />} variant={"outline"} />

@@ -5,7 +5,12 @@ import {
   leaveSession,
   initiateLeaveRoomRequest,
   notifyPeerLanguageChange,
+  initiateNextQuestionRequest,
+  rejectNextQuestionRequest,
+  acceptNextQuestionRequest,
+  updateSessionWithNewQuestion,
 } from "../services/collaborationService";
+import { getFreshRandomQuestionByComplexity } from "../services/questionService";
 
 class ViewSessionStore {
   socket = null;
@@ -76,6 +81,21 @@ class ViewSessionStore {
     }
   }
 
+  initChangeQuestion() {
+    if (this.state.roomId) {
+      initiateNextQuestionRequest(this.socket);
+    }
+  }
+
+  async acceptChangeQuestion(changeQuestionCallback) {
+    if (this.state.roomId) {
+      const newQuestion = await getFreshRandomQuestionByComplexity(this.state.complexity, this.state.questionId);
+      await updateSessionWithNewQuestion(this.state.roomId, newQuestion);
+      acceptNextQuestionRequest(this.socket);
+      changeQuestionCallback();
+    }
+  }
+
   resetState() {
     this.state = {
       questionId: -1,
@@ -100,7 +120,12 @@ class ViewSessionStore {
   /**
    * Sets up a socket connection to the collaboration service server and joins a room.
    */
-  initSocket(onLeaveRoomCallback) {
+  initSocket(
+    onLeaveRoomCallback,   
+    receiveRequestCallback,
+    changeQuestionCallback,
+    rejectRequestCallback
+    ) {
     const userId = JSON.parse(localStorage.getItem("user")).uid;
     this.socket = initCollaborationSocket(
       this.state.roomId,
@@ -111,7 +136,16 @@ class ViewSessionStore {
         // Save language to local storage -- useful when user resumes session
         localStorage.setItem("sessionLanguage", lang);
       },
-      onLeaveRoomCallback
+      onLeaveRoomCallback,
+      () => {
+        // code for onSocketDisconnect but not in use
+
+        // this.socket = null;
+        // this.resetState();
+      },
+      receiveRequestCallback,
+      changeQuestionCallback,
+      rejectRequestCallback
     );
   }
 

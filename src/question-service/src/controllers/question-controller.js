@@ -125,8 +125,8 @@ exports.getRandomQuestion = async (req, res) => {
       ])
     }
 
-    return randomQuestion
-      ? res.status(200).json(randomQuestion)
+    return randomQuestion.length === 1
+      ? res.status(200).json(randomQuestion[0])
       : res.status(404).json({ message: "Question not found" });
   } catch (err) {
     console.log(err);

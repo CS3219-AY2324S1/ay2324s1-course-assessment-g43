@@ -17,6 +17,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
+import { useModalComponentStore } from "../contextProviders/modalContext";
 import { useEffect, useState } from "react";
 
 export const ViewSession = observer(() => {
@@ -29,6 +30,7 @@ export const ViewSession = observer(() => {
   const store = viewSessionStore;
   const state = store.state;
   const DEFAULT_LANGUAGE = "text";
+  const modalComponentStore = useModalComponentStore();
 
   useEffect(() => {
     const roomId = param.id;
@@ -46,7 +48,7 @@ export const ViewSession = observer(() => {
           //TODO can we refactor this to the case below?
           store.setRoomId(roomId);
           store.initQuestionState(question);
-          store.initSocket(leaveSessionCallback);
+          store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
           store.setLanguage(
             localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
           );
@@ -80,7 +82,7 @@ export const ViewSession = observer(() => {
       );
       setIsDoneLoading(true);
 
-      store.initSocket(leaveSessionCallback);
+      store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
     }
 
     return () => {
@@ -103,6 +105,60 @@ export const ViewSession = observer(() => {
       isClosable: true,
     });
   };
+
+  const nextQuestionModalTitle = "Accept Request?";
+
+  const nextQuestionModalBody = "Your partner has requested to move on to the next question. Do you agree?";
+
+  const NextQuestionModalFooter = observer(() => {
+    
+    const handleCancel = (e) => {
+      e.preventDefault();
+      // matchingFormStore.sendMatchCancelRequest();
+    };
+
+    return (
+      <>
+        <Button
+          colorScheme="red"
+          mr={3}
+          onClick={handleCancel}
+        >
+          Decline
+        </Button>
+        <Button
+        colorScheme="green"
+        mr={3}
+        type="submit"
+      >
+        Accept
+      </Button>
+      </>
+    );
+  });
+
+  const receiveRequestCallback = () => {
+    modalComponentStore.openModal(
+      nextQuestionModalTitle,
+      nextQuestionModalBody,
+      <NextQuestionModalFooter />,
+      (e) => {
+        e.preventDefault();
+        store.acceptChangeQuestion(changeQuestionCallback);
+      },
+      () => {}
+    );
+
+    modalComponentStore.setClosable(false);
+  }
+
+  const changeQuestionCallback = () => {
+    navigate(0);
+  }
+
+  const rejectRequestCallback = () => {
+
+  }
 
   const handleLeaveSession = async () => {
     if (

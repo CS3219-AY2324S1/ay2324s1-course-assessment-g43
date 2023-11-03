@@ -40,6 +40,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("initiate-next-question");
   })
 
+  socket.on("reject-next-question", () => {
+    socket.broadcast.emit("reject-next-question");
+  });
+
   socket.on("retrieve-next-question", () => {
     socket.broadcast.emit("retrieve-next-question");
   })

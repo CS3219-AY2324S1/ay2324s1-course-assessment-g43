@@ -1,3 +1,4 @@
+import axios from "axios";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginUser } from "./pages/LoginUser";
@@ -8,10 +9,22 @@ import { ViewQuestions } from "./pages/ViewQuestions";
 import { History } from "./pages/History";
 import { UpdateQuestion } from "./pages/UpdateQuestion";
 import { ViewSession } from "./pages/ViewSession";
-import { AxiosErrorMiddleware } from "./middleware/AxiosErrorMiddleware";
 import { ErrorPage } from "./pages/ErrorPage";
+import { errorCodeContent } from "./utils/error";
 
 function App() {
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (
+        error.response &&
+        Object.keys(errorCodeContent).includes(error.response.status.toString())
+      ) {
+        window.location.replace(`/error?statusCode=${error.response.status}`);
+      }
+      return Promise.reject(error);
+    }
+  );
   return (
     <BrowserRouter>
       <Routes>

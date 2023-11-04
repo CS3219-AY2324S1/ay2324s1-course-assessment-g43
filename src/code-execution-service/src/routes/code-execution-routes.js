@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const codeExecutionController = require("../controller/code-execution-controller.js");
+const codeExecutionController = require("../controller/code-execution-controller");
+const auth = require("../middleware/auth");
 
 /**
  * A Language Data Document
@@ -437,7 +438,7 @@ router.get("/getStatuses", codeExecutionController.getStatuses);
 	"data": {}
 }
  */
-router.post("/createSubmission", codeExecutionController.createSubmission);
+router.post("/createSubmission", auth.authenticate, codeExecutionController.createSubmission);
 
 /**
  * A Submission Result Payload for POST requests
@@ -485,6 +486,6 @@ router.post("/createSubmission", codeExecutionController.createSubmission);
 }
 */
 
-router.get("/getSubmissionResult/:token", codeExecutionController.getSubmissionResult);
+router.get("/getSubmissionResult/:token", auth.authenticate, codeExecutionController.getSubmissionResult);
 
 module.exports = router;

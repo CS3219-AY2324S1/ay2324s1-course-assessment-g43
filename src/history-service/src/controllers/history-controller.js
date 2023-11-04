@@ -23,7 +23,7 @@ exports.createAttempt = async (req, res) => {
 exports.getAttemptsByUserId = async (req, res) => {
   const userId = req.params.userId;
   try {
-    const attempts = await Attempt.find({ currentUserId: userId });
+    const attempts = await Attempt.find({ currentUserId: userId }).sort({ datetime: -1 });
 
     if (!attempts || attempts.length === 0) {
       return res.status(404).json({ message: `No attempts found for user with uid ${userId}` });

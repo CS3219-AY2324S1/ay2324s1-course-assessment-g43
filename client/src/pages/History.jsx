@@ -11,11 +11,18 @@ import {
 } from "@chakra-ui/react";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
+import { viewHistoryStore } from "../stores/viewHistoryStore";
+import { useEffect } from "react";
 
 export const History = observer(() => {
+  const store = viewHistoryStore;
+  const userData = localStorage.getItem("user");
+  const userObject = JSON.parse(userData);
+  const uid = userObject.uid;
+
   const tableHeaders = [
     {
-      key: "attemptedDate",
+      key: "datetime",
       label: "Date Attempted",
     },
     {
@@ -28,44 +35,35 @@ export const History = observer(() => {
     },
   ];
 
-  return (
-    <PageContainer w={"100%"}>
-      <TableContainer w={"100%"}>
-        <Table variant="simple">
-          <TableCaption>-End of attempted questions-</TableCaption>
-          <Thead>
-            <Tr>
+  useEffect(() => {
+    store.getAttemptsByUserId(uid);
+  }, []);
+
+  const attempts = viewHistoryStore.state.attempts;
+
+return (
+  <PageContainer w={"100%"}>
+    <TableContainer w={"100%"}>
+      <Table variant="simple">
+        <TableCaption>-End of attempted questions-</TableCaption>
+        <Thead>
+          <Tr>
+            {tableHeaders.map((header) => (
+              <Th key={header.key}>{header.label}</Th>
+            ))}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {attempts.map((attempt, index) => (
+            <Tr key={index}>
               {tableHeaders.map((header) => (
-                <Th key={header.key}>{header.label}</Th>
+                <Td key={header.key}>{attempt[header.key]}</Td>
               ))}
             </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>inches</Td>
-              <Td>millimetres (mm)</Td>
-              <Td isNumeric>25.4</Td>
-            </Tr>
-            <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
-            </Tr>
-          </Tbody>
-          <Tfoot>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
-            </Tr>
-          </Tfoot>
-        </Table>
-      </TableContainer>
-    </PageContainer>
-  );
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
+  </PageContainer>
+);
 });

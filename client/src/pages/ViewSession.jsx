@@ -18,6 +18,7 @@ import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
 import { useEffect, useState } from "react";
+import { viewHistoryStore } from "../stores/viewHistoryStore";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ export const ViewSession = observer(() => {
   const store = viewSessionStore;
   const state = store.state;
   const DEFAULT_LANGUAGE = "text";
+  const historyStore = viewHistoryStore;
 
   useEffect(() => {
     const roomId = param.id;
@@ -90,7 +92,22 @@ export const ViewSession = observer(() => {
   }, []);
 
   // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = () => {
+  const leaveSessionCallback = async() => {
+    //Save Attempt To History
+    const userData = localStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    const uid = userObject.uid;
+    const attempt = {
+      currentUserId: uid,
+      // questionId: location.state.questionId,
+      questionId: 2, //hardcode
+      title: location.state.title,
+      description: location.state.description,
+      category: location.state.category,
+      complexity: location.state.complexity,
+    }
+    console.log(attempt);
+    await historyStore.createAttempt(attempt);
     // Remove roomId & sessionLanguage from localStorage
     localStorage.removeItem("roomId");
     localStorage.removeItem("sessionLanguage");

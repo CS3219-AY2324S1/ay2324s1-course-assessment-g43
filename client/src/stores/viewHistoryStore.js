@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { getAttemptsByUserId } from "../services/historyService";
+import { createAttempt, getAttemptsByUserId } from "../services/historyService";
 
 class ViewHistoryStore {
   state = {
@@ -19,6 +19,16 @@ class ViewHistoryStore {
       const res = await getAttemptsByUserId(id);
       console.log(res);
       this.setAttempts(res.data);
+      return res;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async createAttempt(attempt) {
+    try {
+      const res = await createAttempt(attempt);
+      console.log(res);
       return res;
     } catch (err) {
       console.log(err);

@@ -194,6 +194,17 @@ export const ViewQuestions = observer(() => {
                         <Text textOverflow={"ellipsis"} maxW={"inherit"}>
                           {question.title}
                         </Text>
+                        <Badge
+                          bg={
+                            question.complexity == "Easy"
+                              ? "#9DEFCD"
+                              : question.complexity == "Medium"
+                              ? "#FAF8A5"
+                              : "#F8C1C1"
+                          }
+                        >
+                          {question.complexity}
+                        </Badge>
                       </HStack>
                       <Button
                         bg={"#BBC2E2"}

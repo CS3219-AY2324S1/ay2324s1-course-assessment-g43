@@ -1,8 +1,5 @@
 import {
   Button,
-  Card,
-  CardBody,
-  Flex,
   HStack,
   Text,
   Stack,
@@ -24,6 +21,14 @@ import {
   AbsoluteCenter,
   Box,
   Tooltip,
+  TableContainer,
+  Table,
+  TableCaption,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -156,44 +161,34 @@ export const ViewQuestions = observer(() => {
             }
           />
         </HStack>
-        <Flex
-          justifyContent={"space-between"}
-          px={6}
-          direction={["column", "row"]}
-        >
-          <HStack>
-            <Text fontWeight="bold" color={"#463F3A"}>
-              ID
-            </Text>
-            <Text fontWeight="bold" color={"#463F3A"}>
-              Question Title
-            </Text>
-          </HStack>
-          <Text fontWeight="bold" color={"#463F3A"}>
-            Actions
-          </Text>
-        </Flex>
-        {!!state.questions ? (
-          state.questions
-            .filter((question) =>
-              question.title
-                .toLowerCase()
-                .includes(state.searchQuery.toLowerCase())
-            )
-            .map((question, index) => {
-              return (
-                <Card key={index}>
-                  <CardBody>
-                    <Flex
-                      justifyContent={"space-between"}
-                      direction={["column", "row"]}
-                      gap={2}
-                    >
-                      <HStack>
-                        <Text>{question.questionId}.</Text>
-                        <Text textOverflow={"ellipsis"} maxW={"inherit"}>
-                          {question.title}
-                        </Text>
+        <TableContainer w={"100%"}>
+          <Table variant="simple">
+            <TableCaption>-End of question list-</TableCaption>
+            <Thead>
+              <Tr>
+                <Th key="id" w={"10%"}>
+                  ID
+                </Th>
+                <Th key="title">Question Title</Th>
+                <Th key="complexity">Complexity</Th>
+                <Th key="actions">Actions</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {state.questions
+                .filter((question) =>
+                  question.title
+                    .toLowerCase()
+                    .includes(state.searchQuery.toLowerCase())
+                )
+                .map((question, index) => {
+                  return (
+                    <Tr key={index}>
+                      <Td key="id">{question.questionId}</Td>
+                      <Td key="title" textOverflow={"ellipsis"}>
+                        {question.title}
+                      </Td>
+                      <Td key="complexity">
                         <Badge
                           bg={
                             question.complexity == "Easy"
@@ -205,29 +200,24 @@ export const ViewQuestions = observer(() => {
                         >
                           {question.complexity}
                         </Badge>
-                      </HStack>
-                      <Button
-                        bg={"#BBC2E2"}
-                        _hover={{
-                          bg: "#DEE2F5",
-                        }}
-                        onClick={() => handleOpenModal(question)}
-                      >
-                        View Details
-                      </Button>
-                    </Flex>
-                  </CardBody>
-                </Card>
-              );
-            })
-        ) : (
-          <Card>
-            <CardBody>
-              {/* eslint-disable-next-line react/no-unescaped-entities*/}
-              <Text>Can't seem to find any questions.</Text>
-            </CardBody>
-          </Card>
-        )}
+                      </Td>
+                      <Td>
+                        <Button
+                          bg={"#BBC2E2"}
+                          _hover={{
+                            bg: "#DEE2F5",
+                          }}
+                          onClick={() => handleOpenModal(question)}
+                        >
+                          View Details
+                        </Button>
+                      </Td>
+                    </Tr>
+                  );
+                })}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Stack>
     </PageContainer>
   );

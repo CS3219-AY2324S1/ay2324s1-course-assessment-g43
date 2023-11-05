@@ -23,6 +23,7 @@ import {
   Divider,
   AbsoluteCenter,
   Box,
+  Tooltip,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -69,32 +70,34 @@ export const ViewQuestions = observer(() => {
   };
 
   const deleteQuestion = (id) => {
-    window.confirm("Delete this question? This action is irreversible.");
-    toast.promise(store.deleteQuestion(id), {
-      success: () => {
-        modalComponentStore.closeModal();
-        store.setSelectedQuestion({});
-        store.getAllQuestions();
-        return {
-          title: "Successfully deleted question.",
-          description: "You've successfully deleted this question!",
-          duration: 3000,
-          isClosable: true,
-        };
-      },
-      error: (error) => ({
-        title: "An error occurred.",
-        description: error.response.data.message || "Unknown error occurred.",
-        duration: 3000,
-        isClosable: true,
-      }),
-      loading: {
-        title: "Deleting Question.",
-        description: "Please give us some time to delete this question.",
-        duration: 3000,
-        isClosable: true,
-      },
-    });
+    window.confirm("Delete this question? This action is irreversible.") == true
+      ? toast.promise(store.deleteQuestion(id), {
+          success: () => {
+            modalComponentStore.closeModal();
+            store.setSelectedQuestion({});
+            store.getAllQuestions();
+            return {
+              title: "Successfully deleted question.",
+              description: "You've successfully deleted this question!",
+              duration: 3000,
+              isClosable: true,
+            };
+          },
+          error: (error) => ({
+            title: "An error occurred.",
+            description:
+              error.response.data.message || "Unknown error occurred.",
+            duration: 3000,
+            isClosable: true,
+          }),
+          loading: {
+            title: "Deleting Question.",
+            description: "Please give us some time to delete this question.",
+            duration: 3000,
+            isClosable: true,
+          },
+        })
+      : {};
   };
 
   const handleOpenModal = (question) => {
@@ -121,7 +124,7 @@ export const ViewQuestions = observer(() => {
             Questions
           </Text>
           <HStack w={"100%"} justifyContent={"flex-end"}>
-            <InputGroup maxW={"400px"}>
+            <InputGroup maxW={"60%"}>
               <InputLeftElement pointerEvents="none">
                 <SearchIcon />
               </InputLeftElement>
@@ -139,6 +142,9 @@ export const ViewQuestions = observer(() => {
             aria-label="Create question"
             icon={<AddIcon />}
             variant={"outline"}
+            _hover={{
+              bg: "#BBC2E2",
+            }}
             onClick={() =>
               modalComponentStore.openModal(
                 createQuestionModalTitle,
@@ -156,10 +162,16 @@ export const ViewQuestions = observer(() => {
           direction={["column", "row"]}
         >
           <HStack>
-            <Text fontWeight="bold">ID</Text>
-            <Text fontWeight="bold">Question Title</Text>
+            <Text fontWeight="bold" color={"#463F3A"}>
+              ID
+            </Text>
+            <Text fontWeight="bold" color={"#463F3A"}>
+              Question Title
+            </Text>
           </HStack>
-          <Text fontWeight="bold">Actions</Text>
+          <Text fontWeight="bold" color={"#463F3A"}>
+            Actions
+          </Text>
         </Flex>
         {!!state.questions ? (
           state.questions
@@ -183,7 +195,13 @@ export const ViewQuestions = observer(() => {
                           {question.title}
                         </Text>
                       </HStack>
-                      <Button onClick={() => handleOpenModal(question)}>
+                      <Button
+                        bg={"#BBC2E2"}
+                        _hover={{
+                          bg: "#DEE2F5",
+                        }}
+                        onClick={() => handleOpenModal(question)}
+                      >
                         View Details
                       </Button>
                     </Flex>
@@ -234,12 +252,21 @@ const CreateQuestionModalBody = observer(() => {
         <FormLabel>Category</FormLabel>
         <HStack spacing={4} paddingBottom={1}>
           {createQuestionStore.state.category.map((category) => (
-            <Tag key={category} borderRadius="full" variant="solid">
-              <TagLabel>{category}</TagLabel>
-              <TagCloseButton
-                onClick={() => createQuestionStore.removeCategory(category)}
-              />
-            </Tag>
+            <Tooltip key={category} label={category} bg={"#706CCC"}>
+              <Tag
+                key={category}
+                borderRadius="full"
+                variant="solid"
+                bg={"#B7B5E4"}
+                color={"white"}
+                maxW={"20%"}
+              >
+                <TagLabel>{category}</TagLabel>
+                <TagCloseButton
+                  onClick={() => createQuestionStore.removeCategory(category)}
+                />
+              </Tag>
+            </Tooltip>
           ))}
         </HStack>
         <InputGroup>
@@ -256,6 +283,7 @@ const CreateQuestionModalBody = observer(() => {
               aria-label="Create category"
               icon={<AddIcon />}
               variant={"unstyled"}
+              paddingBottom={"3px"}
               onClick={() => createQuestionStore.addCategory()}
             />
           </InputRightElement>
@@ -281,7 +309,15 @@ const CreateQuestionModalBody = observer(() => {
 
 const CreateQuestionModalFooter = () => {
   return (
-    <Button colorScheme="green" mr={3} type="submit">
+    <Button
+      bg={"#706CCC"}
+      _hover={{
+        bg: "#8F8ADD",
+      }}
+      color={"white"}
+      mr={3}
+      type="submit"
+    >
       Create Question
     </Button>
   );
@@ -295,21 +331,30 @@ const ViewQuestionDetailsModalBody = observer(() => {
   return (
     <>
       <Badge
-        colorScheme={
+        bg={
           viewQuestionsStore.state.selectedQuestion.complexity == "Easy"
-            ? "green"
+            ? "#9DEFCD"
             : viewQuestionsStore.state.selectedQuestion.complexity == "Medium"
-            ? "yellow"
-            : "red"
+            ? "#FAF8A5"
+            : "#F8C1C1"
         }
       >
         {viewQuestionsStore.state.selectedQuestion.complexity}
       </Badge>
       <HStack spacing={2} paddingBlock={3}>
         {viewQuestionsStore.state.selectedQuestion.category?.map((category) => (
-          <Tag key={category} borderRadius="full" variant="solid">
-            <TagLabel>{category}</TagLabel>
-          </Tag>
+          <Tooltip key={category} label={category} bg={"#706CCC"}>
+            <Tag
+              key={category}
+              borderRadius="full"
+              variant="solid"
+              bg={"#B7B5E4"}
+              color={"white"}
+              maxW={"20%"}
+            >
+              <TagLabel>{category}</TagLabel>
+            </Tag>
+          </Tooltip>
         ))}
       </HStack>
       <Box position="relative" padding="3">
@@ -342,7 +387,11 @@ const ViewQuestionDetailsModalFooter = observer(() => {
   return (
     <>
       <Button
-        colorScheme="blue"
+        bg={"#706CCC"}
+        _hover={{
+          bg: "#8F8ADD",
+        }}
+        color={"white"}
         mr={3}
         onClick={() =>
           redirectToUpdateQuestionPage(
@@ -352,7 +401,12 @@ const ViewQuestionDetailsModalFooter = observer(() => {
       >
         Update Question
       </Button>
-      <Button variant="ghost" colorScheme="red" type="submit">
+      <Button
+        variant="ghost"
+        _hover={{ bg: "#F8C1C1" }}
+        color={"#EC4E4E"}
+        type="submit"
+      >
         Delete Question
       </Button>
     </>

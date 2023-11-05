@@ -10,6 +10,7 @@ import {
   Box,
   AbsoluteCenter,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
@@ -128,17 +129,18 @@ export const ViewSession = observer(() => {
             <Badge
               colorScheme={
                 state.complexity == "Easy"
-                  ? "green"
+                  ? "#9DEFCD"
                   : state.complexity == "Medium"
-                  ? "yellow"
-                  : "red"
+                  ? "#FAF8A5"
+                  : "#F8C1C1"
               }
             >
               {state.complexity}
             </Badge>
           </Heading>
           <Button
-            colorScheme="red"
+            color="#EC4E4E"
+            borderColor="#EC4E4E"
             variant="outline"
             mr={3}
             onClick={handleLeaveSession}
@@ -154,9 +156,18 @@ export const ViewSession = observer(() => {
             </Heading>
             <HStack spacing={2} paddingBlock={3}>
               {state.category?.map((category) => (
-                <Tag key={category} borderRadius="full" variant="solid">
-                  <TagLabel>{category}</TagLabel>
-                </Tag>
+                <Tooltip key={category} label={category} bg={"#706CCC"}>
+                  <Tag
+                    key={category}
+                    borderRadius="full"
+                    variant="solid"
+                    bg={"#B7B5E4"}
+                    color={"white"}
+                    maxW={"20%"}
+                  >
+                    <TagLabel>{category}</TagLabel>
+                  </Tag>
+                </Tooltip>
               ))}
             </HStack>
             <Box position="relative" padding="3" w={"100%"}>

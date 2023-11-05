@@ -23,6 +23,7 @@ import {
   Box,
   InputGroup,
   InputLeftElement,
+  Tooltip,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -70,10 +71,16 @@ export const ViewQuestionsUser = observer(() => {
         </Stack>
         <Flex justifyContent={"space-between"} px={6}>
           <HStack>
-            <Text fontWeight="bold">ID</Text>
-            <Text fontWeight="bold">Question Title</Text>
+            <Text fontWeight="bold" color={"#463F3A"}>
+              ID
+            </Text>
+            <Text fontWeight="bold" color={"#463F3A"}>
+              Question Title
+            </Text>
           </HStack>
-          <Text fontWeight="bold">Actions</Text>
+          <Text fontWeight="bold" color={"#463F3A"}>
+            Actions
+          </Text>
         </Flex>
         {!!state.questions ? (
           state.questions
@@ -93,7 +100,13 @@ export const ViewQuestionsUser = observer(() => {
                           {question.title}
                         </Text>
                       </HStack>
-                      <Button onClick={() => handleOpenModal(question)}>
+                      <Button
+                        bg={"#BBC2E2"}
+                        _hover={{
+                          bg: "#DEE2F5",
+                        }}
+                        onClick={() => handleOpenModal(question)}
+                      >
                         View Details
                       </Button>
                     </Flex>
@@ -125,19 +138,28 @@ export const ViewQuestionsUser = observer(() => {
                   <Badge
                     colorScheme={
                       state.selectedQuestion.complexity == "Easy"
-                        ? "green"
+                        ? "#9DEFCD"
                         : state.selectedQuestion.complexity == "Medium"
-                        ? "yellow"
-                        : "red"
+                        ? "#FAF8A5"
+                        : "#F8C1C1"
                     }
                   >
                     {state.selectedQuestion.complexity}
                   </Badge>
                   <HStack spacing={2} paddingBlock={3}>
                     {state.selectedQuestion.category?.map((category) => (
-                      <Tag key={category} borderRadius="full" variant="solid">
-                        <TagLabel>{category}</TagLabel>
-                      </Tag>
+                      <Tooltip key={category} label={category} bg={"#706CCC"}>
+                        <Tag
+                          key={category}
+                          borderRadius="full"
+                          variant="solid"
+                          bg={"#B7B5E4"}
+                          color={"white"}
+                          maxW={"20%"}
+                        >
+                          <TagLabel>{category}</TagLabel>
+                        </Tag>
+                      </Tooltip>
                     ))}
                   </HStack>
                   <Box position="relative" padding="3">

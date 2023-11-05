@@ -4,6 +4,7 @@ import { createAttempt, getAttemptsByUserId } from "../services/historyService";
 class ViewHistoryStore {
   state = {
     attempts: [],
+    selectedAttempt: {},
   };
 
   constructor() {
@@ -12,6 +13,10 @@ class ViewHistoryStore {
 
   setAttempts(attempts) {
     this.state.attempts = attempts;
+  }
+
+  setSelectedAttempt(selectedAttempt) {
+    this.state.selectedAttempt = selectedAttempt;
   }
 
   async getAttemptsByUserId(id) {

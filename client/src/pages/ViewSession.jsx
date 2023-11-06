@@ -127,7 +127,7 @@ export const ViewSession = observer(() => {
           >
             Matched Difficulty: {}
             <Badge
-              colorScheme={
+              bg={
                 state.complexity == "Easy"
                   ? "#9DEFCD"
                   : state.complexity == "Medium"

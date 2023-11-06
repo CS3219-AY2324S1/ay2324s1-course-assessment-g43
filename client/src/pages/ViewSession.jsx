@@ -93,21 +93,26 @@ export const ViewSession = observer(() => {
     };
   }, []);
 
-  // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = async() => {
-    //Save Attempt To History
+  const createAttempt = async () => {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const uid = userObject.uid;
     const attempt = {
       currentUserId: uid,
-      title: location.state.title,
-      description: location.state.description,
-      category: location.state.category,
-      complexity: location.state.complexity,
+      title: store.state.title,
+      description: store.state.description,
+      category: store.state.category,
+      complexity: store.state.complexity,
     }
     console.log(attempt);
     await historyStore.createAttempt(attempt);
+  }
+
+  // This callback only runs upon a successful DELETE from the Sessions collection
+  const leaveSessionCallback = async() => {
+    //Save Attempt To History
+    await createAttempt();
+
     // Remove roomId & sessionLanguage from localStorage
     localStorage.removeItem("roomId");
     localStorage.removeItem("sessionLanguage");
@@ -169,7 +174,8 @@ export const ViewSession = observer(() => {
     modalComponentStore.setClosable(false);
   }
 
-  const changeQuestionCallback = () => {
+  const changeQuestionCallback = async () => {
+    await createAttempt();
     navigate(0);
   }
 

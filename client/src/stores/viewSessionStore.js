@@ -30,6 +30,7 @@ class ViewSessionStore {
       }
     */
     chat: [],
+    isPeerConnected: true,
   };
 
   constructor() {
@@ -100,7 +101,7 @@ class ViewSessionStore {
       sender: "self",
       ...socketMessage,
     });
-    sendChatMessage(this.socket, this.state?.roomId, socketMessage);
+    sendChatMessage(this.socket, socketMessage);
     // Save chat to local storage -- useful when user resumes session
     localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
   }
@@ -134,6 +135,7 @@ class ViewSessionStore {
       roomId: "",
       language: "",
       chat: [],
+      isPeerConnected: true,
     };
   }
 
@@ -154,6 +156,7 @@ class ViewSessionStore {
     this.socket = initCollaborationSocket(
       this.state.roomId,
       userId,
+      // onPeerLanguageChange
       (lang) => {
         // Note: use arrow function for correct `this` binding
         this.setLanguage(lang);
@@ -161,8 +164,17 @@ class ViewSessionStore {
         localStorage.setItem("sessionLanguage", lang);
       },
       onLeaveRoomCallback,
+      // onChatMessageReceived
       (message) => {
         this.pushMessage(message);
+      },
+      // onPeerJoined
+      () => {
+        this.state.isPeerConnected = true;
+      },
+      // onPeerDisconnected
+      () => {
+        this.state.isPeerConnected = false;
       }
     );
   }

@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 
-export const ChatBox = observer(({ chat, onSendMessage }) => {
+export const ChatBox = observer(({ chat, isPeerConnected, onSendMessage }) => {
   const scrollStyle = {
     overflowY: "auto",
     maxHeight: "20vh",
@@ -42,14 +42,20 @@ export const ChatBox = observer(({ chat, onSendMessage }) => {
           size="sm"
           src="https://t3.ftcdn.net/jpg/05/16/27/58/240_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
         >
-          <AvatarBadge boxSize="1em" bg="green.500" />
+          <AvatarBadge
+            boxSize="1em"
+            bg={isPeerConnected ? "green.500" : "red.500"}
+          />
         </Avatar>
         <Flex flexDirection="column" mx="5" justify="center">
           <Text fontSize="sm" fontWeight="bold">
             Peer
           </Text>
-          <Text color="green.500" fontSize={"sm"}>
-            Online
+          <Text
+            color={isPeerConnected ? "green.500" : "red.500"}
+            fontSize={"sm"}
+          >
+            {isPeerConnected ? "Online" : "Offline"}
           </Text>
         </Flex>
       </Flex>
@@ -91,7 +97,7 @@ export const ChatBox = observer(({ chat, onSendMessage }) => {
               border: "1px solid black",
             }}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
+              if (isPeerConnected && e.key === "Enter") {
                 handleSendMessage();
               }
             }}
@@ -102,6 +108,7 @@ export const ChatBox = observer(({ chat, onSendMessage }) => {
             bg="black"
             color="white"
             borderRadius="none"
+            isDisabled={!isPeerConnected}
             _hover={{
               bg: "white",
               color: "black",

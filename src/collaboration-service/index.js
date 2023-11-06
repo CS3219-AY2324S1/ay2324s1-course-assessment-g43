@@ -22,33 +22,53 @@ const io = new Server(server, {
   },
 });
 
+// socket IDs to room IDs mapping
+const socketRooms = new Map();
+
+function addSocketToRoom(socket, roomId) {
+  socketRooms.set(socket.id, roomId);
+}
+
+function removeSocketFromRoom(socket) {
+  socketRooms.delete(socket.id);
+}
+
+function getRoomOfSocket(socket) {
+  return socketRooms.get(socket.id);
+}
+
 // Socket.io server
 io.on("connection", (socket) => {
   // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;
+    addSocketToRoom(socket, roomId);
     socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);
   });
 
   socket.on("change-language", (language) => {
     if (!language) return;
-    socket.broadcast.emit("change-language", language);
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("change-language", language);
   });
 
   socket.on("leave-room", () => {
-    socket.broadcast.emit("leave-room");
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("leave-room");
   });
 
-  socket.on("new-chat-message", (roomId, message) => {
+  socket.on("new-chat-message", (message) => {
     // Message is a JS object.
     if (!message) return;
+    const roomId = getRoomOfSocket(socket);
     socket.to(roomId).emit("new-chat-message", message);
   });
 
-  // Not in use by FE presently
   socket.on("disconnect", () => {
-    socket.broadcast.emit("user-disconnected");
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("user-disconnected", socket.id);
+    removeSocketFromRoom(socket);
   });
 });
 

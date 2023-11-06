@@ -185,6 +185,7 @@ export const ViewSession = observer(() => {
             <Divider />
             <ChatBox
               chat={state.chat}
+              isPeerConnected={state.isPeerConnected}
               onSendMessage={(newMessage) => {
                 store.pushAndSendMessage(newMessage);
               }}

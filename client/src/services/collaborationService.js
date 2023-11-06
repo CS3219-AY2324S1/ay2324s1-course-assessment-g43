@@ -74,6 +74,8 @@ export const deleteSession = async (roomId) => {
  * @param {Function} onPeerLanguageChange - callback function for peer language change event
  * @param {Function} onLeaveRoomCallback - callback function for peer closing the room
  * @param {Function} onChatMessageReceived - callback function for peer sending a chat message
+ * @param {Function} onPeerJoined - callback function for peer joined
+ * @param {Function} onPeerDisconnected - callback function for peer disconnect
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
  * @returns {Socket} socket created
  */
@@ -83,6 +85,8 @@ export const initCollaborationSocket = (
   onPeerLanguageChange,
   onLeaveRoomCallback,
   onChatMessageReceived,
+  onPeerJoined,
+  onPeerDisconnected,
   onSocketDisconnect
 ) => {
   const socket = socketIOClient(basePath);
@@ -110,6 +114,14 @@ export const initCollaborationSocket = (
     socket.disconnect();
   });
 
+  socket.on("user-connected", () => {
+    onPeerJoined?.();
+  });
+
+  socket.on("user-disconnected", () => {
+    onPeerDisconnected?.();
+  });
+
   return socket;
 };
 
@@ -122,6 +134,6 @@ export const notifyPeerLanguageChange = (socket, language) => {
   socket?.emit("change-language", language);
 };
 
-export const sendChatMessage = (socket, roomId, message) => {
-  socket?.emit("new-chat-message", roomId, message);
+export const sendChatMessage = (socket, message) => {
+  socket?.emit("new-chat-message", message);
 };

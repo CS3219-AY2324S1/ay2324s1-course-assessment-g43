@@ -3,7 +3,7 @@ import { getRandomQuestionByComplexity } from "../services/questionService";
 import { createSession} from "./collaborationService";
 
 const ENDPOINT =
-  import.meta.env.VITE_MATCHING_ENDPOINT || "http://34.87.120.150:32000";
+  import.meta.env.VITE_MATCHING_ENDPOINT || "http://matching-service:5001";
 
 /**
  * Sets up a socket connection to the matching service server.

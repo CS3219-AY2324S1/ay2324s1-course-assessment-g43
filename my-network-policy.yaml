@@ -1,0 +1,13 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-controller
+spec:
+  podSelector:
+    matchLabels:
+      app: ingress-nginx
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: my-nginx-controller-ingress-nginx-controller-68c8d6798c-2njrm # This label should match the Nginx Ingress Controller pod's label.

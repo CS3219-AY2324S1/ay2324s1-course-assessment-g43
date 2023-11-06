@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: client-deployment
+  name: client
   labels:
     app: client
 spec:
@@ -14,7 +14,7 @@ spec:
         app: client
     spec:
       containers:
-        - name: client-container
+        - name: client
           image: gcr.io/ay2324s1-cs3219-g43/client:1.0-SNAPSHOT
           ports:
             - containerPort: 5173
@@ -22,16 +22,16 @@ spec:
             - name: PEERPREP_ENV
               value: production
             - name: VITE_USER_BASE_PATH
-              value: http://34.87.120.150:30000/api
+              value: /user-service/api
             - name: VITE_QUESTION_BASE_PATH
-              value: http://34.87.120.150:31000/api/questions
+              value: /question-service/api/questions
             - name: VITE_MATCHING_ENDPOINT
-              value: http://34.87.120.150:32000
+              value: /matching-service
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: client-service
+  name: client
 spec:
   selector:
     app: client
@@ -39,12 +39,11 @@ spec:
     - protocol: TCP
       port: 5173
       targetPort: 5173
-  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-deployment
+  name: user-service
 spec:
   replicas: 2
   selector:
@@ -56,7 +55,7 @@ spec:
         app: user-service
     spec:
       containers:
-        - name: user-service-container
+        - name: user-service
           image: gcr.io/ay2324s1-cs3219-g43/user-service:1.0-SNAPSHOT
           ports:
             - containerPort: 8000
@@ -91,21 +90,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service-service
+  name: user-service
 spec:
-  type: NodePort
   selector:
     app: user-service
   ports:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-      nodePort: 30000
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: question-service-deployment
+  name: question-service
 spec:
   replicas: 2
   selector:
@@ -117,7 +114,7 @@ spec:
         app: question-service
     spec:
       containers:
-        - name: question-service-container
+        - name: question-service
           image: gcr.io/ay2324s1-cs3219-g43/question-service:1.0-SNAPSHOT
           ports:
             - containerPort: 3000
@@ -132,26 +129,24 @@ spec:
                   name: peerprep-secrets
                   key: DATABASE_URL
             - name: USER_BASE_PATH
-              value: http://34.87.120.150:30000/api
+              value: http://user-service:8000/api
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: question-service-service
+  name: question-service
 spec:
-  type: NodePort
   selector:
     app: question-service
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-      nodePort: 31000
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: matching-service-deployment
+  name: matching-service
 spec:
   replicas: 2
   selector:
@@ -163,7 +158,7 @@ spec:
         app: matching-service
     spec:
       containers:
-        - name: matching-service-container
+        - name: matching-service
           image: gcr.io/ay2324s1-cs3219-g43/matching-service:1.0-SNAPSHOT
           ports:
             - containerPort: 5001
@@ -181,13 +176,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: matching-service-service
+  name: matching-service
 spec:
-  type: NodePort
   selector:
     app: matching-service
   ports:
     - protocol: TCP
       port: 5001
       targetPort: 5001
-      nodePort: 32000

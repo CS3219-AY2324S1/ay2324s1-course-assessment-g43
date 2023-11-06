@@ -9,6 +9,7 @@ class ViewQuestionsStore {
     questions: [],
     selectedQuestion: {},
     searchQuery: "",
+    complexityFilters: new Set(["Easy", "Medium", "Hard"]),
   };
 
   constructor() {
@@ -36,6 +37,12 @@ class ViewQuestionsStore {
 
   setSearchQuery(searchQuery) {
     this.state.searchQuery = searchQuery;
+  }
+
+  toggleComplexityFilter(complexity) {
+    this.state.complexityFilters.has(complexity)
+      ? this.state.complexityFilters.delete(complexity)
+      : this.state.complexityFilters.add(complexity);
   }
 
   async deleteQuestion(id) {

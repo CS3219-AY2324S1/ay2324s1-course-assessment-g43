@@ -29,6 +29,7 @@ import {
   Th,
   Tbody,
   Td,
+  Flex,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
@@ -44,6 +45,21 @@ export const ViewQuestions = observer(() => {
   const toast = useToast();
   const store = viewQuestionsStore;
   const state = store.state;
+
+  const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
+
+  const getColorFromComplexity = (complexity) => {
+    switch (complexity) {
+      case "Easy":
+        return "#9DEFCD";
+      case "Medium":
+        return "#FAF8A5";
+      case "Hard":
+        return "#F8C1C1";
+      default:
+        return "#CFCCD6";
+    }
+  };
 
   const createQuestion = (e) => {
     e.preventDefault();
@@ -141,26 +157,45 @@ export const ViewQuestions = observer(() => {
             </InputGroup>
           </HStack>
         </Stack>
-        <HStack justify={"right"}>
-          <Text>Create new question</Text>
-          <IconButton
-            aria-label="Create question"
-            icon={<AddIcon />}
-            variant={"outline"}
-            _hover={{
-              bg: "#BBC2E2",
-            }}
-            onClick={() =>
-              modalComponentStore.openModal(
-                createQuestionModalTitle,
-                <CreateQuestionModalBody />,
-                <CreateQuestionModalFooter />,
-                createQuestion,
-                () => createQuestionStore.resetState()
-              )
-            }
-          />
-        </HStack>
+        <Flex justifyContent={"space-between"}>
+          <HStack>
+            {COMPLEXITY_LEVELS.map((complexity) => (
+              <Tag
+                size="md"
+                key={complexity}
+                bg={
+                  state.complexityFilters.has(complexity)
+                    ? getColorFromComplexity(complexity)
+                    : "gray"
+                }
+                onClick={() => store.toggleComplexityFilter(complexity)}
+              >
+                <TagLabel>{complexity.toUpperCase()}</TagLabel>
+                {state.complexityFilters.has(complexity) && <TagCloseButton />}
+              </Tag>
+            ))}
+          </HStack>
+          <HStack justify={"right"}>
+            <Text>Create new question</Text>
+            <IconButton
+              aria-label="Create question"
+              icon={<AddIcon />}
+              variant={"outline"}
+              _hover={{
+                bg: "#BBC2E2",
+              }}
+              onClick={() =>
+                modalComponentStore.openModal(
+                  createQuestionModalTitle,
+                  <CreateQuestionModalBody />,
+                  <CreateQuestionModalFooter />,
+                  createQuestion,
+                  () => createQuestionStore.resetState()
+                )
+              }
+            />
+          </HStack>
+        </Flex>
         <TableContainer w={"100%"}>
           <Table variant="simple">
             <TableCaption>-End of question list-</TableCaption>
@@ -176,6 +211,9 @@ export const ViewQuestions = observer(() => {
             </Thead>
             <Tbody>
               {state.questions
+                .filter((question) =>
+                  state.complexityFilters.has(question.complexity)
+                )
                 .filter((question) =>
                   question.title
                     .toLowerCase()

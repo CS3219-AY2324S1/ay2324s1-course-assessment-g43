@@ -19,6 +19,7 @@ import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
 import { useEffect, useState } from "react";
+import { getColorFromComplexity } from "../utils/stylingUtils";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
@@ -126,15 +127,7 @@ export const ViewSession = observer(() => {
             fontWeight={"semibold"}
           >
             Matched Difficulty: {}
-            <Badge
-              bg={
-                state.complexity == "Easy"
-                  ? "#9DEFCD"
-                  : state.complexity == "Medium"
-                  ? "#FAF8A5"
-                  : "#F8C1C1"
-              }
-            >
+            <Badge bg={getColorFromComplexity(state.complexity)}>
               {state.complexity}
             </Badge>
           </Heading>

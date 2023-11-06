@@ -39,6 +39,7 @@ import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
+import { getColorFromComplexity } from "../utils/stylingUtils";
 
 export const ViewQuestions = observer(() => {
   const modalComponentStore = useModalComponentStore();
@@ -47,19 +48,6 @@ export const ViewQuestions = observer(() => {
   const state = store.state;
 
   const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
-
-  const getColorFromComplexity = (complexity) => {
-    switch (complexity) {
-      case "Easy":
-        return "#9DEFCD";
-      case "Medium":
-        return "#FAF8A5";
-      case "Hard":
-        return "#F8C1C1";
-      default:
-        return "#CFCCD6";
-    }
-  };
 
   const createQuestion = (e) => {
     e.preventDefault();
@@ -227,15 +215,7 @@ export const ViewQuestions = observer(() => {
                         {question.title}
                       </Td>
                       <Td key="complexity">
-                        <Badge
-                          bg={
-                            question.complexity == "Easy"
-                              ? "#9DEFCD"
-                              : question.complexity == "Medium"
-                              ? "#FAF8A5"
-                              : "#F8C1C1"
-                          }
-                        >
+                        <Badge bg={getColorFromComplexity(question.complexity)}>
                           {question.complexity}
                         </Badge>
                       </Td>
@@ -370,13 +350,9 @@ const ViewQuestionDetailsModalBody = observer(() => {
   return (
     <>
       <Badge
-        bg={
-          viewQuestionsStore.state.selectedQuestion.complexity == "Easy"
-            ? "#9DEFCD"
-            : viewQuestionsStore.state.selectedQuestion.complexity == "Medium"
-            ? "#FAF8A5"
-            : "#F8C1C1"
-        }
+        bg={getColorFromComplexity(
+          viewQuestionsStore.state.selectedQuestion.complexity
+        )}
       >
         {viewQuestionsStore.state.selectedQuestion.complexity}
       </Badge>

@@ -28,6 +28,7 @@ import { PageContainer } from "../components/PageContainer";
 import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
+import { getColorFromComplexity } from "../utils/stylingUtils";
 
 export const ViewQuestionsUser = observer(() => {
   const modalComponentStore = useModalComponentStore();
@@ -95,15 +96,7 @@ export const ViewQuestionsUser = observer(() => {
                         {question.title}
                       </Td>
                       <Td key="complexity">
-                        <Badge
-                          bg={
-                            question.complexity == "Easy"
-                              ? "#9DEFCD"
-                              : question.complexity == "Medium"
-                              ? "#FAF8A5"
-                              : "#F8C1C1"
-                          }
-                        >
+                        <Badge bg={getColorFromComplexity(question.complexity)}>
                           {question.complexity}
                         </Badge>
                       </Td>
@@ -137,13 +130,9 @@ const ViewQuestionDetailsModalBody = observer(() => {
   return (
     <>
       <Badge
-        bg={
-          viewQuestionsStore.state.selectedQuestion.complexity == "Easy"
-            ? "#9DEFCD"
-            : viewQuestionsStore.state.selectedQuestion.complexity == "Medium"
-            ? "#FAF8A5"
-            : "#F8C1C1"
-        }
+        bg={getColorFromComplexity(
+          viewQuestionsStore.state.selectedQuestion.complexity
+        )}
       >
         {viewQuestionsStore.state.selectedQuestion.complexity}
       </Badge>

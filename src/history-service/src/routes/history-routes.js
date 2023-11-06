@@ -7,7 +7,6 @@ const router = express.Router();
  * An Attempt Payload for POST requests
  * @typedef {object} AttemptPayload
  * @property {Number} currentUserId - The uid of User
- * @property {integer} questionId - The question id
  * @property {string} title - The question title
  * @property {string} description - The question description
  * @property {array<string>} category - The array of categories
@@ -20,7 +19,6 @@ const router = express.Router();
  * @property {string} _id - The document id
  * @property {string} __v - The document version
  * @property {Number} currentUserId - The uid of User
- * @property {integer} questionId - The question id
  * @property {string} title - The question title
  * @property {string} description - The question description
  * @property {array<string>} category - The array of categories
@@ -37,7 +35,6 @@ const router = express.Router();
  * @example request - example payload
 {
   "currentUserId": 1,
-  "questionId": 2,
   "title": "Sample Title2",
   "description": "Sample Description2",
   "category": ["Category3", "Category4"],
@@ -46,7 +43,6 @@ const router = express.Router();
  * @example response - 201 - example 201 response
 {
 	"currentUserId": 1,
-	"questionId": 2,
 	"title": "Sample Title2",
 	"description": "Sample Description2",
 	"category": [
@@ -78,7 +74,6 @@ router.post("/createAttempt", auth.authenticate, historyController.createAttempt
 	{
 		"_id": "6540b01261f323178cf99b23",
 		"currentUserId": 1,
-		"questionId": 2,
 		"title": "Sample Title",
 		"description": "Sample Description",
 		"category": [
@@ -92,7 +87,6 @@ router.post("/createAttempt", auth.authenticate, historyController.createAttempt
 	{
 		"_id": "6540b0a261f323178cf99b25",
 		"currentUserId": 1,
-		"questionId": 2,
 		"title": "Sample Title2",
 		"description": "Sample Description2",
 		"category": [

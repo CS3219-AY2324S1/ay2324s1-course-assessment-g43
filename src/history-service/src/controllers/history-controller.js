@@ -1,11 +1,10 @@
 const Attempt = require("../models/attempt-model");
 
 exports.createAttempt = async (req, res) => {
-  const { currentUserId, questionId, title, description, category, complexity } = req.body;
+  const { currentUserId, title, description, category, complexity } = req.body;
   try {
     const attempt = new Attempt({
       currentUserId,
-      questionId,
       title,
       description,
       category,

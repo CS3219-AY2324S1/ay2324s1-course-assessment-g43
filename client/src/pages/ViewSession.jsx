@@ -99,8 +99,6 @@ export const ViewSession = observer(() => {
     const uid = userObject.uid;
     const attempt = {
       currentUserId: uid,
-      // questionId: location.state.questionId,
-      questionId: 2, //hardcode
       title: location.state.title,
       description: location.state.description,
       category: location.state.category,

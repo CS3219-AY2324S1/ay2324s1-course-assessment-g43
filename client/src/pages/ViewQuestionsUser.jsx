@@ -21,8 +21,9 @@ import {
   Th,
   Tbody,
   Td,
+  IconButton,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon, ViewIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { useEffect } from "react";
@@ -76,9 +77,15 @@ export const ViewQuestionsUser = observer(() => {
                 <Th key="id" w={"10%"}>
                   ID
                 </Th>
-                <Th key="title">Question Title</Th>
-                <Th key="complexity">Complexity</Th>
-                <Th key="actions">Actions</Th>
+                <Th key="title" w={"65%"}>
+                  Question Title
+                </Th>
+                <Th key="complexity" w={"15%"}>
+                  Complexity
+                </Th>
+                <Th key="details" w={"10%"}>
+                  Details
+                </Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -101,12 +108,23 @@ export const ViewQuestionsUser = observer(() => {
                         </Badge>
                       </Td>
                       <Td>
+                        <IconButton
+                          bg={"#BBC2E2"}
+                          _hover={{
+                            bg: "#DEE2F5",
+                          }}
+                          onClick={() => handleOpenModal(question)}
+                          display={{ base: "flex", md: "none" }}
+                          icon={<ViewIcon />}
+                          //dunno what icon to put
+                        />
                         <Button
                           bg={"#BBC2E2"}
                           _hover={{
                             bg: "#DEE2F5",
                           }}
                           onClick={() => handleOpenModal(question)}
+                          display={{ base: "none", md: "flex" }}
                         >
                           View Details
                         </Button>

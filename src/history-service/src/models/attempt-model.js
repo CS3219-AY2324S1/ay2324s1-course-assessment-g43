@@ -11,7 +11,7 @@ const attemptSchema = new mongoose.Schema({
     type: String, // Store as a string
     default: () => {
       const now = new Date();
-      const options = { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' };
+      const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true , day: '2-digit', month: '2-digit', year: 'numeric' };
       return now.toLocaleDateString(undefined, options);
     },
   },

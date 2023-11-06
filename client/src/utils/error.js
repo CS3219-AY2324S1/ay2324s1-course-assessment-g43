@@ -1,4 +1,10 @@
 export const errorCodeContent = {
+  401: {
+    title: "Unauthorized",
+    description: "Your token has expired, please login again",
+    buttonText: "Login",
+    redirectUrl: "/login-user",
+  },
   403: {
     title: "Forbidden",
     description:

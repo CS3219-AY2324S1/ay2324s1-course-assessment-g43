@@ -20,6 +20,11 @@ function App() {
         error.response &&
         Object.keys(errorCodeContent).includes(error.response.status.toString())
       ) {
+        if (error.response.status === 401) {
+          // Log user out on invalid/expired JWT
+          localStorage.removeItem("user");
+          localStorage.removeItem("jwt");
+        }
         window.location.replace(`/error?statusCode=${error.response.status}`);
       }
       return Promise.reject(error);

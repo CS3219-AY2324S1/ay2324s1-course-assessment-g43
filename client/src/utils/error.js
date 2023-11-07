@@ -1,7 +1,8 @@
 export const errorCodeContent = {
   401: {
     title: "Unauthorized",
-    description: "Your token has expired, please login again",
+    description:
+      "You cannot access the page because you lack valid credentials, please login again",
     buttonText: "Login",
     redirectUrl: "/login-user",
   },

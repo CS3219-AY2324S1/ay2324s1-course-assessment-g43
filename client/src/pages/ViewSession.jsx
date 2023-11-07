@@ -35,11 +35,6 @@ export const ViewSession = observer(() => {
   useEffect(() => {
     const roomId = param.id;
 
-    // Navigate back if no roomId specified
-    if (!roomId) {
-      console.log("No roomId specified");
-      navigate("/");
-    }
     if (!location.state || !location.state.questionId) {
       // Case when user resumes an existing session
       store

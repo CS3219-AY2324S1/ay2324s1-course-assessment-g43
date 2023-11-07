@@ -40,13 +40,15 @@ function App() {
         <Route path="/me" exact={true} Component={ViewUser} />
         <Route path="/browse-admin" exact={true} Component={ViewQuestions} />
         <Route path="/history" exact={true} Component={History} />
-
+        <Route path="/error" Component={ErrorPage} />
         <Route
           path="/update-question"
           exact={true}
           Component={UpdateQuestion}
         />
         <Route path="/session/:id" exact={true} Component={ViewSession} />
+        {/* Catch-all route for undefined URLs */}
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
   );

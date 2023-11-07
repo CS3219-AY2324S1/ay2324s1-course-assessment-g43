@@ -31,7 +31,7 @@ export const History = observer(() => {
   const state = store.state;
   const userData = localStorage.getItem("user");
   const userObject = JSON.parse(userData);
-  const uid = userObject.uid;
+  const uid = userObject?.uid;
   const modalComponentStore = useModalComponentStore();
 
   const handleOpenModal = (attempt) => {

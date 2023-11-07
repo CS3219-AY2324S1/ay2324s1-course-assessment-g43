@@ -11,6 +11,7 @@
     "install:matching-service": "cd ./src/matching-service && npm install",
     "install:collaboration-service": "cd ./src/collaboration-service && npm install",
     "install:code-execution-service": "cd ./src/code-execution-service && npm install",
+    "install:history-service": "cd ./src/history-service && npm install",
     "install-all": "concurrently -c \"red,green,yellow,blue,magenta,cyan,gray\" \"npm:install:*\"",
     "dev:client": "cd ./client && npm run dev",
     "dev:user-service": "cd ./src/user-service && npm run dev",
@@ -18,6 +19,7 @@
     "dev:matching-service": "cd ./src/matching-service && npm run dev",
     "dev:collaboration-service": "cd ./src/collaboration-service && npm run dev",
     "dev:code-execution-service": "cd ./src/code-execution-service && npm run dev",
+    "dev:history-service": "cd ./src/history-service && npm run dev",
     "dev-all": "concurrently -c \"red,green,yellow,blue,magenta,cyan,gray\" \"npm:dev:*\""
   },
   "repository": {

@@ -55,18 +55,16 @@ export const ViewSession = observer(() => {
           store.setChat(localStorage.getItem("sessionChat"));
         })
         .catch((err) => {
-          let message = err.message;
-          // If GET /session/:roomId returns 404, delete roomId from localStorage
+          // ! Important
+          // ! If GET /session/:roomId returns 404, delete roomId and other cached session info from localStorage
           // * Be careful when updating the err.message string
           if (err.message === "Session is invalid.") {
             if (localStorage.getItem("roomId") === roomId) {
               localStorage.removeItem("roomId");
               localStorage.removeItem("sessionLanguage");
               localStorage.removeItem("sessionChat");
-              message = "This session has been closed by your partner.";
             }
           }
-          alert(`Error: ${message}`);
           navigate("/");
         })
         .finally(() => {

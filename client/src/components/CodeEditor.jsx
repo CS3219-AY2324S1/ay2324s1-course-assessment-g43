@@ -55,7 +55,7 @@ export const CodeEditor = observer(
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
       const template = getCodeTemplate(language, questionTitle);
       setCode(template);
-      store.setSourceCode(code);
+      store.setSourceCode(template);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -134,38 +134,33 @@ export const CodeEditor = observer(
       return formatted;
     };
 
-    const getCodeTemplate = useCallback(
-      (lang, questionTitle) => {
-        const functionName = convertTitleToFunctionName(questionTitle);
-        switch (lang) {
-          case "cpp":
-            setDisability(false);
-            store.setLanguageId(54);
-            return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
-          case "java":
-            setDisability(false);
-            store.setLanguageId(62);
-            return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
-          case "python":
-            setDisability(false);
-            store.setLanguageId(71);
-            return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
-          case "javascript":
-            setDisability(false);
-            store.setLanguageId(93);
-            return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
-          case "text":
-            setDisability(true);
-            store.setLanguageId(0); //invalid ID because not supposed to run/submit
-            return ``;
-          default:
-            setDisability(true);
-            store.setLanguageId(0); //invalid ID because not supposed to run/submit
-            return ``;
-        }
-      },
-      [store]
-    );
+    const getCodeTemplate = useCallback((lang, questionTitle) => {
+      const functionName = convertTitleToFunctionName(questionTitle);
+      switch (lang) {
+        case "cpp":
+          setDisability(false);
+          store.setLanguageId(54);
+          return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
+        case "java":
+          setDisability(false);
+          store.setLanguageId(62);
+          return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
+        case "python":
+          setDisability(false);
+          store.setLanguageId(71);
+          return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
+        case "javascript":
+          setDisability(false);
+          store.setLanguageId(93);
+          return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
+        case "text":
+          setDisability(true);
+          return ``;
+        default:
+          setDisability(true);
+          return ``;
+      }
+    }, []);
 
     const initiateNextQuestionRequest = () => {
       viewSessionStore.initChangeQuestion();
@@ -333,7 +328,6 @@ export const CodeEditor = observer(
                       </Text>
                       <Card backgroundColor={"gray.100"} variant={"filled"}>
                         <CardBody>
-                          <Text color={"gray.600"}>Hello</Text>
                           <Text>{resultStore.state.stdout}</Text>
                         </CardBody>
                       </Card>
@@ -343,22 +337,26 @@ export const CodeEditor = observer(
                       No output generated
                     </Text>
                   )}
-                  {resultStore.state.stderr ? (
+                  {resultStore.state.status.id >= 5 && resultStore.state.status.id <= 14 ? (
                     <>
                       <Text as={"b"} fontSize={"xl"} color={"red"}>
-                        Error {}
+                        {resultStore.state.status.description}
                       </Text>
-                      <Card
-                        colorScheme={"red"}
-                        variant={"filled"}
-                        backgroundColor={"red.100"}
-                      >
-                        <CardBody>
-                          <Text color={"red.600"}>
-                            {resultStore.state.stderr}
-                          </Text>
-                        </CardBody>
-                      </Card>
+                      {resultStore.state.stderr ? (
+                        <Card
+                          colorScheme={"red"}
+                          variant={"filled"}
+                          backgroundColor={"red.100"}
+                        >
+                          <CardBody>
+                            <Text color={"red.600"}>
+                              {resultStore.state.stderr}
+                            </Text>
+                          </CardBody>
+                        </Card>
+                      ) : (
+                        <></>
+                      )}
                     </>
                   ) : (
                     <></>

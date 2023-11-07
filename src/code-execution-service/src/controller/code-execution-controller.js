@@ -86,22 +86,19 @@ exports.getStatuses = async (req, res) => {
 }
 
 exports.createSubmission = async (req, res) => {
-  // console.log(req);
-  const {language_id, source_code, stdin, expected_output} = req.body;
-  // console.log(language_id, source_code, stdin, expected_output);
+  const {language_id, source_code} = req.body;
 
-  if (!language_id || !source_code || !stdin || !expected_output) {
+  // if (!language_id || !source_code || !stdin) {
+  if (!language_id || !source_code) {
     return res.status(401).json({
       message:
-        "Language ID, source code, stdin and expected output are necessary for a submission.",
+        "Language ID and source code are necessary for a submission.",
       data: {},
     });
   }
 
   // Encode the source code as a base64 string
   const base64SourceCode = Buffer.from(source_code).toString('base64');
-  const base64StdIn = Buffer.from(stdin).toString('base64');
-  const base64ExpectedOutput = Buffer.from(expected_output).toString('base64');
 
   const options = {
     method: 'POST',
@@ -119,8 +116,6 @@ exports.createSubmission = async (req, res) => {
     data: {
       "source_code": base64SourceCode,
       "language_id": language_id,
-      "stdin": base64StdIn,
-      "expected_output": base64ExpectedOutput
     }
   };
 
@@ -141,7 +136,6 @@ exports.createSubmission = async (req, res) => {
 }
 
 exports.getSubmissionResult = async (req, res) => {
-  console.log("inside")
   const token = req.params.token;
   console.log(token);
   if (!token) {
@@ -167,10 +161,6 @@ exports.getSubmissionResult = async (req, res) => {
   try {
     const response = await axios.request(options);
     console.log(response.data);
-    let expectedOutput = response.data.expected_output;
-    if (expectedOutput) {
-      expectedOutput = Buffer.from(expectedOutput, "base64").toString("utf-8");
-    }
     let stdout = response.data.stdout;
     if (stdout) {
       stdout = Buffer.from(stdout, "base64").toString("utf-8");
@@ -183,7 +173,6 @@ exports.getSubmissionResult = async (req, res) => {
     return res.status(200).json({
       message: 'Successful retrieval of submission',
       data: { 
-        "expected_output":expectedOutput,
         stdout,
         stderr,
         status

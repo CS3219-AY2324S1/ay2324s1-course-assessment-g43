@@ -166,7 +166,7 @@ router.get("/questions", auth.authenticate, questionController.getAllQuestions);
  * @param {integer} questionId.path.required - The `questionId`
  * @param {QuestionPayload} request.body.required - The question info
  * @return {QuestionDocument} 200 - success reponse - application/json
- * @return {ErrorResponse} 400 - bad request response - application/json
+ * @return {ErrorResponse} 400 - error response - application/json
  * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
  * {

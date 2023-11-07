@@ -52,6 +52,17 @@ export const getQuestionFromSession = async (roomId) => {
   }
 };
 
+export const updateSessionWithNewQuestion = async (roomId, question) => {
+  const token = localStorage.getItem("jwt");
+
+  const res = await axios.put(`${basePath}/api/session/${roomId}`, question, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+}
+
 export const deleteSession = async (roomId) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.delete(`${basePath}/api/session/${roomId}`, {
@@ -77,6 +88,9 @@ export const deleteSession = async (roomId) => {
  * @param {Function} onPeerJoined - callback function for peer joined
  * @param {Function} onPeerDisconnected - callback function for peer disconnect
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
+ * @param {Function} receiveRequestCallback - callback function for receive change question event
+ * @param {Function} changeQuestionCallback - callback function for change question event
+ * @param {Function} rejectRequestCallback - callback function for reject change question event
  * @returns {Socket} socket created
  */
 export const initCollaborationSocket = (
@@ -87,7 +101,10 @@ export const initCollaborationSocket = (
   onChatMessageReceived,
   onPeerJoined,
   onPeerDisconnected,
-  onSocketDisconnect
+  onSocketDisconnect,
+  receiveRequestCallback,
+  changeQuestionCallback,
+  rejectRequestCallback,
 ) => {
   const socket = socketIOClient(basePath);
 
@@ -109,8 +126,20 @@ export const initCollaborationSocket = (
     onChatMessageReceived?.(message);
   });
 
+  socket.on("initiate-next-question", () => {
+    receiveRequestCallback?.();
+  });
+
+  socket.on("retrieve-next-question", () => { 
+    changeQuestionCallback?.();
+  });
+
+  socket.on("reject-next-question", () => {
+    rejectRequestCallback?.();
+  });
+
   socket.on("leave-room", () => {
-    onLeaveRoomCallback();
+    onLeaveRoomCallback?.();
     socket.disconnect();
   });
 
@@ -129,6 +158,17 @@ export const initiateLeaveRoomRequest = (socket) => {
   socket?.emit("leave-room");
 };
 
+export const initiateNextQuestionRequest = (socket) => {
+  socket?.emit("initiate-next-question");
+};
+
+export const rejectNextQuestionRequest = (socket) => {
+  socket?.emit("reject-next-question");
+};
+
+export const acceptNextQuestionRequest = (socket) => {
+  socket?.emit("retrieve-next-question");
+};
 
 export const notifyPeerLanguageChange = (socket, language) => {
   socket?.emit("change-language", language);

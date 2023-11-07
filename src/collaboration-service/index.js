@@ -53,6 +53,18 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("change-language", language);
   });
 
+  socket.on("initiate-next-question", () => {
+    socket.broadcast.emit("initiate-next-question");
+  })
+
+  socket.on("reject-next-question", () => {
+    socket.broadcast.emit("reject-next-question");
+  });
+
+  socket.on("retrieve-next-question", () => {
+    socket.broadcast.emit("retrieve-next-question");
+  })
+
   socket.on("leave-room", () => {
     const roomId = getRoomOfSocket(socket);
     socket.to(roomId).emit("leave-room");
@@ -90,7 +102,7 @@ mongoose.connect(databaseUrl, {
 
 app.post("/api/session", sessionController.createSession);
 app.get("/api/session/:roomId", sessionController.getSession);
-app.put("/api/session/:roomId", sessionController.saveAttempt);
+app.put("/api/session/:roomId", sessionController.editSession);
 app.delete("/api/session/:roomId", sessionController.deleteSession);
 
 server.listen(port, () => {

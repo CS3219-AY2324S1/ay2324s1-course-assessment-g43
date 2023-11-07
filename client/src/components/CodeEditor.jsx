@@ -27,13 +27,14 @@ import { MonacoBinding } from "y-monaco";
 import { PropTypes } from "prop-types";
 import { createSubmissionStore } from "../stores/createSubmissionStore";
 import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
+import { viewSessionStore } from "../stores/viewSessionStore";
 
 /**
  * `language` prop changes when PEER changes language
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange }) => {
+  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
@@ -48,6 +49,7 @@ export const CodeEditor = observer(
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
+
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -165,6 +167,11 @@ export const CodeEditor = observer(
       [store]
     );
 
+    const initiateNextQuestionRequest = () => {
+      viewSessionStore.initChangeQuestion();
+      viewSessionStore.setIsGetQuestionLoading(true);
+    }
+
     const resetCode = () => {
       if (
         confirm(
@@ -275,7 +282,12 @@ export const CodeEditor = observer(
               bg="gray.300"
               color="black"
             >
-              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
+              <IconButton 
+                icon={<ArrowForwardIcon />} 
+                isLoading={isGetNextQuestionLoading}
+                variant={"outline"} 
+                onClick={initiateNextQuestionRequest}
+              />
             </Tooltip>
             <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
               <IconButton

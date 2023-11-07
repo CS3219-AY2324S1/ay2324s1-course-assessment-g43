@@ -64,10 +64,9 @@ router.post("/createAttempt", auth.authenticate, historyController.createAttempt
 
 /**
  * GET /api/getAttemptsByUserId/{userId}
- * @summary Gets all attempts by user.
+ * @summary Gets all attempts by user. Returns empty array if no attempts found.
  * @param {integer} userId.path.required - The `userId`
  * @return {array<AttemptDocument>} 200 - success response - application/json
- * @return {ErrorResponse} 404 - not found response - application/json
  * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
 [
@@ -98,10 +97,6 @@ router.post("/createAttempt", auth.authenticate, historyController.createAttempt
 		"__v": 0
 	}
 ]
- * @example response - 404 - example 404 response
-{
-	"message": "No attempts found for user with uid 50"
-}
  * @example response - 500 - example 500 response
  * {
  *  "message": "Error getting attempts for user with uid 50"

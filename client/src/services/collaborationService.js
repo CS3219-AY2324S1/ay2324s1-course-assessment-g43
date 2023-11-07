@@ -52,6 +52,17 @@ export const getQuestionFromSession = async (roomId) => {
   }
 };
 
+export const updateSessionWithNewQuestion = async (roomId, question) => {
+  const token = localStorage.getItem("jwt");
+
+  const res = await axios.put(`${basePath}/api/session/${roomId}`, question, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+}
+
 export const leaveSession = async (roomId) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.delete(`${basePath}/api/session/${roomId}`, {
@@ -77,7 +88,10 @@ export const initCollaborationSocket = (
   userId,
   onPeerLanguageChange,
   onLeaveRoomCallback,
-  onSocketDisconnect
+  onSocketDisconnect,
+  receiveRequestCallback,
+  changeQuestionCallback,
+  rejectRequestCallback,
 ) => {
   const socket = socketIOClient(basePath);
 
@@ -99,6 +113,18 @@ export const initCollaborationSocket = (
     }
   });
 
+  socket.on("initiate-next-question", () => {
+    receiveRequestCallback();
+  });
+
+  socket.on("retrieve-next-question", () => { 
+    changeQuestionCallback();
+  });
+
+  socket.on("reject-next-question", () => {
+    rejectRequestCallback();
+  });
+
   socket.on("leave-room", () => {
     onLeaveRoomCallback();
     socket.disconnect();
@@ -111,6 +137,17 @@ export const initiateLeaveRoomRequest = (socket) => {
   socket?.emit("leave-room");
 };
 
+export const initiateNextQuestionRequest = (socket) => {
+  socket?.emit("initiate-next-question");
+};
+
+export const rejectNextQuestionRequest = (socket) => {
+  socket?.emit("reject-next-question");
+};
+
+export const acceptNextQuestionRequest = (socket) => {
+  socket?.emit("retrieve-next-question");
+};
 
 export const notifyPeerLanguageChange = (socket, language) => {
   socket?.emit("change-language", language);

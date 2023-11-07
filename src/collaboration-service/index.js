@@ -22,18 +22,35 @@ const io = new Server(server, {
   },
 });
 
+// socket IDs to room IDs mapping
+const socketRooms = new Map();
+
+function addSocketToRoom(socket, roomId) {
+  socketRooms.set(socket.id, roomId);
+}
+
+function removeSocketFromRoom(socket) {
+  socketRooms.delete(socket.id);
+}
+
+function getRoomOfSocket(socket) {
+  return socketRooms.get(socket.id);
+}
+
 // Socket.io server
 io.on("connection", (socket) => {
   // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;
+    addSocketToRoom(socket, roomId);
     socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);
   });
 
   socket.on("change-language", (language) => {
     if (!language) return;
-    socket.broadcast.emit("change-language", language);
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("change-language", language);
   });
 
   socket.on("initiate-next-question", () => {
@@ -49,12 +66,21 @@ io.on("connection", (socket) => {
   })
 
   socket.on("leave-room", () => {
-    socket.broadcast.emit("leave-room");
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("leave-room");
   });
 
-  // Not in use by FE presently
+  socket.on("new-chat-message", (message) => {
+    // Message is a JS object.
+    if (!message) return;
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("new-chat-message", message);
+  });
+
   socket.on("disconnect", () => {
-    socket.broadcast.emit("user-disconnected");
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("user-disconnected", socket.id);
+    removeSocketFromRoom(socket);
   });
 });
 
@@ -79,12 +105,6 @@ app.get("/api/session/:roomId", sessionController.getSession);
 app.put("/api/session/:roomId", sessionController.editSession);
 app.delete("/api/session/:roomId", sessionController.deleteSession);
 
-
-app.get("/api/hello", (req, res) => {
-  res.send("Hello world");
-});
-
-// app.listen(port, () => console.log(`Listening on port ${port}`));
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

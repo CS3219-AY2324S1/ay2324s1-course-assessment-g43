@@ -20,6 +20,7 @@ import { CodeEditor } from "../components/CodeEditor";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { useEffect, useState } from "react";
 import { viewHistoryStore } from "../stores/viewHistoryStore";
+import { ChatBox } from "../components/ChatBox";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ export const ViewSession = observer(() => {
           store.setLanguage(
             localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
           );
+          store.setChat(localStorage.getItem("sessionChat"));
         })
         .catch((err) => {
           let message = err.message;
@@ -62,6 +64,8 @@ export const ViewSession = observer(() => {
           if (err.message === "Session is invalid.") {
             if (localStorage.getItem("roomId") === roomId) {
               localStorage.removeItem("roomId");
+              localStorage.removeItem("sessionLanguage");
+              localStorage.removeItem("sessionChat");
               message = "This session has been closed by your partner.";
             }
           }
@@ -116,6 +120,7 @@ export const ViewSession = observer(() => {
     // Remove roomId & sessionLanguage from localStorage
     localStorage.removeItem("roomId");
     localStorage.removeItem("sessionLanguage");
+    localStorage.removeItem("sessionChat");
     store.resetState();
     navigate(-1);
     toast({
@@ -205,7 +210,7 @@ export const ViewSession = observer(() => {
       <Stack w={"100%"}>
         <HStack justifyContent={"space-between"}>
           <Heading
-            lineHeight={1.1}
+            lineHeight={1}
             fontSize={{ base: "l", sm: "xl" }}
             fontWeight={"semibold"}
           >
@@ -263,6 +268,14 @@ export const ViewSession = observer(() => {
                 isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
               />
             )}{" "}
+            <Divider />
+            <ChatBox
+              chat={state.chat}
+              isPeerConnected={state.isPeerConnected}
+              onSendMessage={(newMessage) => {
+                store.pushAndSendMessage(newMessage);
+              }}
+            />
           </Stack>
         </HStack>
       </Stack>

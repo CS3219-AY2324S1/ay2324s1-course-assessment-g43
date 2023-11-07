@@ -2,9 +2,10 @@ import { makeAutoObservable } from "mobx";
 import {
   getQuestionFromSession,
   initCollaborationSocket,
-  leaveSession,
+  deleteSession,
   initiateLeaveRoomRequest,
   notifyPeerLanguageChange,
+  sendChatMessage,
   initiateNextQuestionRequest,
   rejectNextQuestionRequest,
   acceptNextQuestionRequest,
@@ -25,6 +26,17 @@ class ViewSessionStore {
     roomId: "",
     language: "",
     isGetNextQuestionLoading: false,
+
+    /*
+    Array of objects with the following structure:
+      {
+        sender: string, // 'self' or 'peer'
+        text: string,
+        timestamp: string,
+      }
+    */
+    chat: [],
+    isPeerConnected: true,
   };
 
   constructor() {
@@ -52,8 +64,6 @@ class ViewSessionStore {
   }
 
   setRoomId(roomId) {
-    console.log("trying to set room ")
-
     this.state.roomId = roomId;
   }
 
@@ -70,6 +80,45 @@ class ViewSessionStore {
     this.state.isGetNextQuestionLoading = isLoading;
   }
 
+  setChat(jsonStringChat) {
+    this.state.chat = jsonStringChat ? JSON.parse(jsonStringChat) : [];
+  }
+
+  /**
+   * Pushes message into `state.chat`. Call this for messages from PEER.
+   *
+   * @param {Object} receivedMsg - Message received from peer
+   */
+  pushMessage(receivedMsg) {
+    this.state.chat.push({
+      sender: "peer",
+      ...receivedMsg,
+    });
+    // Save chat to local storage -- useful when user resumes session
+    localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
+  }
+
+  /**
+   * Pushes messages into `state.chat`, and sends message via websocket.
+   * Call this for messages sent by USER.
+   * Note: message deletions not supported.
+   *
+   * @param {string} messageString - sent by User.
+   */
+  pushAndSendMessage(messageString) {
+    const socketMessage = {
+      text: messageString,
+      timestamp: Date.now(),
+    };
+    this.state.chat.push({
+      sender: "self",
+      ...socketMessage,
+    });
+    sendChatMessage(this.socket, socketMessage);
+    // Save chat to local storage -- useful when user resumes session
+    localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
+  }
+
   initQuestionState(question) {
     const { questionId, title, description, category, complexity } = question;
     this.state = {
@@ -84,7 +133,7 @@ class ViewSessionStore {
 
   async initLeaveRoom() {
     if (this.state.roomId) {
-      await leaveSession(this.state.roomId);
+      await deleteSession(this.state.roomId);
       initiateLeaveRoomRequest(this.socket);
     }
   }
@@ -97,7 +146,10 @@ class ViewSessionStore {
 
   async acceptChangeQuestion(changeQuestionCallback) {
     if (this.state.roomId) {
-      const newQuestion = await getFreshRandomQuestionByComplexity(this.state.complexity, this.state.questionId);
+      const newQuestion = await getFreshRandomQuestionByComplexity(
+        this.state.complexity,
+        this.state.questionId
+      );
       await updateSessionWithNewQuestion(this.state.roomId, newQuestion);
       acceptNextQuestionRequest(this.socket);
       changeQuestionCallback();
@@ -120,6 +172,8 @@ class ViewSessionStore {
       roomId: "",
       language: "",
       isGetNextQuestionLoading: false,
+      chat: [],
+      isPeerConnected: true,
     };
   }
 
@@ -136,15 +190,16 @@ class ViewSessionStore {
    * Sets up a socket connection to the collaboration service server and joins a room.
    */
   initSocket(
-    onLeaveRoomCallback,   
+    onLeaveRoomCallback,
     receiveRequestCallback,
     changeQuestionCallback,
     rejectRequestCallback
-    ) {
+  ) {
     const userId = JSON.parse(localStorage.getItem("user")).uid;
     this.socket = initCollaborationSocket(
       this.state.roomId,
       userId,
+      // onPeerLanguageChange
       (lang) => {
         // Note: use arrow function for correct `this` binding
         this.setLanguage(lang);
@@ -152,9 +207,20 @@ class ViewSessionStore {
         localStorage.setItem("sessionLanguage", lang);
       },
       onLeaveRoomCallback,
-      () => {
-        // code for onSocketDisconnect but not in use
+      // onChatMessageReceived
+      (message) => {
+        this.pushMessage(message);
       },
+      // onPeerJoined
+      () => {
+        this.state.isPeerConnected = true;
+      },
+      // onPeerDisconnected
+      () => {
+        this.state.isPeerConnected = false;
+      },
+      // onSocketDisconnect (not in use)
+      () => {},
       receiveRequestCallback,
       changeQuestionCallback,
       rejectRequestCallback
@@ -169,7 +235,7 @@ class ViewSessionStore {
       this.socket?.disconnect();
       if (this.state.roomId) {
         const userId = JSON.parse(localStorage.getItem("user")).uid;
-        await leaveSession(this.state.roomId, userId);
+        await deleteSession(this.state.roomId, userId);
       }
     } catch (err) {
       console.log(err);

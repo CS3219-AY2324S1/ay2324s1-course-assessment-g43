@@ -33,18 +33,23 @@ const router = express.Router();
 
 /**
  * GET /api/questions/random
- * @summary Gets a random `questionId` by complexity.
+ * @summary Gets a random `question` by complexity.
  * 
  * @param {string} complexity.query.optional - The complexity to filter by - enum:Easy,Medium,Hard
+ * @param {string} currentId.query.optional - The current questionId of the client
  * @return {integer} 200 - success response - application/json
- * @return {ErrorResponse} 404 - not found response - application/json
+ * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
  * {
- *  "questionId": 4
- * }
- * @example response - 404 - example 404 response
- * {
- *  "message": "Question not found"
+ *   "_id": "64fefe7816358d7601e35fa0",
+ *   "questionId": 2,
+ *   "title": "second question",
+ *   "description": "desc1",
+ *   "category": [
+ *     "cat1, cat3, cat33"
+ *   ],
+ *   "complexity": "easy",
+ *   "__v": 0
  * }
  */
 router.get(
@@ -59,6 +64,7 @@ router.get(
  * @param {QuestionPayload} request.body.required - question info
  * @return {QuestionDocument} 201 - success response - application/json
  * @return {ErrorResponse} 400 - error response - application/json
+ * @return {ErrorResponse} 500 - error response - application/json
  * @example request - example payload
  * {
  *   "title": "Two Sum",
@@ -93,7 +99,6 @@ router.post(
  * @summary Gets a question.
  * @param {integer} questionId.path.required - The `questionId`
  * @return {QuestionPayload} 200 - success response - application/json
- * @return {ErrorResponse} 404 - not found response - application/json
  * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
  * {
@@ -106,10 +111,6 @@ router.post(
  *   ],
  *   "complexity": "easy",
  *   "__v": 0
- * }
- * @example response - 404 - example 404 response
- * {
- *  "message": "Question not found"
  * }
  * @example response - 500 - example 500 response
  * {
@@ -166,7 +167,7 @@ router.get("/questions", auth.authenticate, questionController.getAllQuestions);
  * @param {QuestionPayload} request.body.required - The question info
  * @return {QuestionDocument} 200 - success reponse - application/json
  * @return {ErrorResponse} 400 - bad request response - application/json
- * @return {ErrorResponse} 404 - not found response - application/json
+ * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
  * {
  *   "_id": "64fefe9c16358d7601e35fa3",
@@ -183,10 +184,6 @@ router.get("/questions", auth.authenticate, questionController.getAllQuestions);
  * {
  *  "message": "Error updating question"
  * }
- * @example response - 404 - example 404 response
- * {
- *  "message": "Question not found"
- * }
  */
 router.put(
   "/questions/:id",
@@ -200,8 +197,7 @@ router.put(
  * @summary Deletes a question.
  * @param {integer} questionId.path.required - The `questionId`
  * @return {QuestionDocument} 200 - success reponse - application/json
- * @return {ErrorResponse} 400 - bad request response - application/json
- * @return {ErrorResponse} 404 - not found response - application/json
+ * @return {ErrorResponse} 500 - error response - application/json
  * @example response - 200 - example 200 response
  * {
  *   "_id": "64fefe7816358d7601e35fa0",
@@ -214,13 +210,9 @@ router.put(
  *   "complexity": "easy",
  *   "__v": 0
  * }
- * @example response - 400 - example 400 response
+ * @example response - 500 - example 500 response
  * {
  *  "message": "Error deleting question"
- * }
- * @example response - 404 - example 404 response
- * {
- *  "message": "Question not found"
  * }
  */
 router.delete(

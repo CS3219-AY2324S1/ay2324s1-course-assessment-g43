@@ -144,19 +144,21 @@ export const CodeEditor = observer(
         case "cpp":
           setDisability(false);
           store.setLanguageId(54);
-          return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
+          return `#include <iostream>\n// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t
+          /*your function implementation goes here*/\t\n\t};\nint main() {\n\t/*print your output here to check. e.g below:*/\n\t/*std::cout << YOUR-OUTPUT-HERE << std::endl;*/\n}`;
         case "java":
           setDisability(false);
           store.setLanguageId(62);
-          return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
+          return `class Main {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t
+          /*your function implementation goes here*/\t\n\t};\npublic static void main(String[] args) {\n\t/*print your output here to check. e.g below:*/\n\t/*System.out.println(YOUR-OUTPUT-HERE);*/\n}\n`;
         case "python":
           setDisability(false);
           store.setLanguageId(71);
-          return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
+          return `def ${functionName}(/*define your params here*/):\n\t/*your function implementation goes here*/\n/*print your output here to check. e.g below:*/\n/*print(YOUR-OUTPUT-HERE)*/`;
         case "javascript":
           setDisability(false);
           store.setLanguageId(93);
-          return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
+          return `const ${functionName} = (/*define your params here*/) => {\n\t/*your function implementation goes here*/\n}\n/*print your output here to check. e.g below:*/\n/*console.log(YOUR-OUTPUT-HERE)*/`;
         case "text":
           setDisability(true);
           return ``;

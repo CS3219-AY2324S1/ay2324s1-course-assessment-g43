@@ -374,8 +374,12 @@ export const CodeEditor = observer(
           </Drawer>
           <ButtonGroup>
             <Button
-              variant={"solid"}
-              color={"green"}
+              variant={"outline"}
+              color={"#625AF3"}
+              borderColor={"#DEE2F5"}
+              _hover={{
+                bg: "#DEE2F5",
+              }}
               isDisabled={isDisabled || isPressed}
               onClick={handleRunButtonClick}
             >

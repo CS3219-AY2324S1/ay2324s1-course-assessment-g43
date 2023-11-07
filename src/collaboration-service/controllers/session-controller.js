@@ -57,64 +57,56 @@ exports.createSession = async (req, res) => {
   }
 };
 
+// TODO: Return 403 on unauthorized access -- check that userId is in roomId too
 exports.getSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
     const session = await Session.findOne({ roomId });
-
-    if (!session) {
-      return res.status(404).json({ message: "Session not found" });
-    }
-
-    return res.status(200).json(session);
+    // * Note: Only for GET /session/:id we return 404 for 'invalid' id
+    // (allows for better error handling on FE)
+    return session
+      ? res.status(200).json(session)
+      : res.status(404).json({ message: "Session not found" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Error fetching session" });
   }
 };
 
+// Returns deleted Session object if valid roomId given, else `null`.
 exports.deleteSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
-
-    const session = await Session.findOne({ roomId });
-
-    if (!session) {
-      return res.status(404).json({ message: "Session not found" });
-    }
-
+    // Note: deletedSession === null if roomId doesn't exist
     const deletedSession = await Session.findOneAndDelete({ roomId });
-
     return res.status(200).json(deletedSession);
-
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Error leaving session" });
   }
-}
+};
 
+// Returns new Session object if valid roomId given, else `null`.
 exports.editSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
     const { title, description, category } = req.body;
 
     const session = await Session.findOne({ roomId });
-
-    if (!session) {
-      return res.status(404).json({ message: "Session not found" });
+    if (session) {
+      session.title = title;
+      session.description = description;
+      session.category = category;
+      await session.validate();
+      await session.save();
     }
-
-    session.title = title;
-    session.description = description;
-    session.category = category;
-
-    await session.validate();
-    await session.save();
-
     return res.status(200).json(session);
   } catch (err) {
     console.log(err);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: "Error editing session details" });
+    }
     return res.status(500).json({ message: "Error editing session details" });
   }
-}
+};
 

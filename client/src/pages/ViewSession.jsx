@@ -94,7 +94,7 @@ export const ViewSession = observer(() => {
   }, []);
 
   // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = async() => {
+  const leaveSessionCallback = async () => {
     //Save Attempt To History
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
@@ -105,7 +105,7 @@ export const ViewSession = observer(() => {
       description: location.state.description,
       category: location.state.category,
       complexity: location.state.complexity,
-    }
+    };
     console.log(attempt);
     await historyStore.createAttempt(attempt);
     // Remove roomId & sessionLanguage from localStorage
@@ -152,6 +152,9 @@ export const ViewSession = observer(() => {
             variant="outline"
             mr={3}
             onClick={handleLeaveSession}
+            _hover={{
+              bg: "#F8C1C1",
+            }}
           >
             Leave Session
           </Button>
@@ -171,7 +174,7 @@ export const ViewSession = observer(() => {
                     variant="solid"
                     bg={"#B7B5E4"}
                     color={"white"}
-                    maxW={"20%"}
+                    maxW={"60%"}
                   >
                     <TagLabel>{category}</TagLabel>
                   </Tag>

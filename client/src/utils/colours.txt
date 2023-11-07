@@ -40,6 +40,9 @@ hex: #8F8ADD
 medium slate:
 hex: #706CCC
 
+majorelle blue:
+hex: #625AF3
+
 taupe gray:
 hex: #847979
 rgb: 132, 121, 121

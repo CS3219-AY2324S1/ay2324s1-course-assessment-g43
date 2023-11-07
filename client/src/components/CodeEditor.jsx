@@ -263,6 +263,7 @@ export const CodeEditor = observer(
               onChange={(e) => {
                 setUserLanguage(e.target.value);
               }}
+              bg={"#DEE2F5"}
             >
               <option value="text">Notes</option>
               <option value="python">Python</option>
@@ -272,21 +273,29 @@ export const CodeEditor = observer(
             </Select>
           </Tooltip>
           <ButtonGroup>
-            <Tooltip
-              label="Get New Random Question"
-              hasArrow
-              bg="gray.300"
-              color="black"
-            >
-              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
+            <Tooltip label="Get New Random Question" hasArrow bg={"#706CCC"}>
+              <IconButton
+                icon={<ArrowForwardIcon />}
+                variant={"outline"}
+                borderColor={"#DEE2F5"}
+                color={"#625AF3"}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
+              />
             </Tooltip>
             <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
               <IconButton icon={<ChatIcon />} variant={"outline"} />
             </Tooltip>
-            <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
+            <Tooltip label="Reset code" hasArrow bg={"#706CCC"}>
               <IconButton
                 icon={<RepeatIcon />}
                 variant={"outline"}
+                borderColor={"#DEE2F5"}
+                color={"#625AF3"}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
                 onClick={resetCode}
               />
             </Tooltip>

@@ -3,8 +3,8 @@ import { deleteUser, getUserById } from "../services/userService";
 
 class ViewUserStore {
   state = {
-    username: "",
-    email: "",
+    Username: "",
+    Email: "",
   };
 
   constructor() {
@@ -12,11 +12,11 @@ class ViewUserStore {
   }
 
   setUsername(username) {
-    this.state.username = username;
+    this.state.Username = username;
   }
 
   setEmail(email) {
-    this.state.email = email;
+    this.state.Email = email;
   }
 
   async populateStateWithUserById(id) {

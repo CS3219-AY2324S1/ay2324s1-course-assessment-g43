@@ -262,6 +262,7 @@ export const CodeEditor = observer(
               onChange={(e) => {
                 setUserLanguage(e.target.value);
               }}
+              bg={"#DEE2F5"}
             >
               <option value="text">Notes</option>
               <option value="python">Python</option>
@@ -271,23 +272,28 @@ export const CodeEditor = observer(
             </Select>
           </Tooltip>
           <ButtonGroup>
-            <Tooltip
-              label="Get New Random Question"
-              hasArrow
-              bg="gray.300"
-              color="black"
-            >
-              <IconButton 
-                icon={<ArrowForwardIcon />} 
+            <Tooltip label="Get New Random Question" hasArrow bg={"#706CCC"}>
+              <IconButton
+                icon={<ArrowForwardIcon />}
+                variant={"outline"}
+                borderColor={"#DEE2F5"}
+                color={"#625AF3"}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
                 isLoading={isGetNextQuestionLoading}
-                variant={"outline"} 
                 onClick={initiateNextQuestionRequest}
               />
             </Tooltip>
-            <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
+            <Tooltip label="Reset code" hasArrow bg={"#706CCC"}>
               <IconButton
                 icon={<RepeatIcon />}
                 variant={"outline"}
+                borderColor={"#DEE2F5"}
+                color={"#625AF3"}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
                 onClick={resetCode}
               />
             </Tooltip>
@@ -367,8 +373,12 @@ export const CodeEditor = observer(
           </Drawer>
           <ButtonGroup>
             <Button
-              variant={"solid"}
-              color={"green"}
+              variant={"outline"}
+              color={"#625AF3"}
+              borderColor={"#DEE2F5"}
+              _hover={{
+                bg: "#DEE2F5",
+              }}
               isDisabled={isDisabled || isPressed}
               onClick={handleRunButtonClick}
             >

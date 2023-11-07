@@ -111,12 +111,12 @@ export const UpdateUser = observer(() => {
           </FormControl> */}
         <Stack spacing={6} direction={["column", "row"]}>
           <Button
-            bg={"red.400"}
+            bg={"#F07272"}
             color={"white"}
-            w="full"
             _hover={{
-              bg: "red.500",
+              bg: "#EC4E4E",
             }}
+            w="full"
             onClick={() => {
               navigate(-1);
             }}
@@ -124,12 +124,12 @@ export const UpdateUser = observer(() => {
             Cancel
           </Button>
           <Button
-            bg={"blue.400"}
+            bg={"#706CCC"}
+            _hover={{
+              bg: "#8F8ADD",
+            }}
             color={"white"}
             w="full"
-            _hover={{
-              bg: "blue.500",
-            }}
             onClick={async (e) => await updateUser(e)}
           >
             Submit

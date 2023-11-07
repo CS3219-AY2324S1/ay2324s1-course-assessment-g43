@@ -10,6 +10,7 @@ import {
   Box,
   AbsoluteCenter,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
@@ -20,6 +21,7 @@ import { CodeEditor } from "../components/CodeEditor";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { useEffect, useState } from "react";
 import { viewHistoryStore } from "../stores/viewHistoryStore";
+import { getColorFromComplexity } from "../utils/stylingUtils";
 import { ChatBox } from "../components/ChatBox";
 
 export const ViewSession = observer(() => {
@@ -215,23 +217,19 @@ export const ViewSession = observer(() => {
             fontWeight={"semibold"}
           >
             Matched Difficulty: {}
-            <Badge
-              colorScheme={
-                state.complexity == "Easy"
-                  ? "green"
-                  : state.complexity == "Medium"
-                  ? "yellow"
-                  : "red"
-              }
-            >
+            <Badge bg={getColorFromComplexity(state.complexity)}>
               {state.complexity}
             </Badge>
           </Heading>
           <Button
-            colorScheme="red"
+            color="#EC4E4E"
+            borderColor="#EC4E4E"
             variant="outline"
             mr={3}
             onClick={handleLeaveSession}
+            _hover={{
+              bg: "#F8C1C1",
+            }}
           >
             Leave Session
           </Button>
@@ -244,9 +242,18 @@ export const ViewSession = observer(() => {
             </Heading>
             <HStack spacing={2} paddingBlock={3}>
               {state.category?.map((category) => (
-                <Tag key={category} borderRadius="full" variant="solid">
-                  <TagLabel>{category}</TagLabel>
-                </Tag>
+                <Tooltip key={category} label={category} bg={"#706CCC"}>
+                  <Tag
+                    key={category}
+                    borderRadius="full"
+                    variant="solid"
+                    bg={"#B7B5E4"}
+                    color={"white"}
+                    maxW={"60%"}
+                  >
+                    <TagLabel>{category}</TagLabel>
+                  </Tag>
+                </Tooltip>
               ))}
             </HStack>
             <Box position="relative" padding="3" w={"100%"}>

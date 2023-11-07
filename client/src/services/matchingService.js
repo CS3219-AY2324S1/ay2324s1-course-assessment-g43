@@ -42,7 +42,7 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
     const { roomId, firstUserId, secondUserId, complexity } = sessionCreationRequest;
 
     const question = await getRandomQuestionByComplexity(complexity);
-
+    
     const sessionDetails = {
       roomId,
       firstUserId,

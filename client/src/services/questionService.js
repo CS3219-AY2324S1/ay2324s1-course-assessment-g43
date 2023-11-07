@@ -59,6 +59,21 @@ export const getRandomQuestionByComplexity = async (complexity) => {
   }
 }
 
+export const getFreshRandomQuestionByComplexity = async (complexity, currentId) => {
+  try {
+    const token = localStorage.getItem("jwt");
+    const res = await axios.get(`${basePath}/random?complexity=${complexity}&currentId=${currentId}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.log("Error getting questionId:", error.message);
+    return null;
+  }
+}
+
 export const updateQuestionById = async (id, req) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.put(`${basePath}/${id}`, req, {

@@ -1,6 +1,5 @@
 import {
   Stack,
-  Divider,
   Select,
   useDisclosure,
   Drawer,
@@ -18,12 +17,7 @@ import {
   Card,
   CardBody,
 } from "@chakra-ui/react";
-import {
-  ArrowForwardIcon,
-  ChatIcon,
-  ChevronUpIcon,
-  RepeatIcon,
-} from "@chakra-ui/icons";
+import { ArrowForwardIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -33,13 +27,14 @@ import { MonacoBinding } from "y-monaco";
 import { PropTypes } from "prop-types";
 import { createSubmissionStore } from "../stores/createSubmissionStore";
 import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
+import { viewSessionStore } from "../stores/viewSessionStore";
 
 /**
  * `language` prop changes when PEER changes language
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange }) => {
+  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
@@ -55,11 +50,12 @@ export const CodeEditor = observer(
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
 
+
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
       const template = getCodeTemplate(language, questionTitle);
       setCode(template);
-      store.setSourceCode(code);
+      store.setSourceCode(template);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -159,14 +155,17 @@ export const CodeEditor = observer(
           return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
         case "text":
           setDisability(true);
-          store.setLanguageId(0); //invalid ID because not supposed to run/submit
           return ``;
         default:
           setDisability(true);
-          store.setLanguageId(0); //invalid ID because not supposed to run/submit
           return ``;
       }
     }, []);
+
+    const initiateNextQuestionRequest = () => {
+      viewSessionStore.initChangeQuestion();
+      viewSessionStore.setIsGetQuestionLoading(true);
+    }
 
     const resetCode = () => {
       if (
@@ -245,7 +244,7 @@ export const CodeEditor = observer(
     // console.log(isDisabled);
 
     return (
-      <Stack w={"100%"} h={"100%"}>
+      <Stack w={"100%"} h={"50%"}>
         <HStack justifyContent={"space-between"}>
           <Tooltip
             label="Select your preferred language."
@@ -278,10 +277,12 @@ export const CodeEditor = observer(
               bg="gray.300"
               color="black"
             >
-              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
-            </Tooltip>
-            <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
-              <IconButton icon={<ChatIcon />} variant={"outline"} />
+              <IconButton 
+                icon={<ArrowForwardIcon />} 
+                isLoading={isGetNextQuestionLoading}
+                variant={"outline"} 
+                onClick={initiateNextQuestionRequest}
+              />
             </Tooltip>
             <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
               <IconButton
@@ -292,9 +293,8 @@ export const CodeEditor = observer(
             </Tooltip>
           </ButtonGroup>
         </HStack>
-        <Divider color="gray.300" />
         <Editor
-          height={"70vh"}
+          height={"40vh"}
           width={"100%"}
           theme={"vs-dark"}
           onMount={handleEditorDidMount}
@@ -303,7 +303,6 @@ export const CodeEditor = observer(
           value={code}
           options={options}
         />
-        <Divider />
         <Flex justifyContent={"space-between"}>
           <Button variant={"ghost"} onClick={onConsoleOpen}>
             Console
@@ -329,7 +328,6 @@ export const CodeEditor = observer(
                       </Text>
                       <Card backgroundColor={"gray.100"} variant={"filled"}>
                         <CardBody>
-                          <Text color={"gray.600"}>Hello</Text>
                           <Text>{resultStore.state.stdout}</Text>
                         </CardBody>
                       </Card>
@@ -339,22 +337,26 @@ export const CodeEditor = observer(
                       No output generated
                     </Text>
                   )}
-                  {resultStore.state.stderr ? (
+                  {resultStore.state.status.id >= 5 && resultStore.state.status.id <= 14 ? (
                     <>
                       <Text as={"b"} fontSize={"xl"} color={"red"}>
-                        Error {}
+                        {resultStore.state.status.description}
                       </Text>
-                      <Card
-                        colorScheme={"red"}
-                        variant={"filled"}
-                        backgroundColor={"red.100"}
-                      >
-                        <CardBody>
-                          <Text color={"red.600"}>
-                            {resultStore.state.stderr}
-                          </Text>
-                        </CardBody>
-                      </Card>
+                      {resultStore.state.stderr ? (
+                        <Card
+                          colorScheme={"red"}
+                          variant={"filled"}
+                          backgroundColor={"red.100"}
+                        >
+                          <CardBody>
+                            <Text color={"red.600"}>
+                              {resultStore.state.stderr}
+                            </Text>
+                          </CardBody>
+                        </Card>
+                      ) : (
+                        <></>
+                      )}
                     </>
                   ) : (
                     <></>

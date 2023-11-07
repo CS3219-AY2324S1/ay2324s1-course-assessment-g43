@@ -17,8 +17,10 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
+import { useModalComponentStore } from "../contextProviders/modalContext";
 import { useEffect, useState } from "react";
 import { viewHistoryStore } from "../stores/viewHistoryStore";
+import { ChatBox } from "../components/ChatBox";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ export const ViewSession = observer(() => {
   const store = viewSessionStore;
   const state = store.state;
   const DEFAULT_LANGUAGE = "text";
+  const modalComponentStore = useModalComponentStore();
   const historyStore = viewHistoryStore;
 
   useEffect(() => {
@@ -43,10 +46,11 @@ export const ViewSession = observer(() => {
           //TODO can we refactor this to the case below?
           store.setRoomId(roomId);
           store.initQuestionState(question);
-          store.initSocket(leaveSessionCallback);
+          store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
           store.setLanguage(
             localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
           );
+          store.setChat(localStorage.getItem("sessionChat"));
         })
         .catch((err) => {
           let message = err.message;
@@ -55,6 +59,8 @@ export const ViewSession = observer(() => {
           if (err.message === "Session is invalid.") {
             if (localStorage.getItem("roomId") === roomId) {
               localStorage.removeItem("roomId");
+              localStorage.removeItem("sessionLanguage");
+              localStorage.removeItem("sessionChat");
               message = "This session has been closed by your partner.";
             }
           }
@@ -77,7 +83,7 @@ export const ViewSession = observer(() => {
       );
       setIsDoneLoading(true);
 
-      store.initSocket(leaveSessionCallback);
+      store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
     }
 
     return () => {
@@ -86,24 +92,30 @@ export const ViewSession = observer(() => {
     };
   }, []);
 
-  // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = async () => {
-    //Save Attempt To History
+  const createAttempt = async () => {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const uid = userObject.uid;
     const attempt = {
       currentUserId: uid,
-      title: location.state.title,
-      description: location.state.description,
-      category: location.state.category,
-      complexity: location.state.complexity,
-    };
+      title: store.state.title,
+      description: store.state.description,
+      category: store.state.category,
+      complexity: store.state.complexity,
+    }
     console.log(attempt);
     await historyStore.createAttempt(attempt);
+  }
+
+  // This callback only runs upon a successful DELETE from the Sessions collection
+  const leaveSessionCallback = async() => {
+    //Save Attempt To History
+    await createAttempt();
+
     // Remove roomId & sessionLanguage from localStorage
     localStorage.removeItem("roomId");
     localStorage.removeItem("sessionLanguage");
+    localStorage.removeItem("sessionChat");
     store.resetState();
     navigate(-1);
     toast({
@@ -113,6 +125,69 @@ export const ViewSession = observer(() => {
       isClosable: true,
     });
   };
+
+  const nextQuestionModalTitle = "Accept Request?";
+
+  const nextQuestionModalBody = "Your partner has requested to move on to the next question. Do you agree?";
+
+  const NextQuestionModalFooter = observer(() => {
+    
+    const handleCancel = (e) => {
+      e.preventDefault();
+
+      store.rejectChangeQuestion();
+      modalComponentStore.closeModal();
+    };
+
+    return (
+      <>
+        <Button
+          colorScheme="red"
+          mr={3}
+          onClick={handleCancel}
+        >
+          Decline
+        </Button>
+        <Button
+        colorScheme="green"
+        mr={3}
+        type="submit"
+      >
+        Accept
+      </Button>
+      </>
+    );
+  });
+
+  const receiveRequestCallback = () => {
+    modalComponentStore.openModal(
+      nextQuestionModalTitle,
+      nextQuestionModalBody,
+      <NextQuestionModalFooter />,
+      (e) => {
+        e.preventDefault();
+        store.acceptChangeQuestion(changeQuestionCallback);
+      },
+      () => {}
+    );
+
+    modalComponentStore.setClosable(false);
+  }
+
+  const changeQuestionCallback = async () => {
+    await createAttempt();
+    navigate(0);
+  }
+
+  const rejectRequestCallback = () => {
+    store.setIsGetQuestionLoading(false);
+    toast({
+      title: `Your partner has rejected your request, try again later.`,
+      status: "warning",
+      duration: 8000,
+      isClosable: true,
+    });
+  }
 
   const handleLeaveSession = async () => {
     if (
@@ -130,7 +205,7 @@ export const ViewSession = observer(() => {
       <Stack w={"100%"}>
         <HStack justifyContent={"space-between"}>
           <Heading
-            lineHeight={1.1}
+            lineHeight={1}
             fontSize={{ base: "l", sm: "xl" }}
             fontWeight={"semibold"}
           >
@@ -185,8 +260,17 @@ export const ViewSession = observer(() => {
                 roomId={state.roomId}
                 language={state.language}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
+                isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
               />
             )}{" "}
+            <Divider />
+            <ChatBox
+              chat={state.chat}
+              isPeerConnected={state.isPeerConnected}
+              onSendMessage={(newMessage) => {
+                store.pushAndSendMessage(newMessage);
+              }}
+            />
           </Stack>
         </HStack>
       </Stack>

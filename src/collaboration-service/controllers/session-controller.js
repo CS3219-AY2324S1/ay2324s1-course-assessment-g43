@@ -93,12 +93,10 @@ exports.deleteSession = async (req, res) => {
   }
 }
 
-exports.saveAttempt = async (req, res) => {
+exports.editSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
-    const { attempt } = req.body;
-    
-    console.log(req.body);
+    const { title, description, category } = req.body;
 
     const session = await Session.findOne({ roomId });
 
@@ -106,7 +104,9 @@ exports.saveAttempt = async (req, res) => {
       return res.status(404).json({ message: "Session not found" });
     }
 
-    session.attempt = attempt;
+    session.title = title;
+    session.description = description;
+    session.category = category;
 
     await session.validate();
     await session.save();
@@ -114,7 +114,7 @@ exports.saveAttempt = async (req, res) => {
     return res.status(200).json(session);
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: "Error saving attempt" });
+    return res.status(500).json({ message: "Error editing session details" });
   }
 }
 

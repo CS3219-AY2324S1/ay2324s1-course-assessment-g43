@@ -32,6 +32,7 @@ const router = express.Router();
  * @param {AttemptPayload} request.body.required - question attempt info
  * @return {AttemptDocument} 201 - success response - application/json
  * @return {ErrorResponse} 400 - error response - application/json
+ * @return {ErrorResponse} 500 - error response - application/json
  * @example request - example payload
 {
   "currentUserId": 1,

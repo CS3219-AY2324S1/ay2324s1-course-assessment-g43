@@ -336,22 +336,26 @@ export const CodeEditor = observer(
                       No output generated
                     </Text>
                   )}
-                  {resultStore.state.stderr ? (
+                  {resultStore.state.status.id >= 5 && resultStore.state.status.id <= 14 ? (
                     <>
                       <Text as={"b"} fontSize={"xl"} color={"red"}>
-                        {resultStore.state.status} {}
+                        {resultStore.state.status.description}
                       </Text>
-                      <Card
-                        colorScheme={"red"}
-                        variant={"filled"}
-                        backgroundColor={"red.100"}
-                      >
-                        <CardBody>
-                          <Text color={"red.600"}>
-                            {resultStore.state.stderr}
-                          </Text>
-                        </CardBody>
-                      </Card>
+                      {resultStore.state.stderr ? (
+                        <Card
+                          colorScheme={"red"}
+                          variant={"filled"}
+                          backgroundColor={"red.100"}
+                        >
+                          <CardBody>
+                            <Text color={"red.600"}>
+                              {resultStore.state.stderr}
+                            </Text>
+                          </CardBody>
+                        </Card>
+                      ) : (
+                        <></>
+                      )}
                     </>
                   ) : (
                     <></>

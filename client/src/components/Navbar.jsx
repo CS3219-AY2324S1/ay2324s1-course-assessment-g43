@@ -317,6 +317,7 @@ const DesktopNav = ({ navItems }) => {
                               });
                             };
                             const matchFailureCallback = (rejectionReason) => {
+                              modalComponentStore.setClosable(true);
                               toast({
                                 title: rejectionReason,
                                 status: "warning",
@@ -440,6 +441,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     });
                   };
                   const matchFailureCallback = (rejectionReason) => {
+                    modalComponentStore.setClosable(true);
                     toast({
                       title: rejectionReason,
                       status: "warning",
@@ -576,6 +578,7 @@ const MobileNavItem = ({ label, children, href }) => {
                       });
                     };
                     const matchFailureCallback = (rejectionReason) => {
+                      modalComponentStore.setClosable(true);
                       toast({
                         title: rejectionReason,
                         status: "warning",
@@ -676,6 +679,7 @@ const MobileNavItem = ({ label, children, href }) => {
                               });
                             };
                             const matchFailureCallback = (rejectionReason) => {
+                              modalComponentStore.setClosable(true);
                               toast({
                                 title: rejectionReason,
                                 status: "warning",

@@ -52,7 +52,18 @@ export const getQuestionFromSession = async (roomId) => {
   }
 };
 
-export const leaveSession = async (roomId) => {
+export const updateSessionWithNewQuestion = async (roomId, question) => {
+  const token = localStorage.getItem("jwt");
+
+  const res = await axios.put(`${basePath}/api/session/${roomId}`, question, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  return res;
+}
+
+export const deleteSession = async (roomId) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.delete(`${basePath}/api/session/${roomId}`, {
     headers: {
@@ -65,11 +76,21 @@ export const leaveSession = async (roomId) => {
 // Websocket functions
 /**
  * Initialises a socket connection to the collaboration service server.
+ * This socket is used for both collaboration (code editor) and communication (chat).
  * - Joins a room.
  * - Set up custom event listeners.
  *
+ * @param {string} roomId
+ * @param {string} userId
  * @param {Function} onPeerLanguageChange - callback function for peer language change event
+ * @param {Function} onLeaveRoomCallback - callback function for peer closing the room
+ * @param {Function} onChatMessageReceived - callback function for peer sending a chat message
+ * @param {Function} onPeerJoined - callback function for peer joined
+ * @param {Function} onPeerDisconnected - callback function for peer disconnect
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
+ * @param {Function} receiveRequestCallback - callback function for receive change question event
+ * @param {Function} changeQuestionCallback - callback function for change question event
+ * @param {Function} rejectRequestCallback - callback function for reject change question event
  * @returns {Socket} socket created
  */
 export const initCollaborationSocket = (
@@ -77,7 +98,13 @@ export const initCollaborationSocket = (
   userId,
   onPeerLanguageChange,
   onLeaveRoomCallback,
-  onSocketDisconnect
+  onChatMessageReceived,
+  onPeerJoined,
+  onPeerDisconnected,
+  onSocketDisconnect,
+  receiveRequestCallback,
+  changeQuestionCallback,
+  rejectRequestCallback,
 ) => {
   const socket = socketIOClient(basePath);
 
@@ -87,21 +114,41 @@ export const initCollaborationSocket = (
   });
 
   socket.on("disconnect", () => {
-    if (onSocketDisconnect) {
-      onSocketDisconnect();
-    }
+    onSocketDisconnect?.();
   });
 
   // Custom events
   socket.on("change-language", (language) => {
-    if (onPeerLanguageChange) {
-      onPeerLanguageChange(language);
-    }
+    onPeerLanguageChange?.(language);
+  });
+
+  socket.on("new-chat-message", (message) => {
+    onChatMessageReceived?.(message);
+  });
+
+  socket.on("initiate-next-question", () => {
+    receiveRequestCallback?.();
+  });
+
+  socket.on("retrieve-next-question", () => { 
+    changeQuestionCallback?.();
+  });
+
+  socket.on("reject-next-question", () => {
+    rejectRequestCallback?.();
   });
 
   socket.on("leave-room", () => {
-    onLeaveRoomCallback();
+    onLeaveRoomCallback?.();
     socket.disconnect();
+  });
+
+  socket.on("user-connected", () => {
+    onPeerJoined?.();
+  });
+
+  socket.on("user-disconnected", () => {
+    onPeerDisconnected?.();
   });
 
   return socket;
@@ -111,7 +158,22 @@ export const initiateLeaveRoomRequest = (socket) => {
   socket?.emit("leave-room");
 };
 
+export const initiateNextQuestionRequest = (socket) => {
+  socket?.emit("initiate-next-question");
+};
+
+export const rejectNextQuestionRequest = (socket) => {
+  socket?.emit("reject-next-question");
+};
+
+export const acceptNextQuestionRequest = (socket) => {
+  socket?.emit("retrieve-next-question");
+};
 
 export const notifyPeerLanguageChange = (socket, language) => {
   socket?.emit("change-language", language);
+};
+
+export const sendChatMessage = (socket, message) => {
+  socket?.emit("new-chat-message", message);
 };

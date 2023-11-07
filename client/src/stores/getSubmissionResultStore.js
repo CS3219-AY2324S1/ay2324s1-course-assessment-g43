@@ -6,7 +6,11 @@ class GetSubmissionResultStore {
     token: "",
     stdout: "",
     stderr: "",
-    status: ""
+    // status: ""
+    status: {
+      id: "",
+      description: "",
+    }
   }
 
   constructor() {
@@ -25,8 +29,9 @@ class GetSubmissionResultStore {
     this.state.stderr = stderr;
   }
 
-  setStatus(status) {
-    this.state.status = status;
+  setStatus(id, description) {
+    this.state.status.id = id;
+    this.state.status.description = description;
   }
 
   async getSubmissionResult() {
@@ -35,7 +40,7 @@ class GetSubmissionResultStore {
       console.log(res.data);
       this.setStdout(res.data.data.stdout);
       this.setStderr(res.data.data.stderr);
-      this.setStatus(res.data.data.status.description);
+      this.setStatus(res.data.data.status.id, res.data.data.status.description);
       return res.data;
     } catch (err) {
       console.log(err);

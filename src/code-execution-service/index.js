@@ -30,7 +30,7 @@ const options = {
 
 expressJSDocSwagger(app)(options);
 
-const codeExecutionRouter = require("./routes/code-execution-routes.js");
+const codeExecutionRouter = require("./src/routes/code-execution-routes");
 
 app.use("/api", codeExecutionRouter);
 

@@ -18,7 +18,7 @@ export const UpdateUser = observer(() => {
   const toast = useToast();
   const store = updateUserStore;
   const state = store.state;
-  const userId = JSON.parse(localStorage.getItem("user")).uid;
+  const userId = JSON.parse(localStorage.getItem("user"))?.uid;
 
   const updateUser = () => {
     toast.promise(store.updateUser(userId), {

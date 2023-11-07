@@ -58,6 +58,9 @@ export const UpdateQuestion = observer(() => {
   };
 
   useEffect(() => {
+    if (!(location.state && location.state.selectedQuestion)) {
+      window.location.replace("/error?statusCode=403");
+    }
     const selectedQuestion = JSON.parse(location.state.selectedQuestion);
     store.setQuestionId(selectedQuestion.questionId);
     store.setTitle(selectedQuestion.title);

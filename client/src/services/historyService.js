@@ -7,8 +7,8 @@ export const createAttempt = async (req) => {
     const token = localStorage.getItem("jwt");
     const res = await axios.post(`${basePath}/createAttempt`, req, {
       headers: {
-        authorization:`Bearer ${token}`,
-      }
+        authorization: `Bearer ${token}`,
+      },
     });
     console.log(res);
     return res;
@@ -16,19 +16,19 @@ export const createAttempt = async (req) => {
     console.log(err);
     throw err;
   }
-}
+};
 
 export const getAttemptsByUserId = async (id) => {
   try {
     const token = localStorage.getItem("jwt");
     const res = await axios.get(`${basePath}/getAttemptsByUserId/${id}`, {
       headers: {
-        authorization:`Bearer ${token}`,
-      }
+        authorization: `Bearer ${token}`,
+      },
     });
     console.log(res);
     return res;
   } catch (err) {
     console.log(err);
   }
-}
+};

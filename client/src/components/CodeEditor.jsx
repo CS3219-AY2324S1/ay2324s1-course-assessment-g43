@@ -140,21 +140,19 @@ export const CodeEditor = observer(
         case "cpp":
           setDisability(false);
           store.setLanguageId(54);
-          return `#include <iostream>\n// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t
-          /*your function implementation goes here*/\t\n\t};\nint main() {\n\t/*print your output here to check. e.g below:*/\n\t/*std::cout << YOUR-OUTPUT-HERE << std::endl;*/\n}`;
+          return `#include <iostream>\n\n//change your function type below if necessary\nvoid ${functionName}(/*define your params here*/) {\n\t//your function implementation goes here\t\n};\n\nint main() {\n\t//print your output here to check. e.g:\n\t//std::cout << YOUR-OUTPUT-HERE << std::endl;\n}`;
         case "java":
           setDisability(false);
           store.setLanguageId(62);
-          return `class Main {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t
-          /*your function implementation goes here*/\t\n\t};\npublic static void main(String[] args) {\n\t/*print your output here to check. e.g below:*/\n\t/*System.out.println(YOUR-OUTPUT-HERE);*/\n}\n`;
+          return `class Main {\n\t//change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t//your function implementation goes here\t\n\t};\n\n\tpublic static void main(String[] args) {\n\t//print your output here to check. e.g:\n\t//System.out.println(YOUR-OUTPUT-HERE);\n\t}\n}`;
         case "python":
           setDisability(false);
           store.setLanguageId(71);
-          return `def ${functionName}(/*define your params here*/):\n\t/*your function implementation goes here*/\n/*print your output here to check. e.g below:*/\n/*print(YOUR-OUTPUT-HERE)*/`;
+          return `#define your params here\ndef ${functionName}():\n\t#your function implementation goes here\n\n#print your output here to check. e.g below:\n#print(YOUR-OUTPUT-HERE)`;
         case "javascript":
           setDisability(false);
           store.setLanguageId(93);
-          return `const ${functionName} = (/*define your params here*/) => {\n\t/*your function implementation goes here*/\n}\n/*print your output here to check. e.g below:*/\n/*console.log(YOUR-OUTPUT-HERE)*/`;
+          return `const ${functionName} = (/*define your params here*/) => {\n\t//your function implementation goes here\n}\n\n//print your output here to check. e.g:\n//console.log(YOUR-OUTPUT-HERE);`;
         case "text":
           setDisability(true);
           return ``;

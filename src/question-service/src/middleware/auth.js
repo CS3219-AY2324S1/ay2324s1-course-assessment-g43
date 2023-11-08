@@ -1,8 +1,8 @@
 const axios = require("axios");
 const jwtDecode = require("jwt-decode");
-require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
+require("dotenv").config();
 
-const basePath = process.env.USER_BASE_PATH || "http://user-service:8000/api";
+const basePath = process.env.USER_BASE_PATH || "http://localhost:8000/api";
 
 const verifyToken = async (token) => {
   const res = await axios.get(`${basePath}/verifyToken`, {

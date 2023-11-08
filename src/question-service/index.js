@@ -1,4 +1,4 @@
-require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
+require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(cors());
 const port = process.env.PORT || 3000;
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.QUESTION_DATABASE_URL;
 
 const options = {
   info: {

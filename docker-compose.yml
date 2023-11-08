@@ -5,12 +5,8 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "5173:5173"
-    environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -20,12 +16,8 @@ services:
     build:
       context: ./src/question-service
       dockerfile: Dockerfile
-      args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "3000:3000"
-    environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./src/question-service:/app
     depends_on:
@@ -34,12 +26,8 @@ services:
     build:
       context: ./src/user-service
       dockerfile: Dockerfile
-      args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "8000:8000"
-    environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./src/user-service:/app
       - /app/node_modules
@@ -47,11 +35,23 @@ services:
     build:
       context: ./src/matching-service
       dockerfile: Dockerfile
-      args:
-        - PEERPREP_ENV=${PEERPREP_ENV:-production}
     ports:
       - "5001:5001"
-    environment:
-      - PEERPREP_ENV=${PEERPREP_ENV:-production}
     volumes:
       - ./src/matching-service:/app
+  history-service:
+    build:
+      context: ./src/history-service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./src/history-service:/app
+  code-execution-service:
+    build:
+      context: ./src/code-execution-service
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./src/code-execution-service:/app

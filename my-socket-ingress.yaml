@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-socket-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "matching-service"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host:
+      http:
+        paths:
+          - path: /socket.io/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: matching-service
+                port:
+                  number: 5001
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: my-socket-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/use-regex: "true"
+#     nginx.org/websocket-services: "matching-service"
+# spec:
+#   rules:
+#     - http:
+#         paths:
+#           - path: /socket.io/.*
+#             backend:
+#               serviceName: matching-service
+#               servicePort: 5001

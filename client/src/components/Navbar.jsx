@@ -38,6 +38,7 @@ const Navbar = observer(() => {
   const onLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("jwt");
+    localStorage.removeItem("roomId");
     navigate("/");
   };
 

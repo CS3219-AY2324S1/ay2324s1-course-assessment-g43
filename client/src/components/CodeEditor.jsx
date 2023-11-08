@@ -246,14 +246,6 @@ export const CodeEditor = observer(
         }
       })
 
-
-      // const template = getCodeTemplate(language, questionTitle);
-      // type.applyDelta({ insert: template });
-      // setCode(template);
-      // store.setSourceCode(template);
-
-      // type.insert(0, defpythontemplate);
-
       // Bind YJS to monaco
       // eslint-disable-next-line no-unused-vars
       const binding = new MonacoBinding(

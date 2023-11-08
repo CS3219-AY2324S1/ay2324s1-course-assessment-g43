@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(cors());
 const port = process.env.PORT;
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.HISTORY_DATABASE_URL;
 
 const options = {
   info: {

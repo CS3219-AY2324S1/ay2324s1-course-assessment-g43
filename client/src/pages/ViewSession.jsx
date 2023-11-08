@@ -66,7 +66,7 @@ export const ViewSession = observer(() => {
               message = "This session has been closed by your partner.";
             }
           }
-          alert(`Error: ${message}`);
+          // alert(`Error: ${message}`);
           navigate("/");
         })
         .finally(() => {
@@ -265,7 +265,7 @@ export const ViewSession = observer(() => {
               <CodeEditor
                 questionTitle={state.title}
                 roomId={state.roomId}
-                language={state.language}
+                language={"python"}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
                 isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
               />

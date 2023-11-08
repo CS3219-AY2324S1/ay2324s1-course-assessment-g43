@@ -35,6 +35,9 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  */
 export const CodeEditor = observer(
   ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
+
+    const defpythontemplate = "hi python";
+
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
@@ -51,14 +54,14 @@ export const CodeEditor = observer(
     const [isPressed, setPressed] = useState(false);
 
 
-    useEffect(() => {
-      // TODO: Debug this -- why doesn't monaco initialise with the template code?
-      const template = getCodeTemplate(language, questionTitle);
-      setCode(template);
-      store.setSourceCode(template);
+    // useEffect(() => {
+    //   // TODO: Debug this -- why doesn't monaco initialise with the template code?
+    //   const template = getCodeTemplate(language, questionTitle);
+    //   setCode(template);
+    //   store.setSourceCode(template);
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     // !DEBUG
     // useEffect(() => {
@@ -221,14 +224,36 @@ export const CodeEditor = observer(
       }
     }
 
+
+
     // eslint-disable-next-line no-unused-vars
     function handleEditorDidMount(editor, monaco) {
       editorRef.current = editor;
       //Init YJS
       const doc = new Y.Doc(); //collection of shared objects
+      
       const provider = new WebsocketProvider(WS_SERVER_URL, roomId, doc);
 
       const type = doc.getText("monaco");
+      const yMap = doc.getMap();
+
+      // Ensures that you initialise the default template once
+      provider.once('synced', () => {
+        if (!yMap.get('templateInitialized')) {
+          // If the document is new, apply the template code and set the flag
+          type.insert(0, defpythontemplate);
+          yMap.set('templateInitialized', true);
+        }
+      })
+
+
+      // const template = getCodeTemplate(language, questionTitle);
+      // type.applyDelta({ insert: template });
+      // setCode(template);
+      // store.setSourceCode(template);
+
+      // type.insert(0, defpythontemplate);
+
       // Bind YJS to monaco
       // eslint-disable-next-line no-unused-vars
       const binding = new MonacoBinding(
@@ -237,6 +262,17 @@ export const CodeEditor = observer(
         new Set([editorRef.current]),
         provider.awareness
       );
+
+
+
+
+      // provider.on('synced', () => {
+      //   const template = getCodeTemplate(language, questionTitle);
+      //   setCode(template);
+      //   store.setSourceCode(template);
+      // })
+
+
 
       // console.log(editorRef);
       // console.log(provider.awareness, binding);
@@ -307,6 +343,8 @@ export const CodeEditor = observer(
           onChange={handleEditorChange}
           language={userLanguage}
           value={code}
+          defaultLanguage="python"
+          // defaultValue={defpythontemplate}
           options={options}
         />
         <Flex justifyContent={"space-between"}>

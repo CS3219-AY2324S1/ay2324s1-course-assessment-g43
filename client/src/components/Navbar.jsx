@@ -25,7 +25,7 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { matchingFormStore } from "../stores/matchingFormStore";
@@ -34,8 +34,11 @@ import jwt from "jwt-decode";
 const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isCurrPageSession = pathname.search("/session") === 0;
 
   const onLogout = () => {
+    if (isCurrPageSession) return;
     localStorage.removeItem("user");
     localStorage.removeItem("jwt");
     navigate("/");
@@ -145,6 +148,7 @@ const Navbar = observer(() => {
               _hover={{
                 bg: "#8F8ADD",
               }}
+              isDisabled={isCurrPageSession}
               onClick={onLogout}
             >
               Log Out

@@ -16,6 +16,7 @@ import {
   Text,
   Card,
   CardBody,
+  Divider,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -34,7 +35,13 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
+  ({
+    questionTitle,
+    roomId,
+    language,
+    onLanguageChange,
+    isGetNextQuestionLoading,
+  }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
@@ -49,7 +56,6 @@ export const CodeEditor = observer(
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
-
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -70,18 +76,15 @@ export const CodeEditor = observer(
       // This changes when USER changes language
       // console.log("userLanguage changed to: ", userLanguage);
       if (!userLanguage || userLanguage === language) return;
-      if (
-        confirm("Changing languages will erase any current code! Are you sure?")
-      ) {
-        const newCode = getCodeTemplate(
-          userLanguage.toLowerCase(),
-          questionTitle
-        );
-        setCode(newCode);
-        store.setSourceCode(newCode);
 
-        onLanguageChange(userLanguage); // Notify peer
-      }
+      const newCode = getCodeTemplate(
+        userLanguage.toLowerCase(),
+        questionTitle
+      );
+      setCode(newCode);
+      store.setSourceCode(newCode);
+
+      onLanguageChange(userLanguage); // Notify peer
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userLanguage]);
@@ -165,7 +168,7 @@ export const CodeEditor = observer(
     const initiateNextQuestionRequest = () => {
       viewSessionStore.initChangeQuestion();
       viewSessionStore.setIsGetQuestionLoading(true);
-    }
+    };
 
     const resetCode = () => {
       if (
@@ -260,7 +263,11 @@ export const CodeEditor = observer(
               variant={"filled"}
               h={"100%"}
               onChange={(e) => {
-                setUserLanguage(e.target.value);
+                confirm(
+                  "Changing languages will erase any current code! Are you sure?"
+                )
+                  ? setUserLanguage(e.target.value)
+                  : {};
               }}
               bg={"#DEE2F5"}
             >
@@ -310,7 +317,11 @@ export const CodeEditor = observer(
           options={options}
         />
         <Flex justifyContent={"space-between"}>
-          <Button variant={"ghost"} onClick={onConsoleOpen}>
+          <Button
+            variant={"ghost"}
+            onClick={onConsoleOpen}
+            _hover={{ bg: "#DEE2F5" }}
+          >
             Console
             <ChevronUpIcon />
           </Button>
@@ -322,40 +333,43 @@ export const CodeEditor = observer(
           >
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerHeader borderBottomWidth="1px" fontSize={"2xl"}>
-                Testing Console
+              <DrawerHeader borderBottomWidth="1px">
+                <Text fontSize={"2xl"} fontWeight={"bold"} color={"#706CCC"}>
+                  Testing Console
+                </Text>
               </DrawerHeader>
-              <DrawerBody>
+              <DrawerBody minH={"20vh"}>
                 <Stack spacing={"2"}>
                   {resultStore.state.stdout ? (
                     <>
-                      <Text as={"b"} fontSize={"xl"} color={"gray"}>
+                      <Text fontSize={"xl"} color={"#353138"} as={"b"}>
                         Output {}
                       </Text>
-                      <Card backgroundColor={"gray.100"} variant={"filled"}>
+                      <Card backgroundColor={"#DEE2F5"} variant={"filled"}>
                         <CardBody>
-                          <Text>{resultStore.state.stdout}</Text>
+                          <Text color={"#353138"}>
+                            {resultStore.state.stdout}
+                          </Text>
                         </CardBody>
                       </Card>
                     </>
                   ) : (
-                    <Text as={"b"} fontSize={"xl"} color={"gray"}>
+                    <Text fontSize={"xl"} color={"#353138"} as={"b"}>
                       No output generated
                     </Text>
                   )}
-                  {resultStore.state.status.id >= 5 && resultStore.state.status.id <= 14 ? (
+
+                  {resultStore.state.status.id >= 5 &&
+                  resultStore.state.status.id <= 14 ? (
                     <>
-                      <Text as={"b"} fontSize={"xl"} color={"red"}>
+                      <Divider />
+                      <Text as={"b"} fontSize={"xl"} color={"#EC4E4E"}>
                         {resultStore.state.status.description}
                       </Text>
                       {resultStore.state.stderr ? (
-                        <Card
-                          colorScheme={"red"}
-                          variant={"filled"}
-                          backgroundColor={"red.100"}
-                        >
+                        <Card variant={"filled"} bg={"#F8D0D0"}>
                           <CardBody>
-                            <Text color={"red.600"}>
+                            <Text color={"#EC4E4E"}>
                               {resultStore.state.stderr}
                             </Text>
                           </CardBody>

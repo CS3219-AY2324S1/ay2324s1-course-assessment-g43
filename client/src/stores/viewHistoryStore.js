@@ -11,6 +11,23 @@ class ViewHistoryStore {
     makeAutoObservable(this);
   }
 
+  reformatDatetime(attempts) {
+    for (const attempt of attempts) {
+      let datetimeString = attempt.datetime;
+      const datetime = new Date(datetimeString);
+      const options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      };
+      attempt.datetime = datetime.toLocaleDateString(undefined, options);
+    }    
+  }
+
   setAttempts(attempts) {
     this.state.attempts = attempts;
   }
@@ -23,6 +40,7 @@ class ViewHistoryStore {
     try {
       const res = await getAttemptsByUserId(id);
       console.log(res);
+      this.reformatDatetime(res.data);
       this.setAttempts(res.data);
       return res;
     } catch (err) {

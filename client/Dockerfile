@@ -1,10 +1,6 @@
 # Use the Node.js image as the base image
 FROM node:18
 
-# Set a default environment variable for PEERPREP_ENV
-ARG PEERPREP_ENV
-ENV PEERPREP_ENV ${PEERPREP_ENV:-production}
-
 # Set the working directory
 WORKDIR /app
 
@@ -18,5 +14,30 @@ COPY . .
 # Expose port 5173
 EXPOSE 5173
 
-# Define the CMD based on the PEERPREP_ENV argument
-CMD ["sh", "-c", "if [ \"$PEERPREP_ENV\" = \"production\" ]; then npm run build && npm run preview; else npm run dev; fi"]
+# Define the CMD
+CMD ["sh", "-c", "npm run build && npm run preview;"]
+
+# FROM node:18-alpine as BUILD_IMAGE
+# WORKDIR /app/react-app
+
+# COPY package.json .
+
+# RUN npm install
+
+# COPY . .
+
+# RUN npm run build
+
+# FROM node:18-alpine as PRODUCTION_IMAGE
+# WORKDIR /app/react-app
+
+# COPY --from=BUILD_IMAGE /app/react-app/dist/ /app/react-app/dist/
+# EXPOSE 5173
+
+# COPY package.json .
+# COPY vite.config.js .
+
+# RUN npm install
+
+# EXPOSE 5173
+# CMD [ "npm", "run", "preview" ]

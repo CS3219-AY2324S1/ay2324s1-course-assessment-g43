@@ -1,10 +1,9 @@
-
 const express = require("express");
 const cors = require("cors");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 const app = express();
 const port = 5002;
- 
+
 app.use(cors());
 app.use(express.json());
 
@@ -26,7 +25,6 @@ const options = {
   // Set non-required fields as nullable by default
   notRequiredAsNullable: false,
 };
-
 
 expressJSDocSwagger(app)(options);
 

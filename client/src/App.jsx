@@ -24,6 +24,7 @@ function App() {
           // Log user out on invalid/expired JWT
           localStorage.removeItem("user");
           localStorage.removeItem("jwt");
+          localStorage.removeItem("roomId");
         }
         window.location.replace(`/error?statusCode=${error.response.status}`);
       }

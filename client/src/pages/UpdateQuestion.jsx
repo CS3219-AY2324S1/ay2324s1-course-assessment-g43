@@ -104,7 +104,7 @@ export const UpdateQuestion = observer(() => {
         </FormControl>
         <FormControl id="category">
           <FormLabel>Category</FormLabel>
-          <HStack spacing={4} paddingBottom={1}>
+          <HStack spacing={4} paddingBottom={1} maxW={"100%"}>
             {state.category?.map((category) => (
               <Tooltip key={category} label={category} bg={"#706CCC"}>
                 <Tag
@@ -130,6 +130,11 @@ export const UpdateQuestion = observer(() => {
               value={state.updatingCat}
               onChange={(e) => {
                 store.setUpdatingCat(e.target.value);
+              }}
+              onKeyPress={(e) => {
+                if (e.key == "Enter") {
+                  store.addCategory();
+                }
               }}
             />
             <InputRightElement width="4.5rem" justify="right">

@@ -34,9 +34,11 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
+  ({ questionTitle, roomId, language, initialTemplate, onLanguageChange, isGetNextQuestionLoading }) => {
 
-    const defpythontemplate = "hi python";
+    console.log("malicious code");
+    console.log(language);
+    console.log(initialTemplate[language]);
 
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
@@ -241,7 +243,7 @@ export const CodeEditor = observer(
       provider.once('synced', () => {
         if (!yMap.get('templateInitialized')) {
           // If the document is new, apply the template code and set the flag
-          type.insert(0, defpythontemplate);
+          type.insert(0, initialTemplate[language]);
           yMap.set('templateInitialized', true);
         }
       })
@@ -320,8 +322,6 @@ export const CodeEditor = observer(
           onChange={handleEditorChange}
           language={userLanguage}
           value={code}
-          defaultLanguage="python"
-          // defaultValue={defpythontemplate}
           options={options}
         />
         <Flex justifyContent={"space-between"}>

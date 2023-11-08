@@ -41,7 +41,10 @@ export const getQuestionFromSession = async (roomId) => {
       description: res.data.description,
       category: res.data.category,
       complexity: res.data.complexity,
+      currentLanguage: res.data.currentLanguage,
+      attempt: res.data.attempt,
     };
+    
     return question;
   } catch (err) {
     if (err.response.status === 404) {

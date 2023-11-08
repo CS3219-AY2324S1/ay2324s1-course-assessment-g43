@@ -268,6 +268,8 @@ const DesktopNav = ({ navItems }) => {
     category,
     complexity,
     roomId,
+    currentLanguage,
+    attempt,
   }) => {
     // Write roomId to localStorage
     localStorage.setItem("roomId", roomId);
@@ -278,6 +280,8 @@ const DesktopNav = ({ navItems }) => {
         description,
         category,
         complexity,
+        currentLanguage,
+        attempt,
       },
     });
   };

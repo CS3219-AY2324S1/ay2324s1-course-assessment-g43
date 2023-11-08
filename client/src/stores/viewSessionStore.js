@@ -26,6 +26,7 @@ class ViewSessionStore {
     roomId: "",
     language: "",
     isGetNextQuestionLoading: false,
+    attempt: new Map(),
 
     /*
     Array of objects with the following structure:
@@ -120,14 +121,20 @@ class ViewSessionStore {
   }
 
   initQuestionState(question) {
-    const { questionId, title, description, category, complexity } = question;
+    const { questionId, title, description, category, complexity, currentLanguage, attempt } = question;
+
+    console.log("i am inside init question state");
+    console.log(question);
+
     this.state = {
       ...this.state,
+      language: currentLanguage,
       questionId,
       title,
       description,
       category,
       complexity,
+      attempt,
     };
   }
 
@@ -171,6 +178,7 @@ class ViewSessionStore {
       complexity: "",
       roomId: "",
       language: "",
+      attempt: new Map(),
       isGetNextQuestionLoading: false,
       chat: [],
       isPeerConnected: true,

@@ -46,12 +46,10 @@ export const ViewSession = observer(() => {
         .fetchQuestion(roomId)
         .then((question) => {
           //TODO can we refactor this to the case below?
+
           store.setRoomId(roomId);
           store.initQuestionState(question);
           store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
-          store.setLanguage(
-            localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
-          );
           store.setChat(localStorage.getItem("sessionChat"));
         })
         .catch((err) => {
@@ -80,9 +78,7 @@ export const ViewSession = observer(() => {
       store.setDescription(location.state.description);
       store.setCategory(location.state.category);
       store.setComplexity(location.state.complexity);
-      store.setLanguage(
-        localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
-      );
+      store.setLanguage(location.state.currentLanguage);
       setIsDoneLoading(true);
 
       store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
@@ -265,8 +261,9 @@ export const ViewSession = observer(() => {
               <CodeEditor
                 questionTitle={state.title}
                 roomId={state.roomId}
-                language={"python"}
+                language={state.language}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
+                initialTemplate={state.attempt}
                 isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
               />
             )}{" "}

@@ -262,22 +262,7 @@ export const CodeEditor = observer(
         new Set([editorRef.current]),
         provider.awareness
       );
-
-
-
-
-      // provider.on('synced', () => {
-      //   const template = getCodeTemplate(language, questionTitle);
-      //   setCode(template);
-      //   store.setSourceCode(template);
-      // })
-
-
-
-      // console.log(editorRef);
-      // console.log(provider.awareness, binding);
     }
-    // console.log(isDisabled);
 
     return (
       <Stack w={"100%"} h={"50%"}>

@@ -1,10 +1,6 @@
 # Use the Node.js image as the base image
 FROM node:18
 
-# Set a default environment variable for PEERPREP_ENV
-ARG PEERPREP_ENV
-ENV PEERPREP_ENV ${PEERPREP_ENV:-production}
-
 # Set the working directory
 WORKDIR /app
 
@@ -18,5 +14,5 @@ COPY . .
 # Expose port 8000
 EXPOSE 8000
 
-# Define the CMD based on the PEERPREP_ENV argument
-CMD ["sh", "-c", "if [ \"$PEERPREP_ENV\" = \"production\" ]; then npm run start; else npm run dev; fi"]
+# Define the CMD
+CMD ["npm", "run", "start"]

@@ -1,4 +1,4 @@
-require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
+require("dotenv").config();
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 

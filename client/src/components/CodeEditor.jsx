@@ -145,19 +145,15 @@ export const CodeEditor = observer(
         case "cpp":
           setDisability(false);
           store.setLanguageId(54);
-          return `#include <iostream>\n\n//change your function type below if necessary\nvoid ${functionName}(/*define your params here*/) {\n\t//your function implementation goes here\t\n};\n\nint main() {\n\t//print your output here to check. e.g:\n\t//std::cout << YOUR-OUTPUT-HERE << std::endl;\n}`;
         case "java":
           setDisability(false);
           store.setLanguageId(62);
-          return `class Main {\n\t//change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t//your function implementation goes here\t\n\t};\n\n\tpublic static void main(String[] args) {\n\t//print your output here to check. e.g:\n\t//System.out.println(YOUR-OUTPUT-HERE);\n\t}\n}`;
         case "python":
           setDisability(false);
           store.setLanguageId(71);
-          return `#define your params here\ndef ${functionName}():\n\t#your function implementation goes here\n\n#print your output here to check. e.g below:\n#print(YOUR-OUTPUT-HERE)`;
         case "javascript":
           setDisability(false);
           store.setLanguageId(93);
-          return `const ${functionName} = (/*define your params here*/) => {\n\t//your function implementation goes here\n}\n\n//print your output here to check. e.g:\n//console.log(YOUR-OUTPUT-HERE);`;
         case "text":
           setDisability(true);
           return ``;
@@ -241,10 +237,9 @@ export const CodeEditor = observer(
 
       // Ensures that you initialise the default template once
       provider.once('synced', () => {
-        if (!yMap.get('templateInitialized')) {
-          // If the document is new, apply the template code and set the flag
+        const userId = JSON.parse(localStorage.getItem("user"))["uid"]
+        if (roomId.split("-")[1] == userId) {
           type.insert(0, initialTemplate[language]);
-          yMap.set('templateInitialized', true);
         }
       })
 
@@ -256,6 +251,13 @@ export const CodeEditor = observer(
         new Set([editorRef.current]),
         provider.awareness
       );
+
+      // Clean up the Monaco binding when the editor unmounts
+      return () => {
+        provider.disconnect();
+        doc.destroy();
+        binding.destroy();
+      };
     }
 
     return (
@@ -279,7 +281,6 @@ export const CodeEditor = observer(
               }}
               bg={"#DEE2F5"}
             >
-              <option value="text">Notes</option>
               <option value="python">Python</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>

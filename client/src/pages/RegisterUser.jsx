@@ -49,8 +49,10 @@ export const RegisterUser = observer(() => {
     <PageContainer>
       <Stack spacing={8} w={"100%"} maxW={"lg"} p={6}>
         <Stack w={"100%"} align={"center"}>
-          <Heading fontSize={"4xl"}>Register an account</Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
+          <Heading fontSize={"4xl"} color={"#0A050E"}>
+            Register an account
+          </Heading>
+          <Text fontSize={"lg"} color={"#847979"}>
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
@@ -99,11 +101,11 @@ export const RegisterUser = observer(() => {
               <Button
                 loadingText="Submitting"
                 size="lg"
-                bg={"blue.400"}
-                color={"white"}
+                bg={"#706CCC"}
                 _hover={{
-                  bg: "blue.500",
+                  bg: "#8F8ADD",
                 }}
+                color={"white"}
                 type="submit"
               >
                 Register
@@ -112,7 +114,7 @@ export const RegisterUser = observer(() => {
             <Stack pt={6}>
               <Text align={"center"}>
                 Already a user?{" "}
-                <Link color={"blue.400"} href={"/login-user"}>
+                <Link color={"#8F8ADD"} href={"/login-user"}>
                   Log In
                 </Link>
               </Text>

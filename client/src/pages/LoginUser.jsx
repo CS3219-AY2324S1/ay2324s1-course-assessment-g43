@@ -55,8 +55,10 @@ export const LoginUser = observer(() => {
     <PageContainer>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>Log in to your account</Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
+          <Heading fontSize={"4xl"} color={"#0A050E"}>
+            Log in to your account
+          </Heading>
+          <Text fontSize={"lg"} color={"#847979"}>
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
@@ -85,6 +87,7 @@ export const LoginUser = observer(() => {
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
+                    color={"#706CCC"}
                     onClick={() => store.toggleShowPassword()}
                   >
                     {state.showPassword ? <ViewIcon /> : <ViewOffIcon />}
@@ -102,11 +105,11 @@ export const LoginUser = observer(() => {
                 <Text color={"blue.400"}>Forgot password?</Text>
               </Stack> */}
               <Button
-                bg={"blue.400"}
-                color={"white"}
+                bg={"#706CCC"}
                 _hover={{
-                  bg: "blue.500",
+                  bg: "#8F8ADD",
                 }}
+                color={"white"}
                 type="submit"
               >
                 Log In
@@ -117,7 +120,7 @@ export const LoginUser = observer(() => {
         <Stack pt={6}>
           <Text align={"center"}>
             No account yet?{" "}
-            <Link color={"blue.400"} href={"/register-user"}>
+            <Link color={"#8F8ADD"} href={"/register-user"}>
               Register
             </Link>
           </Text>

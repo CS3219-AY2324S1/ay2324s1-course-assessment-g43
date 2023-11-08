@@ -1,0 +1,78 @@
+french gray: 
+hex: #CFCCD6
+rgb: 207, 204, 214
+
+lavender:
+hex: #DEE2F5
+
+tea rose (red): (hard)
+hex: #F8C1C1
+
+light coral: 
+hex: #F07272
+
+imperial red:
+hex: #EC4E4E
+
+light aquamarine: (easy)
+hex: #9DEFCD
+
+aquamarine (green):
+hex: #5DEFB3
+
+darker aquamarine:
+hex: #21EEA3
+
+mindaro (yellow): (medium)
+hex: #FAF8A5
+
+light periwinkle:
+hex: #BBC2E2
+rgb: 187, 194, 226
+
+periwinkle: (categories)
+hex: #B7B5E4
+rgb: 183, 181, 228
+
+tropical indigo:
+hex: #8F8ADD
+
+medium slate:
+hex: #706CCC
+
+majorelle blue:
+hex: #625AF3
+
+taupe gray:
+hex: #847979
+rgb: 132, 121, 121
+
+brown: #463F3A
+
+text: black (purple hue)
+hex: #0A050E
+
+buttons: (medium slate -> tropical indigo)
+bg={"#706CCC"}
+_hover={{
+bg: "#8F8ADD",
+}}
+color={"white"}
+red:
+bg={"#F07272"}
+color={"white"}
+_hover={{
+bg: "#EC4E4E",
+}}
+
+
+to change:
+navbar .
+landing page .
+login page .
+register page .
+questions page .
+update questions page .
+view user .
+update user .
+session (wait for matching service to work properly)

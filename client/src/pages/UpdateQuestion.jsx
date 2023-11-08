@@ -15,6 +15,7 @@ import {
   InputRightElement,
   IconButton,
   Select,
+  Tooltip,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { updateQuestionStore } from "../stores/updateQuestionStore";
@@ -57,6 +58,9 @@ export const UpdateQuestion = observer(() => {
   };
 
   useEffect(() => {
+    if (!(location.state && location.state.selectedQuestion)) {
+      window.location.replace("/error?statusCode=403");
+    }
     const selectedQuestion = JSON.parse(location.state.selectedQuestion);
     store.setQuestionId(selectedQuestion.questionId);
     store.setTitle(selectedQuestion.title);
@@ -68,7 +72,11 @@ export const UpdateQuestion = observer(() => {
   return (
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"} p={6}>
-        <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
+        <Heading
+          color={"#0A050E"}
+          lineHeight={1.1}
+          fontSize={{ base: "2xl", sm: "3xl" }}
+        >
           Update Question
         </Heading>
         <FormControl id="title" isRequired>
@@ -98,12 +106,21 @@ export const UpdateQuestion = observer(() => {
           <FormLabel>Category</FormLabel>
           <HStack spacing={4} paddingBottom={1}>
             {state.category?.map((category) => (
-              <Tag key={category} borderRadius="full" variant="solid">
-                <TagLabel>{category}</TagLabel>
-                <TagCloseButton
-                  onClick={() => store.removeCategory(category)}
-                />
-              </Tag>
+              <Tooltip key={category} label={category} bg={"#706CCC"}>
+                <Tag
+                  key={category}
+                  borderRadius="full"
+                  variant="solid"
+                  bg={"#B7B5E4"}
+                  color={"white"}
+                  maxW={"20%"}
+                >
+                  <TagLabel>{category}</TagLabel>
+                  <TagCloseButton
+                    onClick={() => store.removeCategory(category)}
+                  />
+                </Tag>
+              </Tooltip>
             ))}
           </HStack>
           <InputGroup>
@@ -120,6 +137,7 @@ export const UpdateQuestion = observer(() => {
                 aria-label="Create category"
                 icon={<AddIcon />}
                 variant="unstyled"
+                paddingBottom={"3px"}
                 onClick={() => store.addCategory()}
               />
             </InputRightElement>
@@ -140,12 +158,12 @@ export const UpdateQuestion = observer(() => {
         </FormControl>
         <Stack spacing={6} direction={["column", "row"]}>
           <Button
-            bg={"red.400"}
+            bg={"#F07272"}
             color={"white"}
-            w="full"
             _hover={{
-              bg: "red.500",
+              bg: "#EC4E4E",
             }}
+            w="full"
             onClick={() => {
               navigate(-1);
             }}
@@ -153,12 +171,12 @@ export const UpdateQuestion = observer(() => {
             Cancel
           </Button>
           <Button
-            bg={"blue.400"}
-            color={"white"}
             w="full"
+            bg={"#706CCC"}
             _hover={{
-              bg: "blue.500",
+              bg: "#8F8ADD",
             }}
+            color={"white"}
             onClick={async (e) => await updateQuestion(e)}
           >
             Submit

@@ -1,6 +1,5 @@
 import {
   Stack,
-  Divider,
   Select,
   useDisclosure,
   Drawer,
@@ -18,12 +17,7 @@ import {
   Card,
   CardBody,
 } from "@chakra-ui/react";
-import {
-  ArrowForwardIcon,
-  ChatIcon,
-  ChevronUpIcon,
-  RepeatIcon,
-} from "@chakra-ui/icons";
+import { ArrowForwardIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import * as Y from "yjs";
@@ -33,13 +27,14 @@ import { MonacoBinding } from "y-monaco";
 import { PropTypes } from "prop-types";
 import { createSubmissionStore } from "../stores/createSubmissionStore";
 import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
+import { viewSessionStore } from "../stores/viewSessionStore";
 
 /**
  * `language` prop changes when PEER changes language
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange }) => {
+  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const [userLanguage, setUserLanguage] = useState(language);
@@ -54,6 +49,7 @@ export const CodeEditor = observer(
     const resultStore = getSubmissionResultStore;
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
+
 
     useEffect(() => {
       // TODO: Debug this -- why doesn't monaco initialise with the template code?
@@ -168,6 +164,11 @@ export const CodeEditor = observer(
       }
     }, []);
 
+    const initiateNextQuestionRequest = () => {
+      viewSessionStore.initChangeQuestion();
+      viewSessionStore.setIsGetQuestionLoading(true);
+    }
+
     const resetCode = () => {
       if (
         confirm(
@@ -245,7 +246,7 @@ export const CodeEditor = observer(
     // console.log(isDisabled);
 
     return (
-      <Stack w={"100%"} h={"100%"}>
+      <Stack w={"100%"} h={"50%"}>
         <HStack justifyContent={"space-between"}>
           <Tooltip
             label="Select your preferred language."
@@ -263,6 +264,7 @@ export const CodeEditor = observer(
               onChange={(e) => {
                 setUserLanguage(e.target.value);
               }}
+              bg={"#DEE2F5"}
             >
               <option value="text">Notes</option>
               <option value="python">Python</option>
@@ -272,29 +274,35 @@ export const CodeEditor = observer(
             </Select>
           </Tooltip>
           <ButtonGroup>
-            <Tooltip
-              label="Get New Random Question"
-              hasArrow
-              bg="gray.300"
-              color="black"
-            >
-              <IconButton icon={<ArrowForwardIcon />} variant={"outline"} />
+            <Tooltip label="Get New Random Question" hasArrow bg={"#706CCC"}>
+              <IconButton
+                icon={<ArrowForwardIcon />}
+                variant={"outline"}
+                borderColor={"#DEE2F5"}
+                color={"#625AF3"}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
+                isLoading={isGetNextQuestionLoading}
+                onClick={initiateNextQuestionRequest}
+              />
             </Tooltip>
-            <Tooltip label="Open Chat" hasArrow bg="gray.300" color="black">
-              <IconButton icon={<ChatIcon />} variant={"outline"} />
-            </Tooltip>
-            <Tooltip label="Reset code" hasArrow bg="gray.300" color="black">
+            <Tooltip label="Reset code" hasArrow bg={"#706CCC"}>
               <IconButton
                 icon={<RepeatIcon />}
                 variant={"outline"}
+                borderColor={"#DEE2F5"}
+                color={"#625AF3"}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
                 onClick={resetCode}
               />
             </Tooltip>
           </ButtonGroup>
         </HStack>
-        <Divider color="gray.300" />
         <Editor
-          height={"70vh"}
+          height={"40vh"}
           width={"100%"}
           theme={"vs-dark"}
           onMount={handleEditorDidMount}
@@ -303,7 +311,6 @@ export const CodeEditor = observer(
           value={code}
           options={options}
         />
-        <Divider />
         <Flex justifyContent={"space-between"}>
           <Button variant={"ghost"} onClick={onConsoleOpen}>
             Console
@@ -368,8 +375,12 @@ export const CodeEditor = observer(
           </Drawer>
           <ButtonGroup>
             <Button
-              variant={"solid"}
-              color={"green"}
+              variant={"outline"}
+              color={"#625AF3"}
+              borderColor={"#DEE2F5"}
+              _hover={{
+                bg: "#DEE2F5",
+              }}
               isDisabled={isDisabled || isPressed}
               onClick={handleRunButtonClick}
             >

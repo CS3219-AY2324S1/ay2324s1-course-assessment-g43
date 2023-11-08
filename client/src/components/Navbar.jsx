@@ -104,6 +104,7 @@ const Navbar = observer(() => {
         >
           <IconButton
             onClick={onToggle}
+            color={"#706CCC"}
             icon={
               isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
             }
@@ -115,7 +116,7 @@ const Navbar = observer(() => {
           <Text
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
             fontFamily={"heading"}
-            color={useColorModeValue("gray.800", "white")}
+            color={"#0A050E"}
             as={"a"}
             href="/"
           >
@@ -140,9 +141,9 @@ const Navbar = observer(() => {
               fontSize={"sm"}
               fontWeight={600}
               color={"white"}
-              bg={"pink.400"}
+              bg={"#706CCC"}
               _hover={{
-                bg: "pink.300",
+                bg: "#8F8ADD",
               }}
               onClick={onLogout}
             >
@@ -154,6 +155,7 @@ const Navbar = observer(() => {
                 as={"a"}
                 fontSize={"sm"}
                 fontWeight={400}
+                color={"#847979"}
                 variant={"link"}
                 href={"/login-user"}
               >
@@ -165,10 +167,10 @@ const Navbar = observer(() => {
                 fontSize={"sm"}
                 fontWeight={600}
                 color={"white"}
-                bg={"pink.400"}
+                bg={"#706CCC"}
                 href={"/register-user"}
                 _hover={{
-                  bg: "pink.300",
+                  bg: "#8F8ADD",
                 }}
               >
                 Register
@@ -205,7 +207,6 @@ const MatchingModalBody = observer(() => {
 });
 
 const MatchingModalFooter = observer(() => {
-
   const handleCancel = (e) => {
     e.preventDefault();
 
@@ -216,7 +217,15 @@ const MatchingModalFooter = observer(() => {
   return (
     <>
       <Button
-        colorScheme="red"
+        bg={"#F07272"}
+        color={"white"}
+        _hover={
+          !matchingFormStore.isLoading
+            ? {
+                bg: "#F07272",
+              }
+            : { bg: "#EC4E4E" }
+        }
         mr={3}
         isLoading={matchingFormStore.isCancelLoading}
         isDisabled={!matchingFormStore.isLoading}
@@ -226,24 +235,26 @@ const MatchingModalFooter = observer(() => {
       </Button>
 
       <Button
-      colorScheme="green"
-      mr={3}
-      type="submit"
-      isLoading={matchingFormStore.isLoading}
-      isDisabled={matchingFormStore.isLoading}
-      loadingText={`Finding you a match (${matchingFormStore.countdown}s)`}
-    >
-      Match
-    </Button>
-
+        bg={"#8F8ADD"}
+        color={"white"}
+        _hover={{
+          bg: "#706CCC",
+        }}
+        mr={3}
+        type="submit"
+        isLoading={matchingFormStore.isLoading}
+        isDisabled={matchingFormStore.isLoading}
+        loadingText={`Finding you a match (${matchingFormStore.countdown}s)`}
+      >
+        Match
+      </Button>
     </>
-
   );
 });
 
 const DesktopNav = ({ navItems }) => {
-  const linkColor = useColorModeValue("gray.600", "gray.200");
-  const linkHoverColor = useColorModeValue("gray.800", "white");
+  const linkColor = "#847979";
+  const linkHoverColor = "#0A050E";
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
   const navigate = useNavigate();
   const toast = useToast();
@@ -317,6 +328,7 @@ const DesktopNav = ({ navItems }) => {
                               });
                             };
                             const matchFailureCallback = (rejectionReason) => {
+                              modalComponentStore.setClosable(true);
                               toast({
                                 title: rejectionReason,
                                 status: "warning",
@@ -341,7 +353,7 @@ const DesktopNav = ({ navItems }) => {
                             matchingFormStore.sendMatchRequest(
                               matchSuccessCallback,
                               matchFailureCallback,
-                              matchCancelCallback,
+                              matchCancelCallback
                             );
                           },
                           () => matchingFormStore.resetState()
@@ -376,7 +388,7 @@ const DesktopNav = ({ navItems }) => {
 };
 
 const DesktopSubNav = ({ label, href, subLabel }) => {
-  const bgcolor = useColorModeValue("pink.50", "gray.900");
+  const bgcolor = "#CFCCD6";
   const navigate = useNavigate();
   const toast = useToast();
   const modalComponentStore = useModalComponentStore();
@@ -440,6 +452,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                     });
                   };
                   const matchFailureCallback = (rejectionReason) => {
+                    modalComponentStore.setClosable(true);
                     toast({
                       title: rejectionReason,
                       status: "warning",
@@ -475,7 +488,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         <Box>
           <Text
             transition={"all .3s ease"}
-            _groupHover={{ color: "pink.400" }}
+            _groupHover={{ color: "#8F8ADD" }}
             fontWeight={500}
           >
             {label}
@@ -491,7 +504,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           align={"center"}
           flex={1}
         >
-          <Icon color={"pink.400"} w={5} h={5} as={ChevronRightIcon} />
+          <Icon color={"#8F8ADD"} w={5} h={5} as={ChevronRightIcon} />
         </Flex>
       </Stack>
     </Box>
@@ -517,6 +530,8 @@ const MobileNavItem = ({ label, children, href }) => {
   const modalComponentStore = useModalComponentStore();
   const toast = useToast();
   const navigate = useNavigate();
+  const linkColor = "#847979";
+  const linkHoverColor = "#0A050E";
 
   // This only runs on successful POST to Sessions collection
   const redirectToSessionPage = ({
@@ -546,9 +561,6 @@ const MobileNavItem = ({ label, children, href }) => {
         py={2}
         as="a"
         href={href ?? "#"}
-        _hover={{
-          textDecoration: "none",
-        }}
         onClick={
           label != "Match"
             ? () => {}
@@ -576,6 +588,7 @@ const MobileNavItem = ({ label, children, href }) => {
                       });
                     };
                     const matchFailureCallback = (rejectionReason) => {
+                      modalComponentStore.setClosable(true);
                       toast({
                         title: rejectionReason,
                         status: "warning",
@@ -600,7 +613,7 @@ const MobileNavItem = ({ label, children, href }) => {
                     matchingFormStore.sendMatchRequest(
                       matchSuccessCallback,
                       matchFailureCallback,
-                      matchCancelCallback,
+                      matchCancelCallback
                     );
                   },
                   () => matchingFormStore.resetState()
@@ -610,7 +623,12 @@ const MobileNavItem = ({ label, children, href }) => {
         <Flex justifyContent={"space-between"} alignItems={"center"}>
           <Text
             fontWeight={600}
-            color={useColorModeValue("gray.600", "gray.200")}
+            transition={"all .3s ease"}
+            color={linkColor}
+            _hover={{
+              textDecoration: "none",
+              color: linkHoverColor,
+            }}
           >
             {label}
           </Text>
@@ -621,6 +639,7 @@ const MobileNavItem = ({ label, children, href }) => {
               transform={isToggleOpen ? "rotate(180deg)" : ""}
               w={6}
               h={6}
+              color={"#8F8ADD"}
             />
           )}
         </Flex>
@@ -636,7 +655,7 @@ const MobileNavItem = ({ label, children, href }) => {
           pl={4}
           borderLeft={1}
           borderStyle={"solid"}
-          borderColor={useColorModeValue("gray.200", "gray.700")}
+          borderColor={"#706CCC"}
           align={"start"}
         >
           {children &&
@@ -646,6 +665,13 @@ const MobileNavItem = ({ label, children, href }) => {
                 key={child.label}
                 py={2}
                 href={child.href}
+                fontWeight={500}
+                transition={"all .3s ease"}
+                color={linkColor}
+                _hover={{
+                  textDecoration: "none",
+                  color: linkHoverColor,
+                }}
                 cursor={"pointer"}
                 onClick={
                   child.label != "Match"
@@ -676,6 +702,7 @@ const MobileNavItem = ({ label, children, href }) => {
                               });
                             };
                             const matchFailureCallback = (rejectionReason) => {
+                              modalComponentStore.setClosable(true);
                               toast({
                                 title: rejectionReason,
                                 status: "warning",
@@ -693,7 +720,7 @@ const MobileNavItem = ({ label, children, href }) => {
                                 isClosable: true,
                               });
                             };
-          
+
                             matchingFormStore
                               .startLoading()
                               .then(null, matchFailureCallback);

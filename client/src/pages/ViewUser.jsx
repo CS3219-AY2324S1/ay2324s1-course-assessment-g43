@@ -19,7 +19,7 @@ export const ViewUser = observer(() => {
   const toast = useToast();
   const store = viewUserStore;
   const state = store.state;
-  const userId = JSON.parse(localStorage.getItem("user")).uid;
+  const userId = JSON.parse(localStorage.getItem("user"))?.uid;
 
   const redirectToUpdateUserPage = () => {
     navigate("/update-user");
@@ -65,7 +65,9 @@ export const ViewUser = observer(() => {
       <>
         <IconButton
           icon={<ArrowBackIcon />}
-          bg={"transparent"}
+          variant={"ghost"}
+          marginRight={"5px"}
+          color={"#706CCC"}
           onClick={() => {
             navigate(-1);
           }}
@@ -84,23 +86,23 @@ export const ViewUser = observer(() => {
           </SimpleGrid>
           <Stack spacing={6} direction={["column", "row"]}>
             <Button
-              bg={"red.400"}
+              bg={"#F07272"}
               color={"white"}
-              w="full"
               _hover={{
-                bg: "red.500",
+                bg: "#EC4E4E",
               }}
+              w="full"
               onClick={deleteUser}
             >
               Delete your profile
             </Button>
             <Button
-              bg={"blue.400"}
+              bg={"#706CCC"}
+              _hover={{
+                bg: "#8F8ADD",
+              }}
               color={"white"}
               w="full"
-              _hover={{
-                bg: "blue.500",
-              }}
               onClick={redirectToUpdateUserPage}
             >
               Update your profile

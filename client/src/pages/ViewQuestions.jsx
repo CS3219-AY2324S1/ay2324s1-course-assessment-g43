@@ -1,8 +1,5 @@
 import {
   Button,
-  Card,
-  CardBody,
-  Flex,
   HStack,
   Text,
   Stack,
@@ -23,8 +20,18 @@ import {
   Divider,
   AbsoluteCenter,
   Box,
+  Tooltip,
+  TableContainer,
+  Table,
+  TableCaption,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Flex,
 } from "@chakra-ui/react";
-import { SearchIcon, AddIcon } from "@chakra-ui/icons";
+import { SearchIcon, AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { useNavigate } from "react-router-dom";
@@ -32,12 +39,15 @@ import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
+import { getColorFromComplexity } from "../utils/stylingUtils";
 
 export const ViewQuestions = observer(() => {
   const modalComponentStore = useModalComponentStore();
   const toast = useToast();
   const store = viewQuestionsStore;
   const state = store.state;
+
+  const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
 
   const createQuestion = (e) => {
     e.preventDefault();
@@ -69,32 +79,34 @@ export const ViewQuestions = observer(() => {
   };
 
   const deleteQuestion = (id) => {
-    window.confirm("Delete this question? This action is irreversible.");
-    toast.promise(store.deleteQuestion(id), {
-      success: () => {
-        modalComponentStore.closeModal();
-        store.setSelectedQuestion({});
-        store.getAllQuestions();
-        return {
-          title: "Successfully deleted question.",
-          description: "You've successfully deleted this question!",
-          duration: 3000,
-          isClosable: true,
-        };
-      },
-      error: (error) => ({
-        title: "An error occurred.",
-        description: error.response.data.message || "Unknown error occurred.",
-        duration: 3000,
-        isClosable: true,
-      }),
-      loading: {
-        title: "Deleting Question.",
-        description: "Please give us some time to delete this question.",
-        duration: 3000,
-        isClosable: true,
-      },
-    });
+    window.confirm("Delete this question? This action is irreversible.") == true
+      ? toast.promise(store.deleteQuestion(id), {
+          success: () => {
+            modalComponentStore.closeModal();
+            store.setSelectedQuestion({});
+            store.getAllQuestions();
+            return {
+              title: "Successfully deleted question.",
+              description: "You've successfully deleted this question!",
+              duration: 3000,
+              isClosable: true,
+            };
+          },
+          error: (error) => ({
+            title: "An error occurred.",
+            description:
+              error.response.data.message || "Unknown error occurred.",
+            duration: 3000,
+            isClosable: true,
+          }),
+          loading: {
+            title: "Deleting Question.",
+            description: "Please give us some time to delete this question.",
+            duration: 3000,
+            isClosable: true,
+          },
+        })
+      : {};
   };
 
   const handleOpenModal = (question) => {
@@ -121,7 +133,7 @@ export const ViewQuestions = observer(() => {
             Questions
           </Text>
           <HStack w={"100%"} justifyContent={"flex-end"}>
-            <InputGroup maxW={"400px"}>
+            <InputGroup maxW={"60%"}>
               <InputLeftElement pointerEvents="none">
                 <SearchIcon />
               </InputLeftElement>
@@ -133,72 +145,114 @@ export const ViewQuestions = observer(() => {
             </InputGroup>
           </HStack>
         </Stack>
-        <HStack justify={"right"}>
-          <Text>Create new question</Text>
-          <IconButton
-            aria-label="Create question"
-            icon={<AddIcon />}
-            variant={"outline"}
-            onClick={() =>
-              modalComponentStore.openModal(
-                createQuestionModalTitle,
-                <CreateQuestionModalBody />,
-                <CreateQuestionModalFooter />,
-                createQuestion,
-                () => createQuestionStore.resetState()
-              )
-            }
-          />
-        </HStack>
-        <Flex
-          justifyContent={"space-between"}
-          px={6}
-          direction={["column", "row"]}
-        >
+        <Flex justifyContent={"space-between"}>
           <HStack>
-            <Text fontWeight="bold">ID</Text>
-            <Text fontWeight="bold">Question Title</Text>
+            {COMPLEXITY_LEVELS.map((complexity) => (
+              <Tag
+                size="md"
+                key={complexity}
+                bg={
+                  state.complexityFilters.has(complexity)
+                    ? getColorFromComplexity(complexity)
+                    : "gray"
+                }
+                onClick={() => store.toggleComplexityFilter(complexity)}
+              >
+                <TagLabel>{complexity.toUpperCase()}</TagLabel>
+                {state.complexityFilters.has(complexity) && <TagCloseButton />}
+              </Tag>
+            ))}
           </HStack>
-          <Text fontWeight="bold">Actions</Text>
+          <HStack justify={"right"}>
+            <Text>Create new question</Text>
+            <IconButton
+              aria-label="Create question"
+              icon={<AddIcon />}
+              variant={"outline"}
+              _hover={{
+                bg: "#BBC2E2",
+              }}
+              onClick={() =>
+                modalComponentStore.openModal(
+                  createQuestionModalTitle,
+                  <CreateQuestionModalBody />,
+                  <CreateQuestionModalFooter />,
+                  createQuestion,
+                  () => createQuestionStore.resetState()
+                )
+              }
+            />
+          </HStack>
         </Flex>
-        {!!state.questions ? (
-          state.questions
-            .filter((question) =>
-              question.title
-                .toLowerCase()
-                .includes(state.searchQuery.toLowerCase())
-            )
-            .map((question, index) => {
-              return (
-                <Card key={index}>
-                  <CardBody>
-                    <Flex
-                      justifyContent={"space-between"}
-                      direction={["column", "row"]}
-                      gap={2}
-                    >
-                      <HStack>
-                        <Text>{question.questionId}.</Text>
-                        <Text textOverflow={"ellipsis"} maxW={"inherit"}>
-                          {question.title}
-                        </Text>
-                      </HStack>
-                      <Button onClick={() => handleOpenModal(question)}>
-                        View Details
-                      </Button>
-                    </Flex>
-                  </CardBody>
-                </Card>
-              );
-            })
-        ) : (
-          <Card>
-            <CardBody>
-              {/* eslint-disable-next-line react/no-unescaped-entities*/}
-              <Text>Can't seem to find any questions.</Text>
-            </CardBody>
-          </Card>
-        )}
+        <TableContainer w={"100%"}>
+          <Table variant="simple">
+            <TableCaption>-End of question list-</TableCaption>
+            <Thead>
+              <Tr>
+                <Th key="id" w={"10%"}>
+                  ID
+                </Th>
+                <Th key="title" w={"65%"}>
+                  Question Title
+                </Th>
+                <Th key="complexity" w={"15%"}>
+                  Complexity
+                </Th>
+                <Th key="details" w={"10%"}>
+                  Details
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {state.questions
+                .filter((question) =>
+                  state.complexityFilters.has(question.complexity)
+                )
+                .filter((question) =>
+                  question.title
+                    .toLowerCase()
+                    .includes(state.searchQuery.toLowerCase())
+                )
+                .map((question, index) => {
+                  return (
+                    <Tr key={index}>
+                      <Td key="id">{question.questionId}</Td>
+                      <Td key="title" textOverflow={"ellipsis"}>
+                        {question.title}
+                      </Td>
+                      <Td key="complexity">
+                        <Badge bg={getColorFromComplexity(question.complexity)}>
+                          {question.complexity}
+                        </Badge>
+                      </Td>
+                      <Td>
+                        <IconButton
+                          bg={"#BBC2E2"}
+                          _hover={{
+                            bg: "#DEE2F5",
+                          }}
+                          onClick={() => handleOpenModal(question)}
+                          display={{ base: "flex", md: "none" }}
+                          icon={<ViewIcon />}
+                          //dunno what icon to put
+                        />
+                        <Button
+                          bg={"#BBC2E2"}
+                          _hover={{
+                            bg: "#DEE2F5",
+                          }}
+                          onClick={() => handleOpenModal(question)}
+                          display={{ base: "none", md: "flex" }}
+                        >
+                          View Details
+                        </Button>
+                      </Td>
+                    </Tr>
+                  );
+                })}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Stack>
     </PageContainer>
   );
@@ -234,12 +288,21 @@ const CreateQuestionModalBody = observer(() => {
         <FormLabel>Category</FormLabel>
         <HStack spacing={4} paddingBottom={1}>
           {createQuestionStore.state.category.map((category) => (
-            <Tag key={category} borderRadius="full" variant="solid">
-              <TagLabel>{category}</TagLabel>
-              <TagCloseButton
-                onClick={() => createQuestionStore.removeCategory(category)}
-              />
-            </Tag>
+            <Tooltip key={category} label={category} bg={"#706CCC"}>
+              <Tag
+                key={category}
+                borderRadius="full"
+                variant="solid"
+                bg={"#B7B5E4"}
+                color={"white"}
+                maxW={"20%"}
+              >
+                <TagLabel>{category}</TagLabel>
+                <TagCloseButton
+                  onClick={() => createQuestionStore.removeCategory(category)}
+                />
+              </Tag>
+            </Tooltip>
           ))}
         </HStack>
         <InputGroup>
@@ -256,6 +319,7 @@ const CreateQuestionModalBody = observer(() => {
               aria-label="Create category"
               icon={<AddIcon />}
               variant={"unstyled"}
+              paddingBottom={"3px"}
               onClick={() => createQuestionStore.addCategory()}
             />
           </InputRightElement>
@@ -281,7 +345,15 @@ const CreateQuestionModalBody = observer(() => {
 
 const CreateQuestionModalFooter = () => {
   return (
-    <Button colorScheme="green" mr={3} type="submit">
+    <Button
+      bg={"#706CCC"}
+      _hover={{
+        bg: "#8F8ADD",
+      }}
+      color={"white"}
+      mr={3}
+      type="submit"
+    >
       Create Question
     </Button>
   );
@@ -295,21 +367,26 @@ const ViewQuestionDetailsModalBody = observer(() => {
   return (
     <>
       <Badge
-        colorScheme={
-          viewQuestionsStore.state.selectedQuestion.complexity == "Easy"
-            ? "green"
-            : viewQuestionsStore.state.selectedQuestion.complexity == "Medium"
-            ? "yellow"
-            : "red"
-        }
+        bg={getColorFromComplexity(
+          viewQuestionsStore.state.selectedQuestion.complexity
+        )}
       >
         {viewQuestionsStore.state.selectedQuestion.complexity}
       </Badge>
       <HStack spacing={2} paddingBlock={3}>
         {viewQuestionsStore.state.selectedQuestion.category?.map((category) => (
-          <Tag key={category} borderRadius="full" variant="solid">
-            <TagLabel>{category}</TagLabel>
-          </Tag>
+          <Tooltip key={category} label={category} bg={"#706CCC"}>
+            <Tag
+              key={category}
+              borderRadius="full"
+              variant="solid"
+              bg={"#B7B5E4"}
+              color={"white"}
+              maxW={"20%"}
+            >
+              <TagLabel>{category}</TagLabel>
+            </Tag>
+          </Tooltip>
         ))}
       </HStack>
       <Box position="relative" padding="3">
@@ -342,7 +419,11 @@ const ViewQuestionDetailsModalFooter = observer(() => {
   return (
     <>
       <Button
-        colorScheme="blue"
+        bg={"#706CCC"}
+        _hover={{
+          bg: "#8F8ADD",
+        }}
+        color={"white"}
         mr={3}
         onClick={() =>
           redirectToUpdateQuestionPage(
@@ -352,7 +433,12 @@ const ViewQuestionDetailsModalFooter = observer(() => {
       >
         Update Question
       </Button>
-      <Button variant="ghost" colorScheme="red" type="submit">
+      <Button
+        variant="ghost"
+        _hover={{ bg: "#F8C1C1" }}
+        color={"#EC4E4E"}
+        type="submit"
+      >
         Delete Question
       </Button>
     </>

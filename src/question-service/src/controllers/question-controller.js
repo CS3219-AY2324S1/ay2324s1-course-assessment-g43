@@ -98,15 +98,38 @@ exports.deleteQuestion = async (req, res) => {
 
 exports.getRandomQuestion = async (req, res) => {
   try {
-    const complexity = req.query.complexity;
-    const filteredQuestions = complexity
-      ? await Question.find({ complexity })
-      : await Question.find();
 
-    const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
-    const randomQuestion = filteredQuestions[randomIndex];
-    return randomQuestion
-      ? res.status(200).json(randomQuestion)
+    const complexity = req.query.complexity;
+    const currentId = req.query.currentId;
+
+    let randomQuestion;
+
+    if (!complexity) {
+      // If no complexity is specified, get a random question from the entire collection
+      randomQuestion = await Question.aggregate([
+        { $sample: { size: 1 } },
+      ]);
+    } else if (!currentId) {
+      // If no current question is specified, get a random question of that complexity.
+      randomQuestion = await Question.aggregate([
+        { $match: { complexity } },
+        { $sample: { size: 1 } },
+      ]);
+    } else {
+      const idNum = parseInt(currentId);
+      
+      // Get a random question of that complexity, excluding the current question.
+      randomQuestion = await Question.aggregate([
+        { $match: { questionId: { $ne: idNum }, complexity} },
+        { $sample: { size: 1 } },
+      ])
+
+      // If no question is found, return the current question.
+      randomQuestion[0] = randomQuestion.length === 1 ? randomQuestion[0] : await Question.find({ questionId: idNum });
+    }
+
+    return randomQuestion.length === 1
+      ? res.status(200).json(randomQuestion[0])
       : res.status(404).json({ message: "Question not found" });
   } catch (err) {
     console.log(err);

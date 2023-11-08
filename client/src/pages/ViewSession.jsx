@@ -48,7 +48,12 @@ export const ViewSession = observer(() => {
           //TODO can we refactor this to the case below?
           store.setRoomId(roomId);
           store.initQuestionState(question);
-          store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
+          store.initSocket(
+            leaveSessionCallback,
+            receiveRequestCallback,
+            changeQuestionCallback,
+            rejectRequestCallback
+          );
           store.setLanguage(
             localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
           );
@@ -85,7 +90,12 @@ export const ViewSession = observer(() => {
       );
       setIsDoneLoading(true);
 
-      store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
+      store.initSocket(
+        leaveSessionCallback,
+        receiveRequestCallback,
+        changeQuestionCallback,
+        rejectRequestCallback
+      );
     }
 
     return () => {
@@ -104,13 +114,13 @@ export const ViewSession = observer(() => {
       description: store.state.description,
       category: store.state.category,
       complexity: store.state.complexity,
-    }
+    };
     console.log(attempt);
     await historyStore.createAttempt(attempt);
-  }
+  };
 
   // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = async() => {
+  const leaveSessionCallback = async () => {
     //Save Attempt To History
     await createAttempt();
 
@@ -130,10 +140,10 @@ export const ViewSession = observer(() => {
 
   const nextQuestionModalTitle = "Accept Request?";
 
-  const nextQuestionModalBody = "Your partner has requested to move on to the next question. Do you agree?";
+  const nextQuestionModalBody =
+    "Your partner has requested to move on to the next question. Do you agree?";
 
   const NextQuestionModalFooter = observer(() => {
-    
     const handleCancel = (e) => {
       e.preventDefault();
 
@@ -144,19 +154,27 @@ export const ViewSession = observer(() => {
     return (
       <>
         <Button
-          colorScheme="red"
+          bg={"#F07272"}
+          color={"white"}
+          _hover={{
+            bg: "#EC4E4E",
+          }}
           mr={3}
           onClick={handleCancel}
         >
           Decline
         </Button>
         <Button
-        colorScheme="green"
-        mr={3}
-        type="submit"
-      >
-        Accept
-      </Button>
+          bg={"#706CCC"}
+          _hover={{
+            bg: "#8F8ADD",
+          }}
+          color={"white"}
+          mr={3}
+          type="submit"
+        >
+          Accept
+        </Button>
       </>
     );
   });
@@ -174,12 +192,12 @@ export const ViewSession = observer(() => {
     );
 
     modalComponentStore.setClosable(false);
-  }
+  };
 
   const changeQuestionCallback = async () => {
     await createAttempt();
     navigate(0);
-  }
+  };
 
   const rejectRequestCallback = () => {
     store.setIsGetQuestionLoading(false);
@@ -189,7 +207,7 @@ export const ViewSession = observer(() => {
       duration: 8000,
       isClosable: true,
     });
-  }
+  };
 
   const handleLeaveSession = async () => {
     if (
@@ -235,7 +253,12 @@ export const ViewSession = observer(() => {
             <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
               {state.title}
             </Heading>
-            <HStack spacing={2} paddingBlock={3}>
+            <HStack
+              spacing={2}
+              paddingBlock={3}
+              maxW={"100%"}
+              overflowX={"auto"}
+            >
               {state.category?.map((category) => (
                 <Tooltip key={category} label={category} bg={"#706CCC"}>
                   <Tag
@@ -244,7 +267,7 @@ export const ViewSession = observer(() => {
                     variant="solid"
                     bg={"#B7B5E4"}
                     color={"white"}
-                    maxW={"60%"}
+                    maxW={"20%"}
                   >
                     <TagLabel>{category}</TagLabel>
                   </Tag>
@@ -267,7 +290,7 @@ export const ViewSession = observer(() => {
                 roomId={state.roomId}
                 language={state.language}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
-                isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
+                isGetNextQuestionLoading={state.isGetNextQuestionLoading}
               />
             )}{" "}
             <Divider />

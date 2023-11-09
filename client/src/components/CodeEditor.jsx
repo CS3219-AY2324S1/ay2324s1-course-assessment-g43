@@ -34,7 +34,7 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, initialTemplate, onLanguageChange, isGetNextQuestionLoading }) => {
+  ({ questionTitle, roomId, language, otherUsername, initialTemplate, onLanguageChange, isGetNextQuestionLoading }) => {
 
     console.log("malicious code");
     console.log(language);
@@ -252,7 +252,7 @@ export const CodeEditor = observer(
                 options: {
                   isWholeLine: false,
                   beforeContentClassName: 'partner-cursor',
-                  hoverMessage: { value: 'placeholder name' },
+                  hoverMessage: { value: otherUsername },
                 }}
               ]);
             } else {
@@ -263,7 +263,7 @@ export const CodeEditor = observer(
                 range: new monaco.Range(start.lineNumber, start.column, end.lineNumber, end.column),
                 options: {
                   inlineClassName: 'partner-highlight',
-                  hoverMessage: { value: 'placeholder name' },
+                  hoverMessage: { value: otherUsername },
                 }
                 },
                 { 
@@ -271,7 +271,7 @@ export const CodeEditor = observer(
                   options: {
                     isWholeLine: false,
                     beforeContentClassName: 'partner-cursor',
-                    hoverMessage: { value: 'placeholder name' },
+                    hoverMessage: { value: otherUsername },
                   }
                   }
               ]);

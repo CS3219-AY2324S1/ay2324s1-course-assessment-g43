@@ -43,12 +43,14 @@ export const ViewSession = observer(() => {
     if (!location.state || !location.state.questionId) {
       // Case when user resumes an existing session
       store
-        .fetchQuestion(roomId)
-        .then((question) => {
+        .fetchSession(roomId)
+        .then((session) => {
           //TODO can we refactor this to the case below?
+          console.log('fetched session');
+          console.log(session);
 
           store.setRoomId(roomId);
-          store.initQuestionState(question);
+          store.initiateSessionState(session);
           store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
           store.setChat(localStorage.getItem("sessionChat"));
         })
@@ -262,6 +264,7 @@ export const ViewSession = observer(() => {
                 questionTitle={state.title}
                 roomId={state.roomId}
                 language={state.language}
+                otherUsername={state.otherUserName}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
                 initialTemplate={state.attempt}
                 isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
@@ -270,6 +273,7 @@ export const ViewSession = observer(() => {
             <Divider />
             <ChatBox
               chat={state.chat}
+              otherUserName={state.otherUserName}
               isPeerConnected={state.isPeerConnected}
               onSendMessage={(newMessage) => {
                 store.pushAndSendMessage(newMessage);

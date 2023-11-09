@@ -26,7 +26,7 @@ export const createSession = async (req) => {
  * @param {string} roomId
  * @returns {Object} question if the session is valid, else throws Error.
  */
-export const getQuestionFromSession = async (roomId) => {
+export const getSession = async (roomId) => {
   try {
     const token = localStorage.getItem("jwt");
     const res = await axios.get(`${basePath}/api/session/${roomId}`, {
@@ -34,18 +34,8 @@ export const getQuestionFromSession = async (roomId) => {
         authorization: `Bearer ${token}`,
       },
     });
-    // Convert Session to Question
-    const question = {
-      questionId: res.data.questionId,
-      title: res.data.title,
-      description: res.data.description,
-      category: res.data.category,
-      complexity: res.data.complexity,
-      currentLanguage: res.data.currentLanguage,
-      attempt: res.data.attempt,
-    };
-    
-    return question;
+
+    return res.data;
   } catch (err) {
     if (err.response.status === 404) {
       throw new Error("Session is invalid.");

@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import {
-  getQuestionFromSession,
+  getSession,
   initCollaborationSocket,
   deleteSession,
   initiateLeaveRoomRequest,
@@ -27,6 +27,7 @@ class ViewSessionStore {
 
     roomId: "",
     language: "",
+    otherUserName: "",
     isGetNextQuestionLoading: false,
     attempt: new Map(),
 
@@ -87,6 +88,10 @@ class ViewSessionStore {
     this.state.chat = jsonStringChat ? JSON.parse(jsonStringChat) : [];
   }
 
+  setOtherUsername(otherUserName) {
+    this.state.otherUserName = otherUserName;
+  }
+
   /**
    * Pushes message into `state.chat`. Call this for messages from PEER.
    *
@@ -122,15 +127,20 @@ class ViewSessionStore {
     localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
   }
 
-  initQuestionState(question) {
-    const { questionId, title, description, category, complexity, currentLanguage, attempt } = question;
+  initiateSessionState(session) {
+    const { questionId, title, description, category, complexity, currentLanguage, attempt } = session;
+    
+    const otherUserName = session.firstUserName === JSON.parse(localStorage.getItem("user")).username
+    ? session.secondUserName 
+    : session.firstUserName;
 
-    console.log("i am inside init question state");
-    console.log(question);
+    console.log("i am inside init session state");
+    console.log(session);
 
     this.state = {
       ...this.state,
       language: currentLanguage,
+      otherUserName,
       questionId,
       title,
       description,
@@ -180,6 +190,7 @@ class ViewSessionStore {
       complexity: "",
       roomId: "",
       language: "",
+      otherUserName: "",
       attempt: new Map(),
       isGetNextQuestionLoading: false,
       chat: [],
@@ -187,13 +198,13 @@ class ViewSessionStore {
     };
   }
 
-  async fetchQuestion(roomId) {
-    const question = await getQuestionFromSession(roomId);
+  async fetchSession(roomId) {
+    const session = await getSession(roomId);
     // question should never be null -- just a defensive measure
-    if (!question) {
+    if (!session) {
       throw new Error("Session is invalid");
     }
-    return question;
+    return session;
   }
 
   async changeLanguage(roomId, newLanguage, oldCode) {

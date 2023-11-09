@@ -20,6 +20,7 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+const namespace = io.of("/collaboration-service");
 
 // <socket IDs, room IDs> mapping
 const socketRooms = new Map();
@@ -57,7 +58,7 @@ function getRoomOfSocket(socket) {
 }
 
 // Socket.io server
-io.on("connection", (socket) => {
+namespace.on("connection", (socket) => {
   // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;

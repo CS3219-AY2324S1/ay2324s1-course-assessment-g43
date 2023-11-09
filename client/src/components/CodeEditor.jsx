@@ -28,6 +28,7 @@ import { PropTypes } from "prop-types";
 import { createSubmissionStore } from "../stores/createSubmissionStore";
 import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
 import { viewSessionStore } from "../stores/viewSessionStore";
+import { Position, Range } from "monaco-editor";
 
 /**
  * `language` prop changes when PEER changes language
@@ -42,6 +43,9 @@ export const CodeEditor = observer(
 
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
+
+    const decorationsRef = useRef(null);
+
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
     const [isDisabled, setDisability] = useState(true);
@@ -229,6 +233,90 @@ export const CodeEditor = observer(
         new Set([editorRef.current]),
         provider.awareness
       );
+
+      decorationsRef.current = editorRef.current.createDecorationsCollection([]);
+      // const cursor = new Position(1, 1);
+      // const displayCursor = { 
+      //   range: new monaco.Range(1, 1, 1, 1 + 1),
+      //   options: {
+      //       isWholeLine: false,
+      //       beforeContentClassName: 'partner-cursor',
+      //       hoverMessage: { value: 'hi' }
+      //   }
+      // };
+      // decorationsRef.current.set([displayCursor]);
+
+      const renderRemoteCursors = () => {
+        // Remove previous decorations
+        decorationsRef.current.set([])
+      
+        // Loop over all states in the awareness protocol
+        const allCursors = provider.awareness.getStates().forEach((state, clientId) => {
+          if (clientId !== provider.awareness.clientID && state.cursor) {
+            // Calculate range from cursor state and create a decoration
+            const { start, end, head, userId } = state.cursor;
+
+            if (start.lineNumber == end.lineNumber && start.column == end.column) {
+              // Simple cursor
+              console.log("simple cursor");
+              decorationsRef.current.set([{ 
+                range: new monaco.Range(head.lineNumber, head.column, head.lineNumber, head.column + 1),
+                options: {
+                  isWholeLine: false,
+                  beforeContentClassName: 'partner-cursor',
+                  hoverMessage: { value: 'placeholder name' },
+                }}
+              ]);
+            } else {
+              // Highlight event
+              console.log("highlight event");
+              decorationsRef.current.set([
+                { 
+                range: new monaco.Range(start.lineNumber, start.column, end.lineNumber, end.column),
+                options: {
+                  inlineClassName: 'partner-highlight',
+                  hoverMessage: { value: 'placeholder name' },
+                }
+                },
+                { 
+                  range: new monaco.Range(head.lineNumber, head.column, head.lineNumber, head.column + 1),
+                  options: {
+                    isWholeLine: false,
+                    beforeContentClassName: 'partner-cursor',
+                    hoverMessage: { value: 'placeholder name' },
+                  }
+                  }
+              ]);
+
+
+            }
+          }
+        });
+
+
+      };
+
+
+      const updateCursorPosition = () => {
+        const selection = editorRef.current.getSelection();
+        const position = editorRef.current.getPosition();
+
+        // console.log("evil code");
+        // console.log(selection.getStartPosition())
+        // console.log(selection.getEndPosition())
+        // console.log(position)
+      
+        // Update the local awareness state
+        provider.awareness.setLocalStateField('cursor', {
+          start: selection.getStartPosition(),
+          end: selection.getEndPosition(),
+          head: position,
+          userId: JSON.parse(localStorage.getItem("user"))["uid"] 
+        });
+      };
+
+      editor.onDidChangeCursorPosition(updateCursorPosition);
+      provider.awareness.on('change', renderRemoteCursors);
 
       // Clean up the Monaco binding when the editor unmounts
       return () => {

@@ -2,8 +2,7 @@ import socketIOClient from "socket.io-client";
 import { getRandomQuestionByComplexity } from "../services/questionService";
 import { createSession } from "./collaborationService";
 
-const ENDPOINT =
-  import.meta.env.VITE_MATCHING_ENDPOINT || "http://localhost:5001/";
+const ENDPOINT = "http://localhost:5001/matching-service";
 
 /**
  * Sets up a socket connection to the matching service server.

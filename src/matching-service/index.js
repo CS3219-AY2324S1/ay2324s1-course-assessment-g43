@@ -24,6 +24,7 @@ const init = async () => {
       origin: "*",
     },
   });
+  const namespace = io.of("/matching-service");
 
   app.use(cors());
   app.use(express.json());
@@ -45,7 +46,7 @@ const init = async () => {
   });
   await channel.assertQueue(HARD_QUEUE, { durable: false, messageTtl: 30000 });
 
-  io.on("connection", (socket) => {
+  namespace.on("connection", (socket) => {
     console.log(`Connection opened: ${socket.id}`);
     const timeoutId = setTimeout(() => {
       socket.disconnect(true);
@@ -55,7 +56,7 @@ const init = async () => {
       console.log("Received match request");
 
       const parsedMessage = JSON.parse(message);
-      
+
       const { uid, name, complexity } = parsedMessage;
 
       if (!uid || !name || !complexity) {
@@ -66,7 +67,7 @@ const init = async () => {
       const queueName = getQueue(complexity);
 
       if (!queueName) {
-        io.to(socket.id).emit("match-failure", "Invalid arguments");
+        namespace.to(socket.id).emit("match-failure", "Invalid arguments");
         return;
       }
 
@@ -88,7 +89,6 @@ const init = async () => {
     socket.on("cancel-request", async (message) => {
       const parsedMessage = JSON.parse(message);
 
-      
       const { uid, name, complexity } = parsedMessage;
       if (!uid || !name || !complexity) {
         io.to(socket.id).emit("match-failure", "Missing arguments");
@@ -98,7 +98,7 @@ const init = async () => {
       const queueName = getQueue(complexity);
 
       if (!queueName) {
-        io.to(socket.id).emit("match-failure", "Invalid arguments");
+        namespace.to(socket.id).emit("match-failure", "Invalid arguments");
         return;
       }
 

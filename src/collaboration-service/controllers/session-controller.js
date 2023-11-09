@@ -188,10 +188,13 @@ exports.editSession = async (req, res) => {
       return res.status(404).json({ message: "Session not found" });
     }
 
+    const defaultAttempt = getDefaultAttempt(title);
+
     session.title = title;
     session.description = description;
     session.category = category;
-
+    session.attempt = defaultAttempt;
+    
     await session.validate();
     await session.save();
 

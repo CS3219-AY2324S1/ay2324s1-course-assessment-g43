@@ -46,7 +46,7 @@ export const CodeEditor = observer(
 
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
-    const [isDisabled, setDisability] = useState(true);
+    const [isDisabled, setDisability] = useState(false);
     const {
       isOpen: isConsoleOpen,
       onOpen: onConsoleOpen,

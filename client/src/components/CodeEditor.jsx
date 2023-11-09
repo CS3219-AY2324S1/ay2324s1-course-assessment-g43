@@ -55,39 +55,28 @@ export const CodeEditor = observer(
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
 
-
-    // useEffect(() => {
-    //   // TODO: Debug this -- why doesn't monaco initialise with the template code?
-    //   const template = getCodeTemplate(language, questionTitle);
-    //   setCode(template);
-    //   store.setSourceCode(template);
-
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
-
-    // !DEBUG
-    // useEffect(() => {
-    //   if (!code) return;
-    //   console.log("Code changed: ", code);
-    // }, [code]);
-
     useEffect(() => {
       // This changes when USER changes language
       // console.log("userLanguage changed to: ", userLanguage);
       if (!userLanguage || userLanguage === language) return;
-      if (
-        confirm("Changing languages will erase any current code! Are you sure?")
-      ) {
-        const newCode = getCodeTemplate(
-          userLanguage.toLowerCase(),
-          questionTitle
-        );
-        setCode(newCode);
-        store.setSourceCode(newCode);
 
-        onLanguageChange(userLanguage); // Notify peer
+      async function changeLanguage(roomId, userLanguage, code) {
+        const res = await viewSessionStore.changeLanguage(roomId, userLanguage, code);
+        return res;
       }
 
+      changeLanguage(roomId, userLanguage, code)
+        .then((res) => {
+          const newCode = res.data.code;
+      
+          setCode(newCode);
+          store.setSourceCode(newCode);
+          setStoreLanguage(userLanguage.toLowerCase());
+  
+          onLanguageChange(userLanguage); // Notify peer
+        }).catch((err) => {
+          console.log(err)
+        });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userLanguage]);
 
@@ -126,37 +115,27 @@ export const CodeEditor = observer(
       automaticLayout: true,
     };
 
-    const convertTitleToFunctionName = (questionTitle) => {
-      const words = questionTitle.split(" ");
-      let formatted = "";
-      words.forEach((word, index) => {
-        if (index > 0) {
-          formatted += word[0].toUpperCase() + word.slice(1).toLowerCase();
-        } else {
-          formatted = word.toLowerCase();
-        }
-      });
-      return formatted;
-    };
-
-    const getCodeTemplate = useCallback((lang, questionTitle) => {
-      const functionName = convertTitleToFunctionName(questionTitle);
+    const setStoreLanguage = useCallback((lang) => {
       switch (lang) {
         case "cpp":
           setDisability(false);
           store.setLanguageId(54);
+          return;
         case "java":
           setDisability(false);
           store.setLanguageId(62);
+          return;
         case "python":
           setDisability(false);
           store.setLanguageId(71);
+          return;
         case "javascript":
           setDisability(false);
           store.setLanguageId(93);
+          return;
         case "text":
           setDisability(true);
-          return ``;
+          return;
         default:
           setDisability(true);
           return ``;
@@ -168,17 +147,17 @@ export const CodeEditor = observer(
       viewSessionStore.setIsGetQuestionLoading(true);
     }
 
-    const resetCode = () => {
+    const resetCode = async () => {
       if (
         confirm(
           "Are you sure? Your current code will be discarded and reset to the default code!"
         )
       ) {
-        const newCode = getCodeTemplate(
-          userLanguage.toLowerCase(),
-          questionTitle
-        );
+        const res = await viewSessionStore.resetCode(roomId);
+        const newCode = res.data.code;
+        
         setCode(newCode);
+        setStoreLanguage(userLanguage.toLowerCase());
         store.setSourceCode(newCode);
       }
     };
@@ -233,13 +212,12 @@ export const CodeEditor = observer(
       const provider = new WebsocketProvider(WS_SERVER_URL, roomId, doc);
 
       const type = doc.getText("monaco");
-      const yMap = doc.getMap();
 
-      // Ensures that you initialise the default template once
+      // // Ensures that you initialise the default template once
       provider.once('synced', () => {
         const userId = JSON.parse(localStorage.getItem("user"))["uid"]
         if (roomId.split("-")[1] == userId) {
-          type.insert(0, initialTemplate[language]);
+          setCode(initialTemplate[language]);
         }
       })
 

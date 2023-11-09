@@ -66,6 +66,35 @@ export const updateSessionWithNewQuestion = async (roomId, question) => {
   return res;
 }
 
+export const saveAndChangeCode = async (roomId, newLanguage, code) => {
+  const token = localStorage.getItem("jwt");
+  const req = {
+    oldCode: code,
+    newLanguage: newLanguage,
+  };
+
+  const res = await axios.put(`${basePath}/api/session/${roomId}/language`, req, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res;
+}
+
+export const resetCode = async (roomId) => {
+  const token = localStorage.getItem("jwt");
+  const req = {};
+
+  const res = await axios.put(`${basePath}/api/session/${roomId}/resetCode`, req, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res;
+}
+
 export const deleteSession = async (roomId) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.delete(`${basePath}/api/session/${roomId}`, {

@@ -109,6 +109,8 @@ app.put("/api/session/:roomId", sessionController.editSession);
 
 app.put("/api/session/:roomId/language", sessionController.editLanguage);
 
+app.put("/api/session/:roomId/resetCode", sessionController.resetCode);
+
 app.delete("/api/session/:roomId", sessionController.deleteSession);
 
 server.listen(port, () => {

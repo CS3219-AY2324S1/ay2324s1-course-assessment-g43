@@ -10,6 +10,8 @@ import {
   rejectNextQuestionRequest,
   acceptNextQuestionRequest,
   updateSessionWithNewQuestion,
+  saveAndChangeCode,
+  resetCode,
 } from "../services/collaborationService";
 import { getFreshRandomQuestionByComplexity } from "../services/questionService";
 
@@ -192,6 +194,16 @@ class ViewSessionStore {
       throw new Error("Session is invalid");
     }
     return question;
+  }
+
+  async changeLanguage(roomId, newLanguage, oldCode) {
+    const res = await saveAndChangeCode(roomId, newLanguage, oldCode);
+    return res;
+  }
+
+  async resetCode(roomId) {
+    const res = await resetCode(roomId);
+    return res;
   }
 
   /**

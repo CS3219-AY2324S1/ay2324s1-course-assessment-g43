@@ -91,6 +91,10 @@ class ViewSessionStore {
   setOtherUsername(otherUserName) {
     this.state.otherUserName = otherUserName;
   }
+  
+  setIsPeerConnected(isConnected) {
+    this.state.isPeerConnected = isConnected;
+  }
 
   /**
    * Pushes message into `state.chat`. Call this for messages from PEER.
@@ -244,11 +248,11 @@ class ViewSessionStore {
       },
       // onPeerJoined
       () => {
-        this.state.isPeerConnected = true;
+        this.setIsPeerConnected(true);
       },
       // onPeerDisconnected
       () => {
-        this.state.isPeerConnected = false;
+        this.setIsPeerConnected(false);
       },
       // onSocketDisconnect (not in use)
       () => {},

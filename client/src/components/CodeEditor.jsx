@@ -72,8 +72,6 @@ export const CodeEditor = observer(
           const newCode = res.data.code;
       
           setCode(newCode);
-          store.setSourceCode(newCode);
-          setStoreLanguage(userLanguage.toLowerCase());
   
           onLanguageChange(userLanguage); // Notify peer
         }).catch((err) => {
@@ -159,15 +157,12 @@ export const CodeEditor = observer(
         const newCode = res.data.code;
         
         setCode(newCode);
-        setStoreLanguage(userLanguage.toLowerCase());
-        store.setSourceCode(newCode);
       }
     };
 
     const handleEditorChange = (currContent) => {
       if (!currContent) return;
       setCode(currContent);
-      store.setSourceCode(currContent);
     };
 
     async function getEditorValue() {
@@ -191,6 +186,10 @@ export const CodeEditor = observer(
     async function handleRunButtonClick() {
       setPressed(true);
       setRunLoading(true);
+
+      setStoreLanguage(userLanguage.toLowerCase());
+      store.setSourceCode(code);
+
       try {
         await getEditorValue();
       } catch (error) {

@@ -422,7 +422,15 @@ const ViewQuestionDetailsModalFooter = observer(() => {
     });
   };
   return (
-    <>
+    <HStack spacing={1}>
+      <Button
+        variant="ghost"
+        _hover={{ bg: "#F8C1C1" }}
+        color={"#EC4E4E"}
+        type="submit"
+      >
+        Delete Question
+      </Button>
       <Button
         bg={"#706CCC"}
         _hover={{
@@ -438,14 +446,6 @@ const ViewQuestionDetailsModalFooter = observer(() => {
       >
         Update Question
       </Button>
-      <Button
-        variant="ghost"
-        _hover={{ bg: "#F8C1C1" }}
-        color={"#EC4E4E"}
-        type="submit"
-      >
-        Delete Question
-      </Button>
-    </>
+    </HStack>
   );
 });

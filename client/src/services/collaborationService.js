@@ -75,17 +75,16 @@ export const deleteSession = async (roomId) => {
 
 export const findSessionWithUid = async (uid) => {
   const token = localStorage.getItem("jwt");
-  const res = await axios.get(`${basePath}/api/session/${uid}`, {
+  const res = await axios.get(`${basePath}/api/session/findWithUid/${uid}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
   });
-  // return res;
-  console.log(res);
-  if (res.status === 200) {
-    return res.data.roomId; //check
+  const session = res.data;
+  if (session) {
+    return session.roomId;
   } else {
-    return undefined; //for all other non-200 status codes such as 404 or 500
+    return;
   }
 };
 

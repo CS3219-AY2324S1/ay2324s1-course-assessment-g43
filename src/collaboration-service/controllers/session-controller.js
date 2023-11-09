@@ -127,10 +127,6 @@ exports.findSessionWithUid = async (req, res) => {
         { secondUserId: uid }
       ]
     });
-    if (!session) {
-      return res.status(404).json({ message: "Session not found" });
-    }
-
     return res.status(200).json(session);
   } catch (err) {
     console.log(err);

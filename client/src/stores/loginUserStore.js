@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { login } from "../services/userService";
+import { findSessionWithUid } from "../services/collaborationService";
 
 class LoginUserStore {
   state = {
@@ -29,6 +30,11 @@ class LoginUserStore {
       const res = await login(this.state);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       localStorage.setItem("jwt", res.data.jwt);
+      const uid = res.data.user.uid;
+      const roomId = await findSessionWithUid(uid);
+      if (roomId) {
+        localStorage.setItem("roomId", roomId);
+      }
       return res.data.user;
     } catch (err) {
       console.log(err);

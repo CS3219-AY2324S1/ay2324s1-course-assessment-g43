@@ -18,13 +18,21 @@ import {
   IconButton,
   Tooltip,
   Button,
+  Heading,
+  Stack,
+  Flex,
+  TagCloseButton,
+  InputGroup,
+  InputLeftElement,
+  Input,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { viewHistoryStore } from "../stores/viewHistoryStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { useEffect } from "react";
-import { ViewIcon } from "@chakra-ui/icons";
+import { SearchIcon, ViewIcon } from "@chakra-ui/icons";
+import { getColorFromComplexity } from "../utils/stylingUtils";
 
 export const History = observer(() => {
   const store = viewHistoryStore;
@@ -33,6 +41,8 @@ export const History = observer(() => {
   const userObject = JSON.parse(userData);
   const uid = userObject?.uid;
   const modalComponentStore = useModalComponentStore();
+
+  const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
 
   const handleOpenModal = (attempt) => {
     store.setSelectedAttempt(attempt);
@@ -120,63 +130,107 @@ export const History = observer(() => {
 
   return (
     <PageContainer w={"100%"}>
-      <TableContainer w={"100%"}>
-        <Table variant="simple">
-          <TableCaption>-End of attempted questions-</TableCaption>
-          <Thead>
-            <Tr>
-              {tableHeaders.map((header) => (
-                <Th key={header.key} w={header.key == "title" ? "65%" : ""}>
-                  {header.label}
-                </Th>
+      <Stack align={"center"} w={"100%"}>
+        <Flex justifyContent={"space-between"} w={"100%"}>
+          <Heading
+            color={"#0A050E"}
+            lineHeight={1.1}
+            fontSize={{ base: "2xl", sm: "3xl" }}
+            fontWeight={"semibold"}
+          >
+            Attempt History
+          </Heading>
+          <Stack w={"45%"}>
+            <InputGroup maxW={"100%"}>
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon />
+              </InputLeftElement>
+              <Input
+                variant="outline"
+                placeholder="Search"
+                onChange={(e) => store.setSearchQuery(e.target.value)}
+              />
+            </InputGroup>
+            <HStack justifyContent={"flex-end"}>
+              {COMPLEXITY_LEVELS.map((complexity) => (
+                <Tag
+                  size="md"
+                  key={complexity}
+                  bg={
+                    state.complexityFilters.has(complexity)
+                      ? getColorFromComplexity(complexity)
+                      : "gray"
+                  }
+                  onClick={() => store.toggleComplexityFilter(complexity)}
+                >
+                  <TagLabel>{complexity.toUpperCase()}</TagLabel>
+                  {state.complexityFilters.has(complexity) && (
+                    <TagCloseButton />
+                  )}
+                </Tag>
               ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {attempts.map((attempt, index) => (
-              <Tr key={index}>
-                <Td key="datetime">{attempt["datetime"]}</Td>
-                <Td key="title">{attempt["title"]}</Td>
-                <Td key="complexity">
-                  <Badge
-                    bg={
-                      attempt["complexity"] == "Easy"
-                        ? "#9DEFCD"
-                        : attempt["complexity"] == "Medium"
-                        ? "#FAF8A5"
-                        : "#F8C1C1"
-                    }
-                  >
-                    {attempt["complexity"]}
-                  </Badge>
-                </Td>
-                <Td>
-                  <IconButton
-                    bg={"#BBC2E2"}
-                    _hover={{
-                      bg: "#DEE2F5",
-                    }}
-                    onClick={() => handleOpenModal(attempt)}
-                    display={{ base: "flex", md: "none" }}
-                    icon={<ViewIcon />}
-                    //dunno what icon to put
-                  />
-                  <Button
-                    bg={"#BBC2E2"}
-                    _hover={{
-                      bg: "#DEE2F5",
-                    }}
-                    onClick={() => handleOpenModal(attempt)}
-                    display={{ base: "none", md: "flex" }}
-                  >
-                    View Details
-                  </Button>
-                </Td>
+            </HStack>
+          </Stack>
+        </Flex>
+        <TableContainer w={"100%"}>
+          <Table variant="simple">
+            <TableCaption>-End of attempted questions-</TableCaption>
+            <Thead>
+              <Tr>
+                {tableHeaders.map((header) => (
+                  <Th key={header.key} w={header.key == "title" ? "65%" : ""}>
+                    {header.label}
+                  </Th>
+                ))}
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+            </Thead>
+            <Tbody>
+              {attempts
+                .filter((attempt) =>
+                  state.complexityFilters.has(attempt["complexity"])
+                )
+                .filter((attempt) =>
+                  attempt["title"]
+                    .toLowerCase()
+                    .includes(state.searchQuery.toLowerCase())
+                )
+                .map((attempt, index) => (
+                  <Tr key={index}>
+                    <Td key="datetime">{attempt["datetime"]}</Td>
+                    <Td key="title">{attempt["title"]}</Td>
+                    <Td key="complexity">
+                      <Badge bg={getColorFromComplexity(attempt["complexity"])}>
+                        {attempt["complexity"]}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <IconButton
+                        bg={"#BBC2E2"}
+                        _hover={{
+                          bg: "#DEE2F5",
+                        }}
+                        onClick={() => handleOpenModal(attempt)}
+                        display={{ base: "flex", md: "none" }}
+                        icon={<ViewIcon />}
+                        //dunno what icon to put
+                      />
+                      <Button
+                        bg={"#BBC2E2"}
+                        _hover={{
+                          bg: "#DEE2F5",
+                        }}
+                        onClick={() => handleOpenModal(attempt)}
+                        display={{ base: "none", md: "flex" }}
+                      >
+                        View Details
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Stack>
     </PageContainer>
   );
 });

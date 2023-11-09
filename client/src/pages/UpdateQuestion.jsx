@@ -76,6 +76,7 @@ export const UpdateQuestion = observer(() => {
           color={"#0A050E"}
           lineHeight={1.1}
           fontSize={{ base: "2xl", sm: "3xl" }}
+          fontWeight={"semibold"}
         >
           Update Question
         </Heading>
@@ -137,13 +138,15 @@ export const UpdateQuestion = observer(() => {
                 }
               }}
             />
-            <InputRightElement width="4.5rem" justify="right">
+            <InputRightElement width="2.5rem" justify="right">
               <IconButton
                 aria-label="Create category"
                 icon={<AddIcon />}
-                variant="unstyled"
-                paddingBottom={"3px"}
+                variant="ghost"
                 onClick={() => store.addCategory()}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
               />
             </InputRightElement>
           </InputGroup>

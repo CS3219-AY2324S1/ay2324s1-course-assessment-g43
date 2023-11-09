@@ -141,7 +141,7 @@ export const ViewSession = observer(() => {
   const nextQuestionModalTitle = "Accept Request?";
 
   const nextQuestionModalBody =
-    "Your partner has requested to move on to the next question. Do you agree?";
+    "Your partner has requested to move on to the next question. Do you accept?";
 
   const NextQuestionModalFooter = observer(() => {
     const handleCancel = (e) => {

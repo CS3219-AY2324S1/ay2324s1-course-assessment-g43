@@ -58,7 +58,7 @@ export const ChatBox = observer(({ chat, isPeerConnected, onSendMessage }) => {
         </Flex>
       </Flex>
       <Divider />
-      <Flex w={["100%", "100%"]} h="50%" flexDir="column">
+      <Flex w={["100%", "100%"]} h="45%" flexDir="column">
         <div style={scrollStyle}>
           {chat?.map((message, index) => {
             if (message.sender === "self") {

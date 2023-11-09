@@ -129,7 +129,7 @@ export const ViewQuestions = observer(() => {
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"}>
         <Stack justifyContent={"space-between"} direction={["column", "row"]}>
-          <Text fontSize="40px" align={"start"}>
+          <Text fontSize="40px" align={"start"} fontWeight={"semibold"}>
             Questions
           </Text>
           <HStack w={"100%"} justifyContent={"flex-end"}>
@@ -262,7 +262,7 @@ const createQuestionModalTitle = "Create New Question";
 
 const CreateQuestionModalBody = observer(() => {
   return (
-    <>
+    <Stack spacing={1}>
       <FormControl id="title" isRequired>
         <FormLabel>Title</FormLabel>
         <Input
@@ -319,12 +319,14 @@ const CreateQuestionModalBody = observer(() => {
               }
             }}
           />
-          <InputRightElement width="4.5rem" justify="right">
+          <InputRightElement width="2.5rem" justify="right">
             <IconButton
               aria-label="Create category"
               icon={<AddIcon />}
-              variant={"unstyled"}
-              paddingBottom={"3px"}
+              variant="ghost"
+              _hover={{
+                bg: "#DEE2F5",
+              }}
               onClick={() => createQuestionStore.addCategory()}
             />
           </InputRightElement>
@@ -344,7 +346,7 @@ const CreateQuestionModalBody = observer(() => {
           <option>Hard</option>
         </Select>
       </FormControl>
-    </>
+    </Stack>
   );
 });
 

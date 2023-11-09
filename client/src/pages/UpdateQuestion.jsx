@@ -71,7 +71,7 @@ export const UpdateQuestion = observer(() => {
 
   return (
     <PageContainer w={"100%"}>
-      <Stack spacing={4} w={"100%"} p={6}>
+      <Stack spacing={4} w={"100%"} p={3}>
         <Heading
           color={"#0A050E"}
           lineHeight={1.1}

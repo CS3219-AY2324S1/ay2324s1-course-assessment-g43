@@ -2,7 +2,7 @@ import axios from "axios";
 import socketIOClient from "socket.io-client";
 
 const basePath =
-  import.meta.env.VITE_CODE_EXECUTION_BASE_PATH || "http://localhost:8001";
+  import.meta.env.VITE_COLLABORATION_BASE_PATH || "http://localhost:8001";
 
 // HTTP requests
 export const createSession = async (req) => {

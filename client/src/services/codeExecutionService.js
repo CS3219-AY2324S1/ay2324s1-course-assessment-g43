@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const basePath = "http://localhost:5002/api";
+const basePath =
+  import.meta.env.VITE_CODE_EXECUTION_BASE_PATH || "http://localhost:5002/api";
 
 export const createSubmission = async (req) => {
   try {
@@ -8,8 +9,8 @@ export const createSubmission = async (req) => {
     const jwt = localStorage.getItem("jwt");
     const res = await axios.post(`${basePath}/createSubmission`, req, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
       },
     });
     console.log(res);
@@ -25,7 +26,7 @@ export const getSubmissionResult = async (token) => {
     const jwt = localStorage.getItem("jwt");
     const res = await axios.get(`${basePath}/getSubmissionResult/${token}`, {
       headers: {
-        'Authorization': `Bearer ${jwt}`,
+        Authorization: `Bearer ${jwt}`,
       },
     });
     console.log(res);

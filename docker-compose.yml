@@ -55,3 +55,12 @@ services:
       - "5002:5002"
     volumes:
       - ./src/code-execution-service:/app
+  collaboration-service:
+    build:
+      context: ./src/collaboration-service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./src/collaboration-service:/app

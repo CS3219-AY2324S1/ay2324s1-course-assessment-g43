@@ -109,6 +109,21 @@ createConfirmBtn.addEventListener("click", (event) => {
     return;
   }
 
+  let isDuplicated = false;
+  questions.forEach((question) => {
+    if (title === question.questionTitle) {
+      isDuplicated = true;
+      return;
+    }
+  });
+
+  if (isDuplicated) {
+    alert(
+      "Question with the same title exists! Duplicated questions not allowed."
+    );
+    return;
+  }
+
   createQuestion(title, description, category, complexity);
 
   showMainSection();

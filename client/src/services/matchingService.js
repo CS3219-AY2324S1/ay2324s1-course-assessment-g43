@@ -56,6 +56,8 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
 
     console.log("session")
     console.log(session)
+    console.log(question)
+    console.log(sessionDetails)
     
     callback(session?.data);
   })

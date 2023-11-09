@@ -33,58 +33,41 @@ export const ViewSession = observer(() => {
   const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
-  const DEFAULT_LANGUAGE = "text";
   const modalComponentStore = useModalComponentStore();
   const historyStore = viewHistoryStore;
 
   useEffect(() => {
     const roomId = param.id;
+    store
+      .fetchSession(roomId)
+      .then((session) => {
+        //TODO can we refactor this to the case below?
+        console.log('fetched session');
+        console.log(session);
 
-    if (!location.state || !location.state.questionId) {
-      // Case when user resumes an existing session
-      store
-        .fetchSession(roomId)
-        .then((session) => {
-          //TODO can we refactor this to the case below?
-          console.log('fetched session');
-          console.log(session);
-
-          store.setRoomId(roomId);
-          store.initiateSessionState(session);
-          store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
-          store.setChat(localStorage.getItem("sessionChat"));
-        })
-        .catch((err) => {
-          let message = err.message;
-          // If GET /session/:roomId returns 404, delete roomId from localStorage
-          // * Be careful when updating the err.message string
-          if (err.message === "Session is invalid.") {
-            if (localStorage.getItem("roomId") === roomId) {
-              localStorage.removeItem("roomId");
-              localStorage.removeItem("sessionLanguage");
-              localStorage.removeItem("sessionChat");
-              message = "This session has been closed by your partner.";
-            }
+        store.setRoomId(roomId);
+        store.initiateSessionState(session);
+        store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
+        store.setChat(localStorage.getItem("sessionChat"));
+      })
+      .catch((err) => {
+        let message = err.message;
+        // If GET /session/:roomId returns 404, delete roomId from localStorage
+        // * Be careful when updating the err.message string
+        if (err.message === "Session is invalid.") {
+          if (localStorage.getItem("roomId") === roomId) {
+            localStorage.removeItem("roomId");
+            localStorage.removeItem("sessionLanguage");
+            localStorage.removeItem("sessionChat");
+            message = "This session has been closed by your partner.";
           }
-          // alert(`Error: ${message}`);
-          navigate("/");
-        })
-        .finally(() => {
-          setIsDoneLoading(true);
-        });
-    } else {
-      // Case when user comes from on the successful creation of a new session
-      store.setRoomId(roomId);
-      store.setQuestionId(location.state.questionId);
-      store.setTitle(location.state.title);
-      store.setDescription(location.state.description);
-      store.setCategory(location.state.category);
-      store.setComplexity(location.state.complexity);
-      store.setLanguage(location.state.currentLanguage);
-      setIsDoneLoading(true);
-
-      store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
-    }
+        }
+        // alert(`Error: ${message}`);
+        navigate("/");
+      })
+      .finally(() => {
+        setIsDoneLoading(true);
+      });
 
     return () => {
       store.resetState();
@@ -96,6 +79,11 @@ export const ViewSession = observer(() => {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const uid = userObject.uid;
+    const qid = store.state.questionId;
+
+    console.log('hiii')
+    console.log(qid);
+
     const attempt = {
       currentUserId: uid,
       title: store.state.title,

@@ -35,11 +35,6 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  */
 export const CodeEditor = observer(
   ({ questionTitle, roomId, language, otherUsername, initialTemplate, onLanguageChange, isGetNextQuestionLoading }) => {
-
-    console.log("malicious code");
-    console.log(language);
-    console.log(initialTemplate[language]);
-
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const decorationsRef = useRef(null);

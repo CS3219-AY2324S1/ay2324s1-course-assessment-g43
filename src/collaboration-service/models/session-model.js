@@ -9,6 +9,7 @@ const sessionSchema = new mongoose.Schema({
   isActive: { type: Boolean, required: true },
   attempt: { type: Map, of: String },
   currentLanguage: { type: String, required: true },
+  questionId: { type: Number, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: Array },

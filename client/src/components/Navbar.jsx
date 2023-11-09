@@ -321,6 +321,12 @@ const DesktopNav = ({ navItems }) => {
                             ).uid;
                             matchingFormStore.setUid(uid);
 
+                            const userName = JSON.parse(
+                              localStorage.getItem("user")
+                            ).username;
+
+                            matchingFormStore.setUserName(userName);
+
                             const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
@@ -444,6 +450,12 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
+
+                  const userName = JSON.parse(
+                    localStorage.getItem("user")
+                  ).username;
+
+                  matchingFormStore.setUserName(userName);
 
                   const matchSuccessCallback = (data) => {
                     modalComponentStore.closeModal();
@@ -581,6 +593,12 @@ const MobileNavItem = ({ label, children, href }) => {
                     const uid = JSON.parse(localStorage.getItem("user")).uid;
                     matchingFormStore.setUid(uid);
 
+                    const userName = JSON.parse(
+                      localStorage.getItem("user")
+                    ).username;
+
+                    matchingFormStore.setUserName(userName);
+
                     const matchSuccessCallback = (data) => {
                       modalComponentStore.closeModal();
                       redirectToSessionPage(data);
@@ -694,6 +712,12 @@ const MobileNavItem = ({ label, children, href }) => {
                               localStorage.getItem("user")
                             ).uid;
                             matchingFormStore.setUid(uid);
+
+                            const userName = JSON.parse(
+                              localStorage.getItem("user")
+                            ).username;
+        
+                            matchingFormStore.setUserName(userName);
 
                             const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();

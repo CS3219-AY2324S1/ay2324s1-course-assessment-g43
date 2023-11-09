@@ -3,6 +3,7 @@ import setupSocket from "../services/matchingService";
 
 class MatchingFormStore {
   uid = "";
+  userName = "";
   complexity = "";
   isLoading = false;
   isCancelLoading = false;
@@ -20,6 +21,7 @@ class MatchingFormStore {
 
     const message = JSON.stringify({
       uid: this.uid,
+      name: this.userName,
       complexity: this.complexity,
     });
 
@@ -57,6 +59,10 @@ class MatchingFormStore {
 
   setUid(uid) {
     this.uid = uid;
+  }
+
+  setUserName(userName) {
+    this.userName = userName;
   }
 
   setComplexity(newComplexity) {
@@ -104,14 +110,19 @@ class MatchingFormStore {
     console.log(`sendMatchRequest() with args ${this.uid}, ${this.complexity}`);
     const message = JSON.stringify({
       uid: this.uid,
+      name: this.userName,
       complexity: this.complexity,
     });
+    console.log("yay sending match request");
+    console.log(this.userName);
+
     this.socket.emit("match-request", message);
   }
 
   sendMatchCancelRequest() {
     const message = JSON.stringify({
       uid: this.uid,
+      name: this.userName,
       complexity: this.complexity,
     });
 

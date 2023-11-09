@@ -28,7 +28,6 @@ import { PropTypes } from "prop-types";
 import { createSubmissionStore } from "../stores/createSubmissionStore";
 import { getSubmissionResultStore } from "../stores/getSubmissionResultStore";
 import { viewSessionStore } from "../stores/viewSessionStore";
-import { Position, Range } from "monaco-editor";
 
 /**
  * `language` prop changes when PEER changes language
@@ -43,7 +42,6 @@ export const CodeEditor = observer(
 
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
-
     const decorationsRef = useRef(null);
 
     const [userLanguage, setUserLanguage] = useState(language);
@@ -235,16 +233,6 @@ export const CodeEditor = observer(
       );
 
       decorationsRef.current = editorRef.current.createDecorationsCollection([]);
-      // const cursor = new Position(1, 1);
-      // const displayCursor = { 
-      //   range: new monaco.Range(1, 1, 1, 1 + 1),
-      //   options: {
-      //       isWholeLine: false,
-      //       beforeContentClassName: 'partner-cursor',
-      //       hoverMessage: { value: 'hi' }
-      //   }
-      // };
-      // decorationsRef.current.set([displayCursor]);
 
       const renderRemoteCursors = () => {
         // Remove previous decorations
@@ -300,11 +288,6 @@ export const CodeEditor = observer(
       const updateCursorPosition = () => {
         const selection = editorRef.current.getSelection();
         const position = editorRef.current.getPosition();
-
-        // console.log("evil code");
-        // console.log(selection.getStartPosition())
-        // console.log(selection.getEndPosition())
-        // console.log(position)
       
         // Update the local awareness state
         provider.awareness.setLocalStateField('cursor', {

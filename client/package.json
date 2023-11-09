@@ -20,7 +20,6 @@
     "jwt-decode": "^3.1.2",
     "mobx": "^6.10.2",
     "mobx-react": "^9.0.1",
-    "monaco-editor": "^0.44.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

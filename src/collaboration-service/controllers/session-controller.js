@@ -5,7 +5,9 @@ exports.createSession = async (req, res) => {
   const {
     roomId,
     firstUserId,
+    firstUserName,
     secondUserId,
+    secondUserName,
     questionId,
     title,
     description,
@@ -42,7 +44,9 @@ exports.createSession = async (req, res) => {
     const newSession = new Session({
       roomId,
       firstUserId,
+      firstUserName,
       secondUserId,
+      secondUserName,
       isActive: DEFAULT_ACTIVE_ROOM_STATUS,
       attempt: defaultAttempt,
       currentLanguage: DEFAULT_LANGUAGE,

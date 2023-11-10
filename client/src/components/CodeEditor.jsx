@@ -34,14 +34,20 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, otherUsername, initialTemplate, onLanguageChange, isGetNextQuestionLoading }) => {
+  ({
+    roomId,
+    language,
+    otherUsername,
+    initialTemplate,
+    onLanguageChange,
+    isGetNextQuestionLoading,
+  }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
     const decorationsRef = useRef(null);
 
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
-    const [isDisabled, setDisability] = useState(false);
     const {
       isOpen: isConsoleOpen,
       onOpen: onConsoleOpen,
@@ -58,19 +64,24 @@ export const CodeEditor = observer(
       if (!userLanguage || userLanguage === language) return;
 
       async function changeLanguage(roomId, userLanguage, code) {
-        const res = await viewSessionStore.changeLanguage(roomId, userLanguage, code);
+        const res = await viewSessionStore.changeLanguage(
+          roomId,
+          userLanguage,
+          code
+        );
         return res;
       }
 
       changeLanguage(roomId, userLanguage, code)
         .then((res) => {
           const newCode = res.data.code;
-      
+
           setCode(newCode);
-  
+
           onLanguageChange(userLanguage); // Notify peer
-        }).catch((err) => {
-          console.log(err)
+        })
+        .catch((err) => {
+          console.log(err);
         });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userLanguage]);
@@ -80,11 +91,6 @@ export const CodeEditor = observer(
       // console.log("PEER changed language changed to: ", language);
       if (language === userLanguage) return;
       setUserLanguage(language);
-      if (language == "text") {
-        setDisability(true);
-      } else {
-        setDisability(false);
-      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [language]);
 
@@ -113,26 +119,18 @@ export const CodeEditor = observer(
     const setStoreLanguage = useCallback((lang) => {
       switch (lang) {
         case "cpp":
-          setDisability(false);
           store.setLanguageId(54);
           return;
         case "java":
-          setDisability(false);
           store.setLanguageId(62);
           return;
         case "python":
-          setDisability(false);
           store.setLanguageId(71);
           return;
         case "javascript":
-          setDisability(false);
           store.setLanguageId(93);
           return;
-        case "text":
-          setDisability(true);
-          return;
         default:
-          setDisability(true);
           return ``;
       }
     }, []);
@@ -140,7 +138,7 @@ export const CodeEditor = observer(
     const initiateNextQuestionRequest = () => {
       viewSessionStore.initChangeQuestion();
       viewSessionStore.setIsGetQuestionLoading(true);
-    }
+    };
 
     const resetCode = async () => {
       if (
@@ -150,7 +148,7 @@ export const CodeEditor = observer(
       ) {
         const res = await viewSessionStore.resetCode(roomId);
         const newCode = res.data.code;
-        
+
         setCode(newCode);
       }
     };
@@ -197,25 +195,23 @@ export const CodeEditor = observer(
       }
     }
 
-
-
     // eslint-disable-next-line no-unused-vars
     function handleEditorDidMount(editor, monaco) {
       editorRef.current = editor;
       //Init YJS
       const doc = new Y.Doc(); //collection of shared objects
-      
+
       const provider = new WebsocketProvider(WS_SERVER_URL, roomId, doc);
 
       const type = doc.getText("monaco");
 
       // // Ensures that you initialise the default template once
-      provider.once('synced', () => {
-        const userId = JSON.parse(localStorage.getItem("user"))["uid"]
+      provider.once("synced", () => {
+        const userId = JSON.parse(localStorage.getItem("user"))["uid"];
         if (roomId.split("-")[1] == userId) {
           setCode(initialTemplate[language]);
         }
-      })
+      });
 
       // Bind YJS to monaco
       // eslint-disable-next-line no-unused-vars
@@ -226,74 +222,93 @@ export const CodeEditor = observer(
         provider.awareness
       );
 
-      decorationsRef.current = editorRef.current.createDecorationsCollection([]);
+      decorationsRef.current = editorRef.current.createDecorationsCollection(
+        []
+      );
 
       const renderRemoteCursors = () => {
         // Remove previous decorations
-        decorationsRef.current.set([])
-      
+        decorationsRef.current.set([]);
+
         // Loop over all states in the awareness protocol
-        const allCursors = provider.awareness.getStates().forEach((state, clientId) => {
-          if (clientId !== provider.awareness.clientID && state.cursor) {
-            // Calculate range from cursor state and create a decoration
-            const { start, end, head, userId } = state.cursor;
+        const allCursors = provider.awareness
+          .getStates()
+          .forEach((state, clientId) => {
+            if (clientId !== provider.awareness.clientID && state.cursor) {
+              // Calculate range from cursor state and create a decoration
+              const { start, end, head, userId } = state.cursor;
 
-            if (start.lineNumber == end.lineNumber && start.column == end.column) {
-              // Simple cursor
-              console.log("simple cursor");
-              decorationsRef.current.set([{ 
-                range: new monaco.Range(head.lineNumber, head.column, head.lineNumber, head.column + 1),
-                options: {
-                  isWholeLine: false,
-                  beforeContentClassName: 'partner-cursor',
-                  hoverMessage: { value: otherUsername },
-                }}
-              ]);
-            } else {
-              // Highlight event
-              console.log("highlight event");
-              decorationsRef.current.set([
-                { 
-                range: new monaco.Range(start.lineNumber, start.column, end.lineNumber, end.column),
-                options: {
-                  inlineClassName: 'partner-highlight',
-                  hoverMessage: { value: otherUsername },
-                }
-                },
-                { 
-                  range: new monaco.Range(head.lineNumber, head.column, head.lineNumber, head.column + 1),
-                  options: {
-                    isWholeLine: false,
-                    beforeContentClassName: 'partner-cursor',
-                    hoverMessage: { value: otherUsername },
-                  }
-                  }
-              ]);
-
-
+              if (
+                start.lineNumber == end.lineNumber &&
+                start.column == end.column
+              ) {
+                // Simple cursor
+                console.log("simple cursor");
+                decorationsRef.current.set([
+                  {
+                    range: new monaco.Range(
+                      head.lineNumber,
+                      head.column,
+                      head.lineNumber,
+                      head.column + 1
+                    ),
+                    options: {
+                      isWholeLine: false,
+                      beforeContentClassName: "partner-cursor",
+                      hoverMessage: { value: otherUsername },
+                    },
+                  },
+                ]);
+              } else {
+                // Highlight event
+                console.log("highlight event");
+                decorationsRef.current.set([
+                  {
+                    range: new monaco.Range(
+                      start.lineNumber,
+                      start.column,
+                      end.lineNumber,
+                      end.column
+                    ),
+                    options: {
+                      inlineClassName: "partner-highlight",
+                      hoverMessage: { value: otherUsername },
+                    },
+                  },
+                  {
+                    range: new monaco.Range(
+                      head.lineNumber,
+                      head.column,
+                      head.lineNumber,
+                      head.column + 1
+                    ),
+                    options: {
+                      isWholeLine: false,
+                      beforeContentClassName: "partner-cursor",
+                      hoverMessage: { value: otherUsername },
+                    },
+                  },
+                ]);
+              }
             }
-          }
-        });
-
-
+          });
       };
-
 
       const updateCursorPosition = () => {
         const selection = editorRef.current.getSelection();
         const position = editorRef.current.getPosition();
-      
+
         // Update the local awareness state
-        provider.awareness.setLocalStateField('cursor', {
+        provider.awareness.setLocalStateField("cursor", {
           start: selection.getStartPosition(),
           end: selection.getEndPosition(),
           head: position,
-          userId: JSON.parse(localStorage.getItem("user"))["uid"] 
+          userId: JSON.parse(localStorage.getItem("user"))["uid"],
         });
       };
 
       editor.onDidChangeCursorPosition(updateCursorPosition);
-      provider.awareness.on('change', renderRemoteCursors);
+      provider.awareness.on("change", renderRemoteCursors);
 
       // Clean up the Monaco binding when the editor unmounts
       return () => {
@@ -402,7 +417,8 @@ export const CodeEditor = observer(
                       No output generated
                     </Text>
                   )}
-                  {resultStore.state.status.id >= 5 && resultStore.state.status.id <= 14 ? (
+                  {resultStore.state.status.id >= 5 &&
+                  resultStore.state.status.id <= 14 ? (
                     <>
                       <Text as={"b"} fontSize={"xl"} color={"red"}>
                         {resultStore.state.status.description}
@@ -438,7 +454,7 @@ export const CodeEditor = observer(
               _hover={{
                 bg: "#DEE2F5",
               }}
-              isDisabled={isDisabled || isPressed}
+              isDisabled={isPressed}
               onClick={handleRunButtonClick}
             >
               {isRunLoading ? "Running..." : "Run"}

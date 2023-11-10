@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
@@ -26,7 +26,6 @@ import { ChatBox } from "../components/ChatBox";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
-  const location = useLocation();
   const param = useParams();
   const toast = useToast();
 
@@ -42,16 +41,20 @@ export const ViewSession = observer(() => {
       .fetchSession(roomId)
       .then((session) => {
         //TODO can we refactor this to the case below?
-        console.log('fetched session');
+        console.log("fetched session");
         console.log(session);
 
         store.setRoomId(roomId);
         store.initiateSessionState(session);
-        store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
+        store.initSocket(
+          leaveSessionCallback,
+          receiveRequestCallback,
+          changeQuestionCallback,
+          rejectRequestCallback
+        );
         store.setChat(localStorage.getItem("sessionChat"));
       })
       .catch((err) => {
-        let message = err.message;
         // If GET /session/:roomId returns 404, delete roomId from localStorage
         // * Be careful when updating the err.message string
         if (err.message === "Session is invalid.") {
@@ -59,10 +62,8 @@ export const ViewSession = observer(() => {
             localStorage.removeItem("roomId");
             localStorage.removeItem("sessionLanguage");
             localStorage.removeItem("sessionChat");
-            message = "This session has been closed by your partner.";
           }
         }
-        // alert(`Error: ${message}`);
         navigate("/");
       })
       .finally(() => {
@@ -81,7 +82,7 @@ export const ViewSession = observer(() => {
     const uid = userObject.uid;
     const qid = store.state.questionId;
 
-    console.log('hiii')
+    console.log("hiii");
     console.log(qid);
 
     const attempt = {
@@ -90,13 +91,13 @@ export const ViewSession = observer(() => {
       description: store.state.description,
       category: store.state.category,
       complexity: store.state.complexity,
-    }
+    };
     console.log(attempt);
     await historyStore.createAttempt(attempt);
-  }
+  };
 
   // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = async() => {
+  const leaveSessionCallback = async () => {
     //Save Attempt To History
     await createAttempt();
 
@@ -116,10 +117,10 @@ export const ViewSession = observer(() => {
 
   const nextQuestionModalTitle = "Accept Request?";
 
-  const nextQuestionModalBody = "Your partner has requested to move on to the next question. Do you agree?";
+  const nextQuestionModalBody =
+    "Your partner has requested to move on to the next question. Do you agree?";
 
   const NextQuestionModalFooter = observer(() => {
-    
     const handleCancel = (e) => {
       e.preventDefault();
 
@@ -129,20 +130,12 @@ export const ViewSession = observer(() => {
 
     return (
       <>
-        <Button
-          colorScheme="red"
-          mr={3}
-          onClick={handleCancel}
-        >
+        <Button colorScheme="red" mr={3} onClick={handleCancel}>
           Decline
         </Button>
-        <Button
-        colorScheme="green"
-        mr={3}
-        type="submit"
-      >
-        Accept
-      </Button>
+        <Button colorScheme="green" mr={3} type="submit">
+          Accept
+        </Button>
       </>
     );
   });
@@ -160,12 +153,12 @@ export const ViewSession = observer(() => {
     );
 
     modalComponentStore.setClosable(false);
-  }
+  };
 
   const changeQuestionCallback = async () => {
     await createAttempt();
     navigate(0);
-  }
+  };
 
   const rejectRequestCallback = () => {
     store.setIsGetQuestionLoading(false);
@@ -175,7 +168,7 @@ export const ViewSession = observer(() => {
       duration: 8000,
       isClosable: true,
     });
-  }
+  };
 
   const handleLeaveSession = async () => {
     if (
@@ -249,13 +242,12 @@ export const ViewSession = observer(() => {
           <Stack w={"50%"}>
             {isDoneLoading && (
               <CodeEditor
-                questionTitle={state.title}
                 roomId={state.roomId}
                 language={state.language}
                 otherUsername={state.otherUserName}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
                 initialTemplate={state.attempt}
-                isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
+                isGetNextQuestionLoading={state.isGetNextQuestionLoading}
               />
             )}{" "}
             <Divider />

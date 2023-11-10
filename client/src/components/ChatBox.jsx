@@ -12,7 +12,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 
-export const ChatBox = observer(({ chat, isPeerConnected, onSendMessage }) => {
+export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendMessage }) => {
+
   const scrollStyle = {
     overflowY: "auto",
     maxHeight: "20vh",
@@ -49,7 +50,7 @@ export const ChatBox = observer(({ chat, isPeerConnected, onSendMessage }) => {
         </Avatar>
         <Flex flexDirection="column" mx="5" justify="center">
           <Text fontSize="sm" fontWeight="bold">
-            Peer
+            {otherUserName}
           </Text>
           <Text
             color={isPeerConnected ? "green.500" : "red.500"}

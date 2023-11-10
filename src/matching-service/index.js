@@ -49,8 +49,10 @@ const init = async () => {
       console.log("Received match request");
 
       const parsedMessage = JSON.parse(message);
-      const { uid, complexity } = parsedMessage;
-      if (!uid || !complexity) {
+      
+      const { uid, name, complexity } = parsedMessage;
+
+      if (!uid || !name || !complexity) {
         io.to(socket.id).emit("match-failure", "Missing arguments");
         return;
       }
@@ -65,6 +67,7 @@ const init = async () => {
       const messageMatchRequest = {
         isCancelRequest: false,
         userId: uid,
+        userName: name,
         socketId: socket.id,
       }
 
@@ -75,8 +78,10 @@ const init = async () => {
   
     socket.on("cancel-request", async (message) => {
       const parsedMessage = JSON.parse(message);
-      const { uid, complexity } = parsedMessage;
-      if (!uid || !complexity) {
+
+      
+      const { uid, name, complexity } = parsedMessage;
+      if (!uid || !name || !complexity) {
         io.to(socket.id).emit("match-failure", "Missing arguments");
         return;
       }
@@ -91,6 +96,7 @@ const init = async () => {
       const messageCancelRequest = {
         isCancelRequest: true,
         userId: uid,
+        userName: name,
         socketId: socket.id,
       }
   

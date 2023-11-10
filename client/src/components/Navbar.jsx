@@ -273,6 +273,8 @@ const DesktopNav = ({ navItems }) => {
     category,
     complexity,
     roomId,
+    currentLanguage,
+    attempt,
   }) => {
     // Write roomId to localStorage
     localStorage.setItem("roomId", roomId);
@@ -283,6 +285,8 @@ const DesktopNav = ({ navItems }) => {
         description,
         category,
         complexity,
+        currentLanguage,
+        attempt,
       },
     });
   };
@@ -322,11 +326,17 @@ const DesktopNav = ({ navItems }) => {
                             ).uid;
                             matchingFormStore.setUid(uid);
 
+                            const userName = JSON.parse(
+                              localStorage.getItem("user")
+                            ).username;
+
+                            matchingFormStore.setUserName(userName);
+
                             const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                               toast({
-                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                                title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                                 status: "success",
                                 duration: 8000,
                                 isClosable: true,
@@ -446,11 +456,17 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
 
+                  const userName = JSON.parse(
+                    localStorage.getItem("user")
+                  ).username;
+
+                  matchingFormStore.setUserName(userName);
+
                   const matchSuccessCallback = (data) => {
                     modalComponentStore.closeModal();
                     redirectToSessionPage(data);
                     toast({
-                      title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                      title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                       status: "success",
                       duration: 8000,
                       isClosable: true,
@@ -582,11 +598,17 @@ const MobileNavItem = ({ label, children, href }) => {
                     const uid = JSON.parse(localStorage.getItem("user")).uid;
                     matchingFormStore.setUid(uid);
 
+                    const userName = JSON.parse(
+                      localStorage.getItem("user")
+                    ).username;
+
+                    matchingFormStore.setUserName(userName);
+
                     const matchSuccessCallback = (data) => {
                       modalComponentStore.closeModal();
                       redirectToSessionPage(data);
                       toast({
-                        title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                        title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                         status: "success",
                         duration: 8000,
                         isClosable: true,
@@ -696,11 +718,17 @@ const MobileNavItem = ({ label, children, href }) => {
                             ).uid;
                             matchingFormStore.setUid(uid);
 
+                            const userName = JSON.parse(
+                              localStorage.getItem("user")
+                            ).username;
+        
+                            matchingFormStore.setUserName(userName);
+
                             const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                               toast({
-                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                                title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                                 status: "success",
                                 duration: 8000,
                                 isClosable: true,

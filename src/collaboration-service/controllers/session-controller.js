@@ -1,10 +1,13 @@
 const Session = require("../models/session-model");
+const { getDefaultAttempt } = require("../utils/utils");
 
 exports.createSession = async (req, res) => {
   const {
     roomId,
     firstUserId,
+    firstUserName,
     secondUserId,
+    secondUserName,
     questionId,
     title,
     description,
@@ -33,14 +36,20 @@ exports.createSession = async (req, res) => {
     }
 
     DEFAULT_ACTIVE_ROOM_STATUS = true; // by implementation, room will never be inactive. leaving here for compatibility issues moving forward
-    DEFAULT_ATTEMPT = "";
+
+    const defaultAttempt = getDefaultAttempt(title);
+
+    const DEFAULT_LANGUAGE = "python";
 
     const newSession = new Session({
       roomId,
       firstUserId,
+      firstUserName,
       secondUserId,
+      secondUserName,
       isActive: DEFAULT_ACTIVE_ROOM_STATUS,
-      attempt: DEFAULT_ATTEMPT,
+      attempt: defaultAttempt,
+      currentLanguage: DEFAULT_LANGUAGE,
       questionId,
       title,
       description,
@@ -73,6 +82,81 @@ exports.getSession = async (req, res) => {
   }
 };
 
+exports.getLanguage = async (req, res) => {
+  try {
+    const roomId = req.params.roomId;
+    const session = await Session.findOne({ roomId });
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    const currentLanguage = session.currentLanguage;
+    const currentCode = session.attempt.get(currentLanguage);
+
+    return res.status(200).json({ language: currentLanguage, code: currentCode });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error fetching session" });
+  }
+}
+
+exports.editLanguage = async (req, res) => {
+  try {
+    const roomId = req.params.roomId;
+    const { oldCode, newLanguage } = req.body;
+
+    const session = await Session.findOne({ roomId });
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    const currentLanguage = session.currentLanguage;
+    session.attempt.set(currentLanguage, oldCode);
+
+    session.currentLanguage = newLanguage;
+    const newCode = session.attempt.get(newLanguage);
+
+    await session.validate();
+    await session.save();
+
+    return res.status(200).json({ language: newLanguage, code: newCode });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error fetching session" });
+  }
+}
+
+exports.resetCode = async (req, res) => {
+  try {
+    const roomId = req.params.roomId;
+
+    const session = await Session.findOne({ roomId });
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    const title = session.title;
+    const defaultAttempt = getDefaultAttempt(title);
+
+    const currentLanguage = session.currentLanguage;
+    const blankCode = defaultAttempt[currentLanguage];
+
+    session.attempt.set(currentLanguage, blankCode);
+
+    await session.validate();
+    await session.save();
+
+    return res.status(200).json({ language: currentLanguage, code: blankCode });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error fetching session" });
+  }
+}
+
+
 exports.deleteSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
@@ -104,10 +188,13 @@ exports.editSession = async (req, res) => {
       return res.status(404).json({ message: "Session not found" });
     }
 
+    const defaultAttempt = getDefaultAttempt(title);
+
     session.title = title;
     session.description = description;
     session.category = category;
-
+    session.attempt = defaultAttempt;
+    
     await session.validate();
     await session.save();
 

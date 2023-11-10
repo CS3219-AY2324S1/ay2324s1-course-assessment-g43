@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { viewSessionStore } from "../stores/viewSessionStore";
 import { observer } from "mobx-react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../components/PageContainer";
 import { ScrollableText } from "../components/ScrollableText";
 import { CodeEditor } from "../components/CodeEditor";
@@ -26,67 +26,49 @@ import { ChatBox } from "../components/ChatBox";
 
 export const ViewSession = observer(() => {
   const navigate = useNavigate();
-  const location = useLocation();
   const param = useParams();
   const toast = useToast();
 
   const [isDoneLoading, setIsDoneLoading] = useState(false);
   const store = viewSessionStore;
   const state = store.state;
-  const DEFAULT_LANGUAGE = "text";
   const modalComponentStore = useModalComponentStore();
   const historyStore = viewHistoryStore;
 
   useEffect(() => {
     const roomId = param.id;
+    store
+      .fetchSession(roomId)
+      .then((session) => {
+        //TODO can we refactor this to the case below?
+        console.log("fetched session");
+        console.log(session);
 
-    if (!location.state || !location.state.questionId) {
-      // Case when user resumes an existing session
-      store
-        .fetchQuestion(roomId)
-        .then((question) => {
-          //TODO can we refactor this to the case below?
-          store.setRoomId(roomId);
-          store.initQuestionState(question);
-          store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
-          store.setLanguage(
-            localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
-          );
-          store.setChat(localStorage.getItem("sessionChat"));
-        })
-        .catch((err) => {
-          let message = err.message;
-          // If GET /session/:roomId returns 404, delete roomId from localStorage
-          // * Be careful when updating the err.message string
-          if (err.message === "Session is invalid.") {
-            if (localStorage.getItem("roomId") === roomId) {
-              localStorage.removeItem("roomId");
-              localStorage.removeItem("sessionLanguage");
-              localStorage.removeItem("sessionChat");
-              message = "This session has been closed by your partner.";
-            }
+        store.setRoomId(roomId);
+        store.initiateSessionState(session);
+        store.initSocket(
+          leaveSessionCallback,
+          receiveRequestCallback,
+          changeQuestionCallback,
+          rejectRequestCallback
+        );
+        store.setChat(localStorage.getItem("sessionChat"));
+      })
+      .catch((err) => {
+        // If GET /session/:roomId returns 404, delete roomId from localStorage
+        // * Be careful when updating the err.message string
+        if (err.message === "Session is invalid.") {
+          if (localStorage.getItem("roomId") === roomId) {
+            localStorage.removeItem("roomId");
+            localStorage.removeItem("sessionLanguage");
+            localStorage.removeItem("sessionChat");
           }
-          alert(`Error: ${message}`);
-          navigate("/");
-        })
-        .finally(() => {
-          setIsDoneLoading(true);
-        });
-    } else {
-      // Case when user comes from on the successful creation of a new session
-      store.setRoomId(roomId);
-      store.setQuestionId(location.state.questionId);
-      store.setTitle(location.state.title);
-      store.setDescription(location.state.description);
-      store.setCategory(location.state.category);
-      store.setComplexity(location.state.complexity);
-      store.setLanguage(
-        localStorage.getItem("sessionLanguage") ?? DEFAULT_LANGUAGE
-      );
-      setIsDoneLoading(true);
-
-      store.initSocket(leaveSessionCallback, receiveRequestCallback, changeQuestionCallback, rejectRequestCallback);
-    }
+        }
+        navigate("/");
+      })
+      .finally(() => {
+        setIsDoneLoading(true);
+      });
 
     return () => {
       store.resetState();
@@ -98,19 +80,24 @@ export const ViewSession = observer(() => {
     const userData = localStorage.getItem("user");
     const userObject = JSON.parse(userData);
     const uid = userObject.uid;
+    const qid = store.state.questionId;
+
+    console.log("hiii");
+    console.log(qid);
+
     const attempt = {
       currentUserId: uid,
       title: store.state.title,
       description: store.state.description,
       category: store.state.category,
       complexity: store.state.complexity,
-    }
+    };
     console.log(attempt);
     await historyStore.createAttempt(attempt);
-  }
+  };
 
   // This callback only runs upon a successful DELETE from the Sessions collection
-  const leaveSessionCallback = async() => {
+  const leaveSessionCallback = async () => {
     //Save Attempt To History
     await createAttempt();
 
@@ -130,10 +117,10 @@ export const ViewSession = observer(() => {
 
   const nextQuestionModalTitle = "Accept Request?";
 
-  const nextQuestionModalBody = "Your partner has requested to move on to the next question. Do you agree?";
+  const nextQuestionModalBody =
+    "Your partner has requested to move on to the next question. Do you agree?";
 
   const NextQuestionModalFooter = observer(() => {
-    
     const handleCancel = (e) => {
       e.preventDefault();
 
@@ -143,20 +130,12 @@ export const ViewSession = observer(() => {
 
     return (
       <>
-        <Button
-          colorScheme="red"
-          mr={3}
-          onClick={handleCancel}
-        >
+        <Button colorScheme="red" mr={3} onClick={handleCancel}>
           Decline
         </Button>
-        <Button
-        colorScheme="green"
-        mr={3}
-        type="submit"
-      >
-        Accept
-      </Button>
+        <Button colorScheme="green" mr={3} type="submit">
+          Accept
+        </Button>
       </>
     );
   });
@@ -174,12 +153,12 @@ export const ViewSession = observer(() => {
     );
 
     modalComponentStore.setClosable(false);
-  }
+  };
 
   const changeQuestionCallback = async () => {
     await createAttempt();
     navigate(0);
-  }
+  };
 
   const rejectRequestCallback = () => {
     store.setIsGetQuestionLoading(false);
@@ -189,7 +168,7 @@ export const ViewSession = observer(() => {
       duration: 8000,
       isClosable: true,
     });
-  }
+  };
 
   const handleLeaveSession = async () => {
     if (
@@ -263,16 +242,18 @@ export const ViewSession = observer(() => {
           <Stack w={"50%"}>
             {isDoneLoading && (
               <CodeEditor
-                questionTitle={state.title}
                 roomId={state.roomId}
                 language={state.language}
+                otherUsername={state.otherUserName}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
-                isGetNextQuestionLoading = {state.isGetNextQuestionLoading}
+                initialTemplate={state.attempt}
+                isGetNextQuestionLoading={state.isGetNextQuestionLoading}
               />
             )}{" "}
             <Divider />
             <ChatBox
               chat={state.chat}
+              otherUserName={state.otherUserName}
               isPeerConnected={state.isPeerConnected}
               onSendMessage={(newMessage) => {
                 store.pushAndSendMessage(newMessage);

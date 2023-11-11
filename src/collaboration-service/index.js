@@ -74,16 +74,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("initiate-next-question", () => {
-    socket.broadcast.emit("initiate-next-question");
-  })
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("initiate-next-question");
+  });
 
   socket.on("reject-next-question", () => {
-    socket.broadcast.emit("reject-next-question");
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("reject-next-question");
   });
 
   socket.on("retrieve-next-question", () => {
-    socket.broadcast.emit("retrieve-next-question");
-  })
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("retrieve-next-question");
+  });
 
   socket.on("leave-room", () => {
     const roomId = getRoomOfSocket(socket);

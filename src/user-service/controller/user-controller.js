@@ -162,14 +162,6 @@ exports.userLogin = async (req, res) => {
   }
 };
 
-exports.userLogout = async (req, res) => {
-  try {
-    console.log(req);
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
 exports.updateProfile = async (req, res) => {
   const id = parseInt(req.params.id);
   const decodedToken = req.decodedToken;

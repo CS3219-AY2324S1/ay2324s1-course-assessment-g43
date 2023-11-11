@@ -41,6 +41,7 @@ class MatchingFormStore {
             this.countdown -= 1;
           } else {
             this.isLoading = false;
+            this.isCancelLoading = false;
             reject("Sorry, but we could not find a match. Please try again!");
             clearInterval(countdownInterval);
           }
@@ -102,7 +103,6 @@ class MatchingFormStore {
       },
       () => {
         console.log("socket closed");
-        this.setLoading(false);
         onSocketDisconnect?.();
       }
     );

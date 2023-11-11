@@ -172,6 +172,10 @@ exports.userLogout = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const id = parseInt(req.params.id);
+  const decodedToken = req.decodedToken;
+  if (id !== decodedToken.uid) {
+    return res.status(403).end();
+  }
   const { username, email } = req.body;
 
   try {
@@ -216,6 +220,10 @@ exports.updateProfile = async (req, res) => {
 
 exports.deleteProfile = async (req, res) => {
   const id = parseInt(req.params.id);
+  const decodedToken = req.decodedToken;
+  if (id !== decodedToken.uid) {
+    return res.status(403).end();
+  }
 
   try {
     const result = await pool.query("SELECT * FROM Users WHERE uid = $1", [id]);

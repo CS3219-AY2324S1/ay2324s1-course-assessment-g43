@@ -32,6 +32,7 @@ exports.authenticateRequest = (req, res, next) => {
       data: {} 
     })
   }
+  req.decodedToken = decodedToken;
   next();
   })
 }

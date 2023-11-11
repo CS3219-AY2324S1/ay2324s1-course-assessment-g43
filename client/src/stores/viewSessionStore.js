@@ -40,7 +40,7 @@ class ViewSessionStore {
       }
     */
     chat: [],
-    isPeerConnected: true,
+    isPeerConnected: false,
   };
 
   constructor() {
@@ -91,7 +91,7 @@ class ViewSessionStore {
   setOtherUsername(otherUserName) {
     this.state.otherUserName = otherUserName;
   }
-  
+
   setIsPeerConnected(isConnected) {
     this.state.isPeerConnected = isConnected;
   }
@@ -132,13 +132,22 @@ class ViewSessionStore {
   }
 
   initiateSessionState(session) {
-    const { questionId, title, description, category, complexity, currentLanguage, attempt } = session;
-    
-    const otherUserName = session.firstUserName === JSON.parse(localStorage.getItem("user")).username
-    ? session.secondUserName 
-    : session.firstUserName;
+    const {
+      questionId,
+      title,
+      description,
+      category,
+      complexity,
+      currentLanguage,
+      attempt,
+    } = session;
 
-    console.log("i am inside init session state");
+    const otherUserName =
+      session.firstUserName ===
+      JSON.parse(localStorage.getItem("user")).username
+        ? session.secondUserName
+        : session.firstUserName;
+
     console.log(session);
 
     this.state = {
@@ -198,7 +207,7 @@ class ViewSessionStore {
       attempt: new Map(),
       isGetNextQuestionLoading: false,
       chat: [],
-      isPeerConnected: true,
+      isPeerConnected: false,
     };
   }
 

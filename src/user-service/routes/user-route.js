@@ -183,7 +183,7 @@ router.post("/logout", authFunctions.authenticateRequest, userController.userLog
 }
  */
 
-router.get("/getUsers", userController.getUsers);
+router.get("/getUsers", authFunctions.authenticateRequest, userController.getUsers);
 
 /**
  * GET /api/getUsers/{id}
@@ -215,7 +215,7 @@ router.get("/getUsers", userController.getUsers);
 }
  */
 
-router.get("/getUsers/:id", userController.getUser);
+router.get("/getUsers/:id", authFunctions.authenticateRequest, userController.getUser);
 
 /**
  * PUT /api/update/{id}

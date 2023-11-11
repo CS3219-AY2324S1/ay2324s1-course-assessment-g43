@@ -102,8 +102,17 @@ mongoose.connect(databaseUrl, {
 
 app.post("/api/session", sessionController.createSession);
 app.get("/api/session/:roomId", sessionController.getSession);
+
+app.get("/api/session/:roomId/language", sessionController.getLanguage);
+
 app.put("/api/session/:roomId", sessionController.editSession);
+
+app.put("/api/session/:roomId/language", sessionController.editLanguage);
+
+app.put("/api/session/:roomId/resetCode", sessionController.resetCode);
+
 app.delete("/api/session/:roomId", sessionController.deleteSession);
+app.get("/api/session/findWithUid/:uid", sessionController.findSessionWithUid);
 
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);

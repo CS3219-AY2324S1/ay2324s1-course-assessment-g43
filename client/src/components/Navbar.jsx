@@ -25,7 +25,7 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { PropTypes } from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { matchingFormStore } from "../stores/matchingFormStore";
@@ -34,10 +34,14 @@ import jwt from "jwt-decode";
 const Navbar = observer(() => {
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isCurrPageSession = pathname.search("/session") === 0;
 
   const onLogout = () => {
+    if (isCurrPageSession) return;
     localStorage.removeItem("user");
     localStorage.removeItem("jwt");
+    localStorage.removeItem("roomId");
     navigate("/");
   };
 
@@ -145,6 +149,7 @@ const Navbar = observer(() => {
               _hover={{
                 bg: "#8F8ADD",
               }}
+              isDisabled={isCurrPageSession}
               onClick={onLogout}
             >
               Log Out
@@ -268,6 +273,8 @@ const DesktopNav = ({ navItems }) => {
     category,
     complexity,
     roomId,
+    currentLanguage,
+    attempt,
   }) => {
     // Write roomId to localStorage
     localStorage.setItem("roomId", roomId);
@@ -278,6 +285,8 @@ const DesktopNav = ({ navItems }) => {
         description,
         category,
         complexity,
+        currentLanguage,
+        attempt,
       },
     });
   };
@@ -317,11 +326,17 @@ const DesktopNav = ({ navItems }) => {
                             ).uid;
                             matchingFormStore.setUid(uid);
 
+                            const userName = JSON.parse(
+                              localStorage.getItem("user")
+                            ).username;
+
+                            matchingFormStore.setUserName(userName);
+
                             const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                               toast({
-                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                                title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                                 status: "success",
                                 duration: 8000,
                                 isClosable: true,
@@ -441,11 +456,17 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
                   const uid = JSON.parse(localStorage.getItem("user")).uid;
                   matchingFormStore.setUid(uid);
 
+                  const userName = JSON.parse(
+                    localStorage.getItem("user")
+                  ).username;
+
+                  matchingFormStore.setUserName(userName);
+
                   const matchSuccessCallback = (data) => {
                     modalComponentStore.closeModal();
                     redirectToSessionPage(data);
                     toast({
-                      title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                      title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                       status: "success",
                       duration: 8000,
                       isClosable: true,
@@ -577,11 +598,17 @@ const MobileNavItem = ({ label, children, href }) => {
                     const uid = JSON.parse(localStorage.getItem("user")).uid;
                     matchingFormStore.setUid(uid);
 
+                    const userName = JSON.parse(
+                      localStorage.getItem("user")
+                    ).username;
+
+                    matchingFormStore.setUserName(userName);
+
                     const matchSuccessCallback = (data) => {
                       modalComponentStore.closeModal();
                       redirectToSessionPage(data);
                       toast({
-                        title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                        title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                         status: "success",
                         duration: 8000,
                         isClosable: true,
@@ -691,11 +718,17 @@ const MobileNavItem = ({ label, children, href }) => {
                             ).uid;
                             matchingFormStore.setUid(uid);
 
+                            const userName = JSON.parse(
+                              localStorage.getItem("user")
+                            ).username;
+        
+                            matchingFormStore.setUserName(userName);
+
                             const matchSuccessCallback = (data) => {
                               modalComponentStore.closeModal();
                               redirectToSessionPage(data);
                               toast({
-                                title: `Successfully matched with User #${data.firstUserId} on ${data.complexity} question - ${data.title}`,
+                                title: `Successfully matched with User ${data.firstUserName == userName ? data.secondUserName: data.firstUserName} on ${data.complexity} question - ${data.title}`,
                                 status: "success",
                                 duration: 8000,
                                 isClosable: true,

@@ -34,12 +34,20 @@ import { viewSessionStore } from "../stores/viewSessionStore";
  * `onLanguageChange` is a callback function called when USER changes language
  */
 export const CodeEditor = observer(
-  ({ questionTitle, roomId, language, onLanguageChange, isGetNextQuestionLoading }) => {
+  ({
+    roomId,
+    language,
+    otherUsername,
+    initialTemplate,
+    onLanguageChange,
+    isGetNextQuestionLoading,
+  }) => {
     const WS_SERVER_URL = "ws://localhost:8002";
     const editorRef = useRef(null);
+    const decorationsRef = useRef(null);
+
     const [userLanguage, setUserLanguage] = useState(language);
     const [code, setCode] = useState("");
-    const [isDisabled, setDisability] = useState(true);
     const {
       isOpen: isConsoleOpen,
       onOpen: onConsoleOpen,
@@ -50,39 +58,31 @@ export const CodeEditor = observer(
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
 
-
-    useEffect(() => {
-      // TODO: Debug this -- why doesn't monaco initialise with the template code?
-      const template = getCodeTemplate(language, questionTitle);
-      setCode(template);
-      store.setSourceCode(template);
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // !DEBUG
-    // useEffect(() => {
-    //   if (!code) return;
-    //   console.log("Code changed: ", code);
-    // }, [code]);
-
     useEffect(() => {
       // This changes when USER changes language
       // console.log("userLanguage changed to: ", userLanguage);
       if (!userLanguage || userLanguage === language) return;
-      if (
-        confirm("Changing languages will erase any current code! Are you sure?")
-      ) {
-        const newCode = getCodeTemplate(
-          userLanguage.toLowerCase(),
-          questionTitle
-        );
-        setCode(newCode);
-        store.setSourceCode(newCode);
 
-        onLanguageChange(userLanguage); // Notify peer
+      async function changeLanguage(roomId, userLanguage, code) {
+        const res = await viewSessionStore.changeLanguage(
+          roomId,
+          userLanguage,
+          code
+        );
+        return res;
       }
 
+      changeLanguage(roomId, userLanguage, code)
+        .then((res) => {
+          const newCode = res.data.code;
+
+          setCode(newCode);
+
+          onLanguageChange(userLanguage); // Notify peer
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userLanguage]);
 
@@ -91,11 +91,6 @@ export const CodeEditor = observer(
       // console.log("PEER changed language changed to: ", language);
       if (language === userLanguage) return;
       setUserLanguage(language);
-      if (language == "text") {
-        setDisability(true);
-      } else {
-        setDisability(false);
-      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [language]);
 
@@ -121,43 +116,21 @@ export const CodeEditor = observer(
       automaticLayout: true,
     };
 
-    const convertTitleToFunctionName = (questionTitle) => {
-      const words = questionTitle.split(" ");
-      let formatted = "";
-      words.forEach((word, index) => {
-        if (index > 0) {
-          formatted += word[0].toUpperCase() + word.slice(1).toLowerCase();
-        } else {
-          formatted = word.toLowerCase();
-        }
-      });
-      return formatted;
-    };
-
-    const getCodeTemplate = useCallback((lang, questionTitle) => {
-      const functionName = convertTitleToFunctionName(questionTitle);
+    const setStoreLanguage = useCallback((lang) => {
       switch (lang) {
         case "cpp":
-          setDisability(false);
           store.setLanguageId(54);
-          return `class Solution {\npublic:\n\t// change your function type below if necessary\n\tvoid ${functionName}(/*define your params here*/){\n\t\t\n\t};\n}`;
+          return;
         case "java":
-          setDisability(false);
           store.setLanguageId(62);
-          return `class Solution {\n\t// change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t\n\t}\n}\n`;
+          return;
         case "python":
-          setDisability(false);
           store.setLanguageId(71);
-          return `class Solution:\n\tdef ${functionName}():\n\t\treturn\n`;
+          return;
         case "javascript":
-          setDisability(false);
           store.setLanguageId(93);
-          return `const ${functionName} = (/*define your params here*/) => {\n\treturn;\n}`;
-        case "text":
-          setDisability(true);
-          return ``;
+          return;
         default:
-          setDisability(true);
           return ``;
       }
     }, []);
@@ -165,27 +138,24 @@ export const CodeEditor = observer(
     const initiateNextQuestionRequest = () => {
       viewSessionStore.initChangeQuestion();
       viewSessionStore.setIsGetQuestionLoading(true);
-    }
+    };
 
-    const resetCode = () => {
+    const resetCode = async () => {
       if (
         confirm(
           "Are you sure? Your current code will be discarded and reset to the default code!"
         )
       ) {
-        const newCode = getCodeTemplate(
-          userLanguage.toLowerCase(),
-          questionTitle
-        );
+        const res = await viewSessionStore.resetCode(roomId);
+        const newCode = res.data.code;
+
         setCode(newCode);
-        store.setSourceCode(newCode);
       }
     };
 
     const handleEditorChange = (currContent) => {
       if (!currContent) return;
       setCode(currContent);
-      store.setSourceCode(currContent);
     };
 
     async function getEditorValue() {
@@ -209,6 +179,10 @@ export const CodeEditor = observer(
     async function handleRunButtonClick() {
       setPressed(true);
       setRunLoading(true);
+
+      setStoreLanguage(userLanguage.toLowerCase());
+      store.setSourceCode(code);
+
       try {
         await getEditorValue();
       } catch (error) {
@@ -226,9 +200,19 @@ export const CodeEditor = observer(
       editorRef.current = editor;
       //Init YJS
       const doc = new Y.Doc(); //collection of shared objects
+
       const provider = new WebsocketProvider(WS_SERVER_URL, roomId, doc);
 
       const type = doc.getText("monaco");
+
+      // // Ensures that you initialise the default template once
+      provider.once("synced", () => {
+        const userId = JSON.parse(localStorage.getItem("user"))["uid"];
+        if (roomId.split("-")[1] == userId) {
+          setCode(initialTemplate[language]);
+        }
+      });
+
       // Bind YJS to monaco
       // eslint-disable-next-line no-unused-vars
       const binding = new MonacoBinding(
@@ -238,10 +222,101 @@ export const CodeEditor = observer(
         provider.awareness
       );
 
-      // console.log(editorRef);
-      // console.log(provider.awareness, binding);
+      decorationsRef.current = editorRef.current.createDecorationsCollection(
+        []
+      );
+
+      const renderRemoteCursors = () => {
+        // Remove previous decorations
+        decorationsRef.current.set([]);
+
+        // Loop over all states in the awareness protocol
+        const allCursors = provider.awareness
+          .getStates()
+          .forEach((state, clientId) => {
+            if (clientId !== provider.awareness.clientID && state.cursor) {
+              // Calculate range from cursor state and create a decoration
+              const { start, end, head, userId } = state.cursor;
+
+              if (
+                start.lineNumber == end.lineNumber &&
+                start.column == end.column
+              ) {
+                // Simple cursor
+                console.log("simple cursor");
+                decorationsRef.current.set([
+                  {
+                    range: new monaco.Range(
+                      head.lineNumber,
+                      head.column,
+                      head.lineNumber,
+                      head.column + 1
+                    ),
+                    options: {
+                      isWholeLine: false,
+                      beforeContentClassName: "partner-cursor",
+                      hoverMessage: { value: otherUsername },
+                    },
+                  },
+                ]);
+              } else {
+                // Highlight event
+                console.log("highlight event");
+                decorationsRef.current.set([
+                  {
+                    range: new monaco.Range(
+                      start.lineNumber,
+                      start.column,
+                      end.lineNumber,
+                      end.column
+                    ),
+                    options: {
+                      inlineClassName: "partner-highlight",
+                      hoverMessage: { value: otherUsername },
+                    },
+                  },
+                  {
+                    range: new monaco.Range(
+                      head.lineNumber,
+                      head.column,
+                      head.lineNumber,
+                      head.column + 1
+                    ),
+                    options: {
+                      isWholeLine: false,
+                      beforeContentClassName: "partner-cursor",
+                      hoverMessage: { value: otherUsername },
+                    },
+                  },
+                ]);
+              }
+            }
+          });
+      };
+
+      const updateCursorPosition = () => {
+        const selection = editorRef.current.getSelection();
+        const position = editorRef.current.getPosition();
+
+        // Update the local awareness state
+        provider.awareness.setLocalStateField("cursor", {
+          start: selection.getStartPosition(),
+          end: selection.getEndPosition(),
+          head: position,
+          userId: JSON.parse(localStorage.getItem("user"))["uid"],
+        });
+      };
+
+      editor.onDidChangeCursorPosition(updateCursorPosition);
+      provider.awareness.on("change", renderRemoteCursors);
+
+      // Clean up the Monaco binding when the editor unmounts
+      return () => {
+        provider.disconnect();
+        doc.destroy();
+        binding.destroy();
+      };
     }
-    // console.log(isDisabled);
 
     return (
       <Stack w={"100%"} h={"50%"}>
@@ -264,7 +339,6 @@ export const CodeEditor = observer(
               }}
               bg={"#DEE2F5"}
             >
-              <option value="text">Notes</option>
               <option value="python">Python</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>
@@ -343,7 +417,8 @@ export const CodeEditor = observer(
                       No output generated
                     </Text>
                   )}
-                  {resultStore.state.status.id >= 5 && resultStore.state.status.id <= 14 ? (
+                  {resultStore.state.status.id >= 5 &&
+                  resultStore.state.status.id <= 14 ? (
                     <>
                       <Text as={"b"} fontSize={"xl"} color={"red"}>
                         {resultStore.state.status.description}
@@ -379,7 +454,7 @@ export const CodeEditor = observer(
               _hover={{
                 bg: "#DEE2F5",
               }}
-              isDisabled={isDisabled || isPressed}
+              isDisabled={isPressed}
               onClick={handleRunButtonClick}
             >
               {isRunLoading ? "Running..." : "Run"}

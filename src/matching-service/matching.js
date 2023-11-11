@@ -13,7 +13,7 @@ const getQueue = (complexity) => {
   }
 };
 
-const handleCancelRequest = async (channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts) => {
+const handleCancelRequest = async (channel, index, socketId, userId, userName, pendingSocketRequests, pendingUserIds, pendingUserNames, pendingTimeouts) => {
   
   console.log("cancel request");
 
@@ -36,7 +36,7 @@ const handleCancelRequest = async (channel, index, socketId, userId, pendingSock
   }
 }
 
-const handleSaveMatchRequest = async (channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts) => {
+const handleSaveMatchRequest = async (channel, index, socketId, userId, userName, pendingSocketRequests, pendingUserIds, pendingUserNames, pendingTimeouts) => {
   
   console.log("save match request");
 
@@ -46,10 +46,11 @@ const handleSaveMatchRequest = async (channel, index, socketId, userId, pendingS
   
   pendingSocketRequests[index] = socketId;
   pendingUserIds[index] = userId;
+  pendingUserNames[index] = userName;
   pendingTimeouts[index] = messageTimeout;
 }
 
-const handleSuccessMatchRequest = async (channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts) => {
+const handleSuccessMatchRequest = async (channel, index, socketId, userId, userName, pendingSocketRequests, pendingUserIds, pendingUserNames, pendingTimeouts) => {
 
   console.log("success match request");
 
@@ -59,9 +60,11 @@ const handleSuccessMatchRequest = async (channel, index, socketId, userId, pendi
 
   const firstUserSocketId = pendingSocketRequests[index];
   const firstUserId = pendingUserIds[index];
+  const firstUserName = pendingUserNames[index];
 
   const secondUserSocketId = socketId;
   const secondUserId = userId;
+  const secondUserName = userName;
 
   pendingSocketRequests[index] = null;
   pendingUserIds[index] = null;
@@ -71,7 +74,9 @@ const handleSuccessMatchRequest = async (channel, index, socketId, userId, pendi
     firstUserSocketId,
     secondUserSocketId,
     firstUserId, 
+    firstUserName,
     secondUserId,
+    secondUserName,
     complexity: QUESTION_COMPLEXITY_LIST[index]
   };
 
@@ -87,6 +92,7 @@ exports.listenToQueue = async (channel) => {
   const queueNames = [EASY_QUEUE, MEDIUM_QUEUE, HARD_QUEUE];
   const pendingSocketRequests = [null, null, null];
   const pendingUserIds= [null, null, null];
+  const pendingUserNames = [null, null, null];
   const pendingTimeouts = [null, null, null];
 
   for (let index = 0; index < queueNames.length; index++) {
@@ -101,14 +107,14 @@ exports.listenToQueue = async (channel) => {
       
       console.log("consumed queue message");
 
-      const { isCancelRequest, userId, socketId } = JSON.parse(message.content.toString());
+      const { isCancelRequest, userId, userName, socketId } = JSON.parse(message.content.toString());
 
       if (isCancelRequest) {
-        handleCancelRequest(channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts);
+        handleCancelRequest(channel, index, socketId, userId, userName, pendingSocketRequests, pendingUserIds, pendingUserNames, pendingTimeouts);
       } else if (!pendingSocketRequests[index]) {
-        handleSaveMatchRequest(channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts);
+        handleSaveMatchRequest(channel, index, socketId, userId, userName, pendingSocketRequests, pendingUserIds, pendingUserNames, pendingTimeouts);
       } else {
-        handleSuccessMatchRequest(channel, index, socketId, userId, pendingSocketRequests, pendingUserIds, pendingTimeouts);
+        handleSuccessMatchRequest(channel, index, socketId, userId, userName, pendingSocketRequests, pendingUserIds, pendingUserNames, pendingTimeouts);
       }
     }, { noAck: true});
     
@@ -136,7 +142,7 @@ exports.listenToReplies = async (channel, io) => {
       return;
     }
 
-    const { firstUserSocketId, firstUserId, secondUserSocketId, secondUserId, complexity } = parsedReply;
+    const { firstUserSocketId, firstUserId, firstUserName, secondUserSocketId, secondUserId, secondUserName, complexity } = parsedReply;
     
     const timestamp = Math.floor(Date.now() / 1000);
     const roomId = `${timestamp}-${firstUserId}-${secondUserId}`;
@@ -144,7 +150,9 @@ exports.listenToReplies = async (channel, io) => {
     const sessionCreationRequest = {
       roomId,
       firstUserId,
+      firstUserName,
       secondUserId,
+      secondUserName,
       complexity,
     };
 

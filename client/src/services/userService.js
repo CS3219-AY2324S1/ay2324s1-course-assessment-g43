@@ -3,12 +3,22 @@ import axios from "axios";
 const basePath = "http://localhost:8000/api";
 
 export const getUserById = async (id) => {
-  const res = await axios.get(`${basePath}/getUsers/${id}`);
+  const token = localStorage.getItem("jwt");
+  const res = await axios.get(`${basePath}/getUsers/${id}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
   return res.data.data;
 };
 
 export const getAllUsers = async () => {
-  const res = await axios.get(`${basePath}/getUsers`);
+  const token = localStorage.getItem("jwt");
+  const res = await axios.get(`${basePath}/getUsers`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
   console.log(res);
   return res;
 };

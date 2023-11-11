@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import {
-  getQuestionFromSession,
+  getSession,
   initCollaborationSocket,
   deleteSession,
   initiateLeaveRoomRequest,
@@ -10,6 +10,8 @@ import {
   rejectNextQuestionRequest,
   acceptNextQuestionRequest,
   updateSessionWithNewQuestion,
+  saveAndChangeCode,
+  resetCode,
 } from "../services/collaborationService";
 import { getFreshRandomQuestionByComplexity } from "../services/questionService";
 
@@ -25,7 +27,9 @@ class ViewSessionStore {
 
     roomId: "",
     language: "",
+    otherUserName: "",
     isGetNextQuestionLoading: false,
+    attempt: new Map(),
 
     /*
     Array of objects with the following structure:
@@ -84,6 +88,14 @@ class ViewSessionStore {
     this.state.chat = jsonStringChat ? JSON.parse(jsonStringChat) : [];
   }
 
+  setOtherUsername(otherUserName) {
+    this.state.otherUserName = otherUserName;
+  }
+  
+  setIsPeerConnected(isConnected) {
+    this.state.isPeerConnected = isConnected;
+  }
+
   /**
    * Pushes message into `state.chat`. Call this for messages from PEER.
    *
@@ -119,15 +131,26 @@ class ViewSessionStore {
     localStorage.setItem("sessionChat", JSON.stringify(this.state.chat));
   }
 
-  initQuestionState(question) {
-    const { questionId, title, description, category, complexity } = question;
+  initiateSessionState(session) {
+    const { questionId, title, description, category, complexity, currentLanguage, attempt } = session;
+    
+    const otherUserName = session.firstUserName === JSON.parse(localStorage.getItem("user")).username
+    ? session.secondUserName 
+    : session.firstUserName;
+
+    console.log("i am inside init session state");
+    console.log(session);
+
     this.state = {
       ...this.state,
+      language: currentLanguage,
+      otherUserName,
       questionId,
       title,
       description,
       category,
       complexity,
+      attempt,
     };
   }
 
@@ -171,19 +194,31 @@ class ViewSessionStore {
       complexity: "",
       roomId: "",
       language: "",
+      otherUserName: "",
+      attempt: new Map(),
       isGetNextQuestionLoading: false,
       chat: [],
       isPeerConnected: true,
     };
   }
 
-  async fetchQuestion(roomId) {
-    const question = await getQuestionFromSession(roomId);
+  async fetchSession(roomId) {
+    const session = await getSession(roomId);
     // question should never be null -- just a defensive measure
-    if (!question) {
+    if (!session) {
       throw new Error("Session is invalid");
     }
-    return question;
+    return session;
+  }
+
+  async changeLanguage(roomId, newLanguage, oldCode) {
+    const res = await saveAndChangeCode(roomId, newLanguage, oldCode);
+    return res;
+  }
+
+  async resetCode(roomId) {
+    const res = await resetCode(roomId);
+    return res;
   }
 
   /**
@@ -213,11 +248,11 @@ class ViewSessionStore {
       },
       // onPeerJoined
       () => {
-        this.state.isPeerConnected = true;
+        this.setIsPeerConnected(true);
       },
       // onPeerDisconnected
       () => {
-        this.state.isPeerConnected = false;
+        this.setIsPeerConnected(false);
       },
       // onSocketDisconnect (not in use)
       () => {},

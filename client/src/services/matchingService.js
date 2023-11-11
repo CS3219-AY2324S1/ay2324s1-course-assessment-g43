@@ -39,14 +39,16 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
 
   socket.on("create-session", async (sessionCreationRequest, callback) => {
 
-    const { roomId, firstUserId, secondUserId, complexity } = sessionCreationRequest;
+    const { roomId, firstUserId, firstUserName, secondUserId, secondUserName, complexity } = sessionCreationRequest;
 
     const question = await getRandomQuestionByComplexity(complexity);
     
     const sessionDetails = {
       roomId,
       firstUserId,
+      firstUserName,
       secondUserId,
+      secondUserName,
       ...question,
     };
 
@@ -54,6 +56,8 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
 
     console.log("session")
     console.log(session)
+    console.log(question)
+    console.log(sessionDetails)
     
     callback(session?.data);
   })

@@ -38,3 +38,10 @@ spec:
                 name: code-execution-service
                 port:
                   number: 5001
+          - path: /collaboration-service(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: collaboration-service
+                port:
+                  number: 8001

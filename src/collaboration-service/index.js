@@ -12,15 +12,15 @@ const setupWSConnection = require("y-websocket/bin/utils").setupWSConnection;
 const app = express();
 const port = process.env.PORT || 8001;
 const wssPort = 8002;
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.COLLABORATION_DATABASE_URL;
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
+  path: "/collaboration-socket",
 });
-const namespace = io.of("/collaboration-service");
 
 // <socket IDs, room IDs> mapping
 const socketRooms = new Map();
@@ -58,7 +58,7 @@ function getRoomOfSocket(socket) {
 }
 
 // Socket.io server
-namespace.on("connection", (socket) => {
+io.on("connection", (socket) => {
   // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;

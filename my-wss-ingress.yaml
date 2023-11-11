@@ -1,30 +1,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-socket-ingress
+  name: my-wss-ingress
   annotations:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/websocket-services: "matching-service, collaboration-service"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
     nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: "nginx"
   rules:
     - host:
       http:
         paths:
-          - path: /matching-service/?(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: matching-service
-                port:
-                  number: 5001
-          - path: /collaboration-socket/?(.*)
+          - path: /collaboration-wss(/|$)(.*)
             pathType: Prefix
             backend:
               service:
                 name: collaboration-service
                 port:
-                  number: 8001
+                  number: 8002

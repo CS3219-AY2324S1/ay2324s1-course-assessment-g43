@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 
 const basePath =
   import.meta.env.VITE_COLLABORATION_BASE_PATH || "http://localhost:8001";
-const NAMESPACE = "/collaboration-service";
+const NAMESPACE = "/collaboration-socket";
 
 // HTTP requests
 export const createSession = async (req) => {
@@ -145,7 +145,9 @@ export const initCollaborationSocket = (
   changeQuestionCallback,
   rejectRequestCallback
 ) => {
-  const socket = socketIOClient(`${basePath}${NAMESPACE}`);
+  const socket = socketIOClient(import.meta.env.VITE_MATCHING_ENDPOINT, {
+    path: NAMESPACE,
+  });
 
   socket.on("connect", () => {
     console.log("Collab Service socket connected");

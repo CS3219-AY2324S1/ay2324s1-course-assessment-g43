@@ -23,8 +23,8 @@ const init = async () => {
     cors: {
       origin: "*",
     },
+    path: "/matching-service",
   });
-  const namespace = io.of("/matching-service");
 
   app.use(cors());
   app.use(express.json());
@@ -46,7 +46,7 @@ const init = async () => {
   });
   await channel.assertQueue(HARD_QUEUE, { durable: false, messageTtl: 30000 });
 
-  namespace.on("connection", (socket) => {
+  io.on("connection", (socket) => {
     console.log(`Connection opened: ${socket.id}`);
     const timeoutId = setTimeout(() => {
       socket.disconnect(true);
@@ -67,7 +67,7 @@ const init = async () => {
       const queueName = getQueue(complexity);
 
       if (!queueName) {
-        namespace.to(socket.id).emit("match-failure", "Invalid arguments");
+        io.to(socket.id).emit("match-failure", "Invalid arguments");
         return;
       }
 
@@ -98,7 +98,7 @@ const init = async () => {
       const queueName = getQueue(complexity);
 
       if (!queueName) {
-        namespace.to(socket.id).emit("match-failure", "Invalid arguments");
+        io.to(socket.id).emit("match-failure", "Invalid arguments");
         return;
       }
 

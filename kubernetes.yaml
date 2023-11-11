@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: gcr.io/ay2324s1-cs3219-g43/client:3.0-SNAPSHOT
+          image: gcr.io/ay2324s1-cs3219-g43/client:5.3-SNAPSHOT
           ports:
             - containerPort: 5173
           env:
@@ -24,11 +24,13 @@ spec:
             - name: VITE_QUESTION_BASE_PATH
               value: /question-service/api/questions
             - name: VITE_MATCHING_ENDPOINT
-              value: http://34.126.85.193
+              value: http://34.124.197.110
             - name: VITE_HISTORY_BASE_PATH
               value: /history-service/api
             - name: VITE_CODE_EXECUTION_BASE_PATH
               value: /code-execution-service
+            - name: VITE_COLLABORATION_BASE_PATH
+              value: /collaboration-service
 ---
 apiVersion: v1
 kind: Service
@@ -58,7 +60,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: gcr.io/ay2324s1-cs3219-g43/user-service:3.0-SNAPSHOT
+          image: gcr.io/ay2324s1-cs3219-g43/user-service:5.0-SNAPSHOT
           ports:
             - containerPort: 8000
           env:
@@ -115,7 +117,7 @@ spec:
     spec:
       containers:
         - name: question-service
-          image: gcr.io/ay2324s1-cs3219-g43/question-service:3.0-SNAPSHOT
+          image: gcr.io/ay2324s1-cs3219-g43/question-service:5.0-SNAPSHOT
           ports:
             - containerPort: 3000
           env:
@@ -157,7 +159,7 @@ spec:
     spec:
       containers:
         - name: matching-service
-          image: gcr.io/ay2324s1-cs3219-g43/matching-service:3.0-SNAPSHOT
+          image: gcr.io/ay2324s1-cs3219-g43/matching-service:5.0-SNAPSHOT
           ports:
             - containerPort: 5001
           env:
@@ -197,7 +199,7 @@ spec:
     spec:
       containers:
         - name: history-service
-          image: gcr.io/ay2324s1-cs3219-g43/history-service:3.0-SNAPSHOT
+          image: gcr.io/ay2324s1-cs3219-g43/history-service:5.0-SNAPSHOT
           ports:
             - containerPort: 3001
           env:
@@ -239,7 +241,7 @@ spec:
     spec:
       containers:
         - name: code-execution-service
-          image: gcr.io/ay2324s1-cs3219-g43/code-execution-service:3.0-SNAPSHOT
+          image: gcr.io/ay2324s1-cs3219-g43/code-execution-service:5.0-SNAPSHOT
           ports:
             - containerPort: 5001
           env:
@@ -274,3 +276,49 @@ spec:
     - protocol: TCP
       port: 5001
       targetPort: 5001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaboration-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collaboration-service
+  template:
+    metadata:
+      labels:
+        app: collaboration-service
+    spec:
+      containers:
+        - name: collaboration-service
+          image: gcr.io/ay2324s1-cs3219-g43/collaboration-service:5.0-SNAPSHOT
+          ports:
+            - containerPort: 8001
+            - containerPort: 8002
+          env:
+            - name: PORT
+              value: "8001"
+            - name: COLLABORATION_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: COLLABORATION_DATABASE_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: collaboration-service
+spec:
+  selector:
+    app: collaboration-service
+  ports:
+    - name: socket
+      protocol: TCP
+      port: 8001
+      targetPort: 8001
+    - name: wss
+      protocol: TCP
+      port: 8002
+      targetPort: 8002

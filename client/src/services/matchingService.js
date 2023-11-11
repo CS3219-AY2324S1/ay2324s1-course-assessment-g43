@@ -2,7 +2,8 @@ import socketIOClient from "socket.io-client";
 import { getRandomQuestionByComplexity } from "../services/questionService";
 import { createSession } from "./collaborationService";
 
-const ENDPOINT = "http://localhost:5001/matching-service";
+const ENDPOINT =
+  import.meta.env.VITE_MATCHING_ENDPOINT || "http://localhost:5001";
 
 /**
  * Sets up a socket connection to the matching service server.
@@ -20,7 +21,7 @@ const setupSocket = (
   onSocketDisconnect
 ) => {
   console.log(ENDPOINT);
-  const socket = socketIOClient(ENDPOINT);
+  const socket = socketIOClient(ENDPOINT, { path: "/matching-service" });
 
   socket.on("connect", () => {
     console.log("socket connected");

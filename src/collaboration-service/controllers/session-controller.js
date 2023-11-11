@@ -16,6 +16,10 @@ exports.createSession = async (req, res) => {
   } = req.body;
 
   try {
+    const requestorUid = req.decodedToken?.uid;
+    if (firstUserId !== requestorUid && secondUserId !== requestorUid) {
+      return res.status(403).end();
+    }
     if (firstUserId === secondUserId) {
       return res.status(400).json({ message: "Two users cannot be identical" });
     }
@@ -69,7 +73,6 @@ exports.createSession = async (req, res) => {
   }
 };
 
-// TODO: Return 403 on unauthorized access -- check that userId is in roomId too
 exports.getSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;

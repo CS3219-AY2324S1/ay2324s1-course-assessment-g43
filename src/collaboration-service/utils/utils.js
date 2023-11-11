@@ -1,7 +1,7 @@
 exports.getDefaultAttempt = (questionTitle) => {
   const words = questionTitle.split(" ");
   let formatted = "";
-  words.forEach((word, index) => {
+  words?.forEach((word, index) => {
     if (index > 0) {
       formatted += word[0].toUpperCase() + word.slice(1).toLowerCase();
     } else {
@@ -20,3 +20,11 @@ exports.getDefaultAttempt = (questionTitle) => {
 
   return defaultAttempt;
 }
+
+exports.getUserIdsFromRoomId = (roomId) => {
+  if (!roomId) return [];
+  return roomId
+    .split("-")
+    .slice(-2)
+    .map((id) => parseInt(id, 10));
+};

@@ -15,21 +15,24 @@ exports.createAttempt = async (req, res) => {
     return res.status(201).json(attempt);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ message: "Error creating attempt" });
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: "Error creating attempt" });
+    }
+    return res.status(500).json({ message: "Error creating attempt" });
   }
-}
+};
 
 exports.getAttemptsByUserId = async (req, res) => {
   const userId = req.params.userId;
   try {
-    const attempts = await Attempt.find({ currentUserId: userId }).sort({ datetime: -1 });
-
-    if (!attempts || attempts.length === 0) {
-      return res.status(404).json({ message: `No attempts found for user with uid ${userId}` });
-    }
+    const attempts = await Attempt.find({ currentUserId: userId }).sort({
+      datetime: -1,
+    });
     return res.status(200).json(attempts);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ message: `Error getting attempts for user with uid ${userId}` });
+    return res
+      .status(500)
+      .json({ message: `Error getting attempts for user with uid ${userId}` });
   }
 };

@@ -186,7 +186,13 @@ export const ViewQuestions = observer(() => {
         </Flex>
         <TableContainer w={"100%"}>
           <Table variant="simple">
-            <TableCaption>-End of question list-</TableCaption>
+            <TableCaption>
+              -
+              {state.questions?.length !== 0
+                ? "End of question list"
+                : "No questions added yet"}
+              -
+            </TableCaption>
             <Thead>
               <Tr>
                 <Th key="id" w={"10%"}>

@@ -122,7 +122,13 @@ export const History = observer(() => {
     <PageContainer w={"100%"}>
       <TableContainer w={"100%"}>
         <Table variant="simple">
-          <TableCaption>-End of attempted questions-</TableCaption>
+          <TableCaption>
+            -
+            {attempts?.length !== 0
+              ? "End of attempted questions"
+              : "No questions attempted"}
+            -
+          </TableCaption>
           <Thead>
             <Tr>
               {tableHeaders.map((header) => (

@@ -336,11 +336,7 @@ export const CodeEditor = observer(
               variant={"filled"}
               h={"100%"}
               onChange={(e) => {
-                confirm(
-                  "Changing languages will erase any current code! Are you sure?"
-                )
-                  ? setUserLanguage(e.target.value)
-                  : {};
+                setUserLanguage(e.target.value);
               }}
               bg={"#DEE2F5"}
             >

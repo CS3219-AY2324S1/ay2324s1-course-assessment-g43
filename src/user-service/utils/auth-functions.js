@@ -1,41 +1,41 @@
 const jwt = require("jsonwebtoken");
 
-const maxAge = 3 * 24 * 60 * 60 //value in SECONDS
+const maxAge = 3 * 24 * 60 * 60; //value in SECONDS
 
 exports.createToken = (uid, usertype) => {
   let token;
   try {
-    token = jwt.sign({ uid, usertype },process.env.ACCESS_TOKEN_SECRET,{
-    expiresIn: maxAge
+    token = jwt.sign({ uid, usertype }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: maxAge,
     });
     return token;
   } catch (err) {
     console.error("Unable to create JWT. Error: ", err);
     throw err;
   }
-}
+};
 
 exports.authenticateRequest = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   if (token == null) {
     console.log("No JWT token received");
-    return res.status(401).json({ 
+    return res.status(401).json({
       message: `No authorization token received.`,
-      data: {} 
-    })
+      data: {},
+    });
   }
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
-  if (err) {
-    return res.status(401).json({ 
-      message: `Invalid authorization token received. Denied Access.`,
-      data: {} 
-    })
-  }
-  req.decodedToken = decodedToken;
-  next();
-  })
-}
+    if (err) {
+      return res.status(401).json({
+        message: `Invalid authorization token received. Denied Access.`,
+        data: {},
+      });
+    }
+    req.decodedToken = decodedToken;
+    next();
+  });
+};
 
 exports.authenticateToken = (req, res) => {
   const authHeader = req.headers["authorization"];
@@ -44,22 +44,22 @@ exports.authenticateToken = (req, res) => {
     console.log("No JWT token received");
     return res.status(401).json({
       message: `No authorization token received.`,
-      data: {}
+      data: {},
     });
   }
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedToken) => {
     if (err) {
       res.status(401).json({
         isValid: false,
         message: `Invalid authorization token received. Denied Access.`,
-        data: {}
+        data: {},
       });
     } else {
       res.status(200).json({
         isValid: true,
         message: "Token is valid",
-        data: {}
+        decodedToken,
       });
     }
   });
-}
+};

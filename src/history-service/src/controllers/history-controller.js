@@ -2,6 +2,9 @@ const Attempt = require("../models/attempt-model");
 
 exports.createAttempt = async (req, res) => {
   const { currentUserId, title, description, category, complexity } = req.body;
+  if (currentUserId !== req.decodedToken?.uid) {
+    return res.status(403).end();
+  }
   try {
     const attempt = new Attempt({
       currentUserId,
@@ -23,7 +26,10 @@ exports.createAttempt = async (req, res) => {
 };
 
 exports.getAttemptsByUserId = async (req, res) => {
-  const userId = req.params.userId;
+  const userId = parseInt(req.params.userId);
+  if (userId !== req.decodedToken?.uid) {
+    return res.status(403).end();
+  }
   try {
     const attempts = await Attempt.find({ currentUserId: userId }).sort({
       datetime: -1,

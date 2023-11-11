@@ -24,6 +24,7 @@ exports.authenticate = async (req, res, next) => {
   try {
     const verificationResponse = await verifyToken(token);
     if (verificationResponse.isValid) {
+      req.decodedToken = verificationResponse.decodedToken;
       next();
     } else {
       return res.status(401).json({

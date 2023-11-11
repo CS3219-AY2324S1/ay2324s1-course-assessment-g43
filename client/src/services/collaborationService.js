@@ -95,6 +95,21 @@ export const deleteSession = async (roomId) => {
   return res;
 };
 
+export const findSessionWithUid = async (uid) => {
+  const token = localStorage.getItem("jwt");
+  const res = await axios.get(`${basePath}/api/session/findWithUid/${uid}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  const session = res.data;
+  if (session) {
+    return session.roomId;
+  } else {
+    return;
+  }
+};
+
 // Websocket functions
 /**
  * Initialises a socket connection to the collaboration service server.

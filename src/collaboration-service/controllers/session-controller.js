@@ -205,3 +205,18 @@ exports.editSession = async (req, res) => {
   }
 }
 
+exports.findSessionWithUid = async (req, res) => {
+  try {
+    const uid = req.params.uid;
+    const session = await Session.findOne({
+      $or: [
+        { firstUserId: uid },
+        { secondUserId: uid }
+      ]
+    });
+    return res.status(200).json(session);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error fetching session" });
+  }
+}

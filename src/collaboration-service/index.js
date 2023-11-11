@@ -112,6 +112,7 @@ app.put("/api/session/:roomId/language", sessionController.editLanguage);
 app.put("/api/session/:roomId/resetCode", sessionController.resetCode);
 
 app.delete("/api/session/:roomId", sessionController.deleteSession);
+app.get("/api/session/findWithUid/:uid", sessionController.findSessionWithUid);
 
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);

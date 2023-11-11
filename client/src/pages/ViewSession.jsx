@@ -55,7 +55,8 @@ export const ViewSession = observer(() => {
         store.setChat(localStorage.getItem("sessionChat"));
       })
       .catch((err) => {
-        // If GET /session/:roomId returns 404, delete roomId from localStorage
+        // ! Important
+        // ! If GET /session/:roomId returns 404, delete roomId and other cached session info from localStorage
         // * Be careful when updating the err.message string
         if (err.message === "Session is invalid.") {
           if (localStorage.getItem("roomId") === roomId) {

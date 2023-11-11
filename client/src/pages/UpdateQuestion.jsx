@@ -71,11 +71,12 @@ export const UpdateQuestion = observer(() => {
 
   return (
     <PageContainer w={"100%"}>
-      <Stack spacing={4} w={"100%"} p={6}>
+      <Stack spacing={4} w={"100%"} p={3}>
         <Heading
           color={"#0A050E"}
           lineHeight={1.1}
           fontSize={{ base: "2xl", sm: "3xl" }}
+          fontWeight={"semibold"}
         >
           Update Question
         </Heading>
@@ -104,7 +105,7 @@ export const UpdateQuestion = observer(() => {
         </FormControl>
         <FormControl id="category">
           <FormLabel>Category</FormLabel>
-          <HStack spacing={4} paddingBottom={1}>
+          <HStack spacing={4} paddingBottom={1} maxW={"100%"}>
             {state.category?.map((category) => (
               <Tooltip key={category} label={category} bg={"#706CCC"}>
                 <Tag
@@ -131,14 +132,21 @@ export const UpdateQuestion = observer(() => {
               onChange={(e) => {
                 store.setUpdatingCat(e.target.value);
               }}
+              onKeyPress={(e) => {
+                if (e.key == "Enter") {
+                  store.addCategory();
+                }
+              }}
             />
-            <InputRightElement width="4.5rem" justify="right">
+            <InputRightElement width="2.5rem" justify="right">
               <IconButton
                 aria-label="Create category"
                 icon={<AddIcon />}
-                variant="unstyled"
-                paddingBottom={"3px"}
+                variant="ghost"
                 onClick={() => store.addCategory()}
+                _hover={{
+                  bg: "#DEE2F5",
+                }}
               />
             </InputRightElement>
           </InputGroup>

@@ -6,6 +6,7 @@ lavender:
 hex: #DEE2F5
 
 tea rose (red): (hard)
+lighter vers: #F8D0D0
 hex: #F8C1C1
 
 light coral: 
@@ -22,6 +23,9 @@ hex: #5DEFB3
 
 darker aquamarine:
 hex: #21EEA3
+
+mint: (online)
+hex: #1EBB81
 
 mindaro (yellow): (medium)
 hex: #FAF8A5
@@ -48,6 +52,9 @@ hex: #847979
 rgb: 132, 121, 121
 
 brown: #463F3A
+
+jet:
+hex: #353138
 
 text: black (purple hue)
 hex: #0A050E

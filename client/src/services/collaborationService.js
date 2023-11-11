@@ -180,7 +180,7 @@ export const initCollaborationSocket = (
     socket.disconnect();
   });
 
-  socket.on("user-connected", () => {
+  socket.on("peer-connected", () => {
     onPeerJoined?.();
   });
 

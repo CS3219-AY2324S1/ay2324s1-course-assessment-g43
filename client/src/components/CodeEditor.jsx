@@ -244,7 +244,7 @@ export const CodeEditor = observer(
                 start.column == end.column
               ) {
                 // Simple cursor
-                console.log("simple cursor");
+                // console.log("simple cursor");
                 decorationsRef.current.set([
                   {
                     range: new monaco.Range(
@@ -262,7 +262,7 @@ export const CodeEditor = observer(
                 ]);
               } else {
                 // Highlight event
-                console.log("highlight event");
+                // console.log("highlight event");
                 decorationsRef.current.set([
                   {
                     range: new monaco.Range(

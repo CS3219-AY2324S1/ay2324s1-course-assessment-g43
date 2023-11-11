@@ -22,15 +22,35 @@ const io = new Server(server, {
   },
 });
 
-// socket IDs to room IDs mapping
+// <socket IDs, room IDs> mapping
 const socketRooms = new Map();
+// <room IDs, Set<socket IDs>> mapping
+const roomToActiveSockets = new Map();
 
-function addSocketToRoom(socket, roomId) {
+/**
+ * Updates mappings when a new connection is established.
+ * Emits "peer-connected" event to the newly connected socket if peer is already in room.
+ */
+function updateMappingsOnConnection(socket, roomId) {
   socketRooms.set(socket.id, roomId);
+  if (roomToActiveSockets.has(roomId)) {
+    roomToActiveSockets.get(roomId).add(socket.id);
+    io.to(socket.id).emit("peer-connected");
+  } else {
+    roomToActiveSockets.set(roomId, new Set([socket.id]));
+  }
 }
 
-function removeSocketFromRoom(socket) {
+/**
+ * Removes mappings when a connection is disconnected.
+ */
+function updateMappingsOnDisconnection(socket) {
+  const roomdId = socketRooms.get(socket.id);
   socketRooms.delete(socket.id);
+  roomToActiveSockets.get(roomdId).delete(socket.id);
+  if (roomToActiveSockets.get(roomdId).size === 0) {
+    roomToActiveSockets.delete(roomdId);
+  }
 }
 
 function getRoomOfSocket(socket) {
@@ -42,9 +62,9 @@ io.on("connection", (socket) => {
   // Custom Events
   socket.on("join-room", (roomId, userId) => {
     if (!roomId || !userId) return;
-    addSocketToRoom(socket, roomId);
     socket.join(roomId);
-    socket.to(roomId).emit("user-connected", userId);
+    socket.to(roomId).emit("peer-connected", userId);
+    updateMappingsOnConnection(socket, roomId, io);
   });
 
   socket.on("change-language", (language) => {
@@ -54,16 +74,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("initiate-next-question", () => {
-    socket.broadcast.emit("initiate-next-question");
-  })
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("initiate-next-question");
+  });
 
   socket.on("reject-next-question", () => {
-    socket.broadcast.emit("reject-next-question");
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("reject-next-question");
   });
 
   socket.on("retrieve-next-question", () => {
-    socket.broadcast.emit("retrieve-next-question");
-  })
+    const roomId = getRoomOfSocket(socket);
+    socket.to(roomId).emit("retrieve-next-question");
+  });
 
   socket.on("leave-room", () => {
     const roomId = getRoomOfSocket(socket);
@@ -80,7 +103,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const roomId = getRoomOfSocket(socket);
     socket.to(roomId).emit("user-disconnected", socket.id);
-    removeSocketFromRoom(socket);
+    updateMappingsOnDisconnection(socket);
   });
 });
 

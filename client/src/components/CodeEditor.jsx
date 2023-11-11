@@ -16,6 +16,7 @@ import {
   Text,
   Card,
   CardBody,
+  Divider,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, ChevronUpIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -384,7 +385,11 @@ export const CodeEditor = observer(
           options={options}
         />
         <Flex justifyContent={"space-between"}>
-          <Button variant={"ghost"} onClick={onConsoleOpen}>
+          <Button
+            variant={"ghost"}
+            onClick={onConsoleOpen}
+            _hover={{ bg: "#DEE2F5" }}
+          >
             Console
             <ChevronUpIcon />
           </Button>
@@ -396,41 +401,42 @@ export const CodeEditor = observer(
           >
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerHeader borderBottomWidth="1px" fontSize={"2xl"}>
-                Testing Console
+              <DrawerHeader borderBottomWidth="1px">
+                <Text fontSize={"2xl"} fontWeight={"bold"} color={"#706CCC"}>
+                  Testing Console
+                </Text>
               </DrawerHeader>
-              <DrawerBody>
+              <DrawerBody minH={"20vh"}>
                 <Stack spacing={"2"}>
                   {resultStore.state.stdout ? (
                     <>
-                      <Text as={"b"} fontSize={"xl"} color={"gray"}>
+                      <Text fontSize={"xl"} color={"#353138"} as={"b"}>
                         Output {}
                       </Text>
-                      <Card backgroundColor={"gray.100"} variant={"filled"}>
+                      <Card backgroundColor={"#DEE2F5"} variant={"filled"}>
                         <CardBody>
-                          <Text>{resultStore.state.stdout}</Text>
+                          <Text color={"#353138"}>
+                            {resultStore.state.stdout}
+                          </Text>
                         </CardBody>
                       </Card>
                     </>
                   ) : (
-                    <Text as={"b"} fontSize={"xl"} color={"gray"}>
+                    <Text fontSize={"xl"} color={"#353138"} as={"b"}>
                       No output generated
                     </Text>
                   )}
                   {resultStore.state.status.id >= 5 &&
                   resultStore.state.status.id <= 14 ? (
                     <>
-                      <Text as={"b"} fontSize={"xl"} color={"red"}>
+                      <Divider />
+                      <Text as={"b"} fontSize={"xl"} color={"#EC4E4E"}>
                         {resultStore.state.status.description}
                       </Text>
                       {resultStore.state.stderr ? (
-                        <Card
-                          colorScheme={"red"}
-                          variant={"filled"}
-                          backgroundColor={"red.100"}
-                        >
+                        <Card variant={"filled"} bg={"#F8D0D0"}>
                           <CardBody>
-                            <Text color={"red.600"}>
+                            <Text color={"#EC4E4E"}>
                               {resultStore.state.stderr}
                             </Text>
                           </CardBody>

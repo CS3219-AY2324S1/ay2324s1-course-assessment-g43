@@ -119,7 +119,7 @@ export const ViewSession = observer(() => {
   const nextQuestionModalTitle = "Accept Request?";
 
   const nextQuestionModalBody =
-    "Your partner has requested to move on to the next question. Do you agree?";
+    "Your partner has requested to move on to the next question. Do you accept?";
 
   const NextQuestionModalFooter = observer(() => {
     const handleCancel = (e) => {
@@ -131,10 +131,26 @@ export const ViewSession = observer(() => {
 
     return (
       <>
-        <Button colorScheme="red" mr={3} onClick={handleCancel}>
+        <Button
+          bg={"#F07272"}
+          color={"white"}
+          _hover={{
+            bg: "#EC4E4E",
+          }}
+          mr={3}
+          onClick={handleCancel}
+        >
           Decline
         </Button>
-        <Button colorScheme="green" mr={3} type="submit">
+        <Button
+          bg={"#706CCC"}
+          _hover={{
+            bg: "#8F8ADD",
+          }}
+          color={"white"}
+          mr={3}
+          type="submit"
+        >
           Accept
         </Button>
       </>
@@ -215,7 +231,12 @@ export const ViewSession = observer(() => {
             <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
               {state.title}
             </Heading>
-            <HStack spacing={2} paddingBlock={3}>
+            <HStack
+              spacing={2}
+              paddingBlock={3}
+              maxW={"100%"}
+              overflowX={"auto"}
+            >
               {state.category?.map((category) => (
                 <Tooltip key={category} label={category} bg={"#706CCC"}>
                   <Tag
@@ -224,7 +245,7 @@ export const ViewSession = observer(() => {
                     variant="solid"
                     bg={"#B7B5E4"}
                     color={"white"}
-                    maxW={"60%"}
+                    maxW={"20%"}
                   >
                     <TagLabel>{category}</TagLabel>
                   </Tag>

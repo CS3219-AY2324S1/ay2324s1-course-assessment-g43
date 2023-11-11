@@ -17,6 +17,7 @@ export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendM
   const scrollStyle = {
     overflowY: "auto",
     maxHeight: "20vh",
+    minHeight: "20vh",
     maxWidth: "100%",
   };
 
@@ -45,29 +46,26 @@ export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendM
         >
           <AvatarBadge
             boxSize="1em"
-            bg={isPeerConnected ? "green.500" : "red.500"}
+            bg={isPeerConnected ? "#1EBB81" : "#F07272"}
           />
         </Avatar>
         <Flex flexDirection="column" mx="5" justify="center">
           <Text fontSize="sm" fontWeight="bold">
             {otherUserName}
           </Text>
-          <Text
-            color={isPeerConnected ? "green.500" : "red.500"}
-            fontSize={"sm"}
-          >
+          <Text color={isPeerConnected ? "#1EBB81" : "#F07272"} fontSize={"sm"}>
             {isPeerConnected ? "Online" : "Offline"}
           </Text>
         </Flex>
       </Flex>
       <Divider />
-      <Flex w={["100%", "100%"]} h="50%" flexDir="column">
+      <Flex w={["100%", "100%"]} h="45%" flexDir="column">
         <div style={scrollStyle}>
           {chat?.map((message, index) => {
             if (message.sender === "self") {
               return (
                 <Flex key={index} w="100%" justify="flex-end">
-                  <Card bg={"black"} maxW={"45%"} my="1" p="3" color="white">
+                  <Card bg={"#706CCC"} maxW={"45%"} my="1" p="3" color="white">
                     <Flex>
                       <Text maxW="100%">{message.text}</Text>
                     </Flex>
@@ -77,7 +75,7 @@ export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendM
             } else {
               return (
                 <Flex key={index} w="100%">
-                  <Card bg={"gray.100"} color="black" maxW="45%" my="1" p="3">
+                  <Card bg={"#DEE2F5"} color="black" maxW="45%" my="1" p="3">
                     <Flex>
                       <Text maxW="100%">{message.text}</Text>
                     </Flex>
@@ -106,14 +104,14 @@ export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendM
             onChange={(e) => setInputMessage(e.target.value)}
           />
           <Button
-            bg="black"
+            bg="#706CCC"
             color="white"
             borderRadius="none"
             isDisabled={!isPeerConnected}
             _hover={{
-              bg: "white",
-              color: "black",
-              border: "1px solid black",
+              bg: "#BBC2E2",
+              color: "#0A050E",
+              border: "1px #BBC2E2",
             }}
             disabled={inputMessage.trim().length <= 0}
             onClick={handleSendMessage}

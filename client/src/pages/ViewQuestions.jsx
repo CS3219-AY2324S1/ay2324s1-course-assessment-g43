@@ -129,7 +129,7 @@ export const ViewQuestions = observer(() => {
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"}>
         <Stack justifyContent={"space-between"} direction={["column", "row"]}>
-          <Text fontSize="40px" align={"start"}>
+          <Text fontSize="40px" align={"start"} fontWeight={"semibold"}>
             Questions
           </Text>
           <HStack w={"100%"} justifyContent={"flex-end"}>
@@ -268,7 +268,7 @@ const createQuestionModalTitle = "Create New Question";
 
 const CreateQuestionModalBody = observer(() => {
   return (
-    <>
+    <Stack spacing={1}>
       <FormControl id="title" isRequired>
         <FormLabel>Title</FormLabel>
         <Input
@@ -292,7 +292,7 @@ const CreateQuestionModalBody = observer(() => {
       </FormControl>
       <FormControl id="category">
         <FormLabel>Category</FormLabel>
-        <HStack spacing={4} paddingBottom={1}>
+        <HStack spacing={4} paddingBottom={1} maxW={"100%"}>
           {createQuestionStore.state.category.map((category) => (
             <Tooltip key={category} label={category} bg={"#706CCC"}>
               <Tag
@@ -319,13 +319,20 @@ const CreateQuestionModalBody = observer(() => {
             onChange={(e) => {
               createQuestionStore.setCreatingCat(e.target.value);
             }}
+            onKeyPress={(e) => {
+              if (e.key == "Enter") {
+                createQuestionStore.addCategory();
+              }
+            }}
           />
-          <InputRightElement width="4.5rem" justify="right">
+          <InputRightElement width="2.5rem" justify="right">
             <IconButton
               aria-label="Create category"
               icon={<AddIcon />}
-              variant={"unstyled"}
-              paddingBottom={"3px"}
+              variant="ghost"
+              _hover={{
+                bg: "#DEE2F5",
+              }}
               onClick={() => createQuestionStore.addCategory()}
             />
           </InputRightElement>
@@ -345,7 +352,7 @@ const CreateQuestionModalBody = observer(() => {
           <option>Hard</option>
         </Select>
       </FormControl>
-    </>
+    </Stack>
   );
 });
 
@@ -423,7 +430,15 @@ const ViewQuestionDetailsModalFooter = observer(() => {
     });
   };
   return (
-    <>
+    <HStack spacing={1}>
+      <Button
+        variant="ghost"
+        _hover={{ bg: "#F8C1C1" }}
+        color={"#EC4E4E"}
+        type="submit"
+      >
+        Delete Question
+      </Button>
       <Button
         bg={"#706CCC"}
         _hover={{
@@ -439,14 +454,6 @@ const ViewQuestionDetailsModalFooter = observer(() => {
       >
         Update Question
       </Button>
-      <Button
-        variant="ghost"
-        _hover={{ bg: "#F8C1C1" }}
-        color={"#EC4E4E"}
-        type="submit"
-      >
-        Delete Question
-      </Button>
-    </>
+    </HStack>
   );
 });

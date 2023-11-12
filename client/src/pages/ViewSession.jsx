@@ -93,7 +93,7 @@ export const ViewSession = observer(() => {
       category: store.state.category,
       complexity: store.state.complexity,
       attemptDetails: {
-        code: "need to get updated code from CodeEditor Component", //CodeEditor.getCodeEditorValue
+        code: store.state.code,
         language: store.state.language,
       }
     };
@@ -273,6 +273,7 @@ export const ViewSession = observer(() => {
                 otherUsername={state.otherUserName}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
                 initialTemplate={state.attempt}
+                code={state.code}
                 isGetNextQuestionLoading={state.isGetNextQuestionLoading}
               />
             )}{" "}

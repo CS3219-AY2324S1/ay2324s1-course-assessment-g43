@@ -29,6 +29,7 @@ class ViewSessionStore {
     language: "",
     otherUserName: "",
     isGetNextQuestionLoading: false,
+    code: "",
     attempt: new Map(),
 
     /*
@@ -75,6 +76,10 @@ class ViewSessionStore {
     if (!language || language === this.state.language) return;
     this.state.language = language;
     notifyPeerLanguageChange(this.socket, language.toLowerCase());
+  }
+  
+  setCode(code) {
+    this.state.code = code;
   }
 
   setIsGetQuestionLoading(isLoading) {
@@ -204,6 +209,7 @@ class ViewSessionStore {
       roomId: "",
       language: "",
       otherUserName: "",
+      code: "",
       attempt: new Map(),
       isGetNextQuestionLoading: false,
       chat: [],

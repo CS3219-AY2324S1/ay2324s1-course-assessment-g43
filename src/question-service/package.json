@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "PEERPREP_ENV=${PEERPREP_ENV:-local} nodemon index.js",
+    "dev": "cross-env PEERPREP_ENV=$PEERPREP_ENV nodemon index.js",
     "test": "jest"
   },
   "author": "",
@@ -21,6 +21,7 @@
     "mongoose": "^7.5.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "mockingoose": "^2.16.2",
     "nodemon": "^3.0.1"

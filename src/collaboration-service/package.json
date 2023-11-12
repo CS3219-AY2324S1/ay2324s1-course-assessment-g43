@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "PEERPREP_ENV=${PEERPREP_ENV:-local} nodemon index.js",
+    "dev": "cross-env PEERPREP_ENV=$PEERPREP_ENV nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -22,6 +22,7 @@
     "y-websocket": "^1.5.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.0.1"
   }
 }

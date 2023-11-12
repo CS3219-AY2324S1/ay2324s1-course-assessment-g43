@@ -66,14 +66,6 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  if (req.params.id === "undefined") {
-    return res.status(403).send({
-      message:
-        "Forbidden: user ID cannot be undefined, please login to access this content",
-      data: {},
-    });
-  }
-
   const id = parseInt(req.params.id);
 
   try {

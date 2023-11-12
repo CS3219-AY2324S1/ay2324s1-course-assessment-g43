@@ -145,7 +145,7 @@ export const initCollaborationSocket = (
   changeQuestionCallback,
   rejectRequestCallback
 ) => {
-  const socket = socketIOClient(import.meta.env.VITE_MATCHING_ENDPOINT, {
+  const socket = socketIOClient(basePath, {
     path: NAMESPACE,
   });
 

@@ -214,12 +214,14 @@ export const History = observer(() => {
               -
             </TableCaption>
             <Thead>
+              <Th display={{ base: "flex", md: "none" }}>
+                Scroll right for more
+              </Th>
+            </Thead>
+            <Thead>
               <Tr>
                 {tableHeaders.map((header) => (
-                  <Th
-                    key={header.key}
-                    w={header.key == "title" ? "30%" : "10%"}
-                  >
+                  <Th key={header.key} w={header.key == "title" ? "65%" : ""}>
                     {header.label}
                   </Th>
                 ))}
@@ -255,7 +257,7 @@ export const History = observer(() => {
                           bg: "#DEE2F5",
                         }}
                         onClick={() => handleOpenDetailsModal(attempt)}
-                        display={{ base: "flex", md: "none" }}
+                        display={{ base: "flex", lg: "none" }}
                         icon={<ViewIcon />}
                         //dunno what icon to put
                       />
@@ -265,7 +267,7 @@ export const History = observer(() => {
                           bg: "#DEE2F5",
                         }}
                         onClick={() => handleOpenDetailsModal(attempt)}
-                        display={{ base: "none", md: "flex" }}
+                        display={{ base: "none", lg: "flex" }}
                       >
                         View Details
                       </Button>
@@ -277,7 +279,7 @@ export const History = observer(() => {
                           bg: "#DEE2F5",
                         }}
                         onClick={() => handleOpenCodeModal(attempt)}
-                        display={{ base: "flex", md: "none" }}
+                        display={{ base: "flex", lg: "none" }}
                         icon={<EditIcon />}
                       />
                       <Button
@@ -286,7 +288,7 @@ export const History = observer(() => {
                           bg: "#DEE2F5",
                         }}
                         onClick={() => handleOpenCodeModal(attempt)}
-                        display={{ base: "none", md: "flex" }}
+                        display={{ base: "none", lg: "flex" }}
                       >
                         View Code
                       </Button>

@@ -26,9 +26,6 @@ export const ViewUser = observer(() => {
   };
 
   const deleteUser = () => {
-    window.confirm(
-      "Are you sure you want to delete your account? This action is irreversible."
-    );
     toast.promise(store.deleteUser(userId), {
       success: () => {
         localStorage.removeItem("user");
@@ -92,7 +89,13 @@ export const ViewUser = observer(() => {
                 bg: "#EC4E4E",
               }}
               w="full"
-              onClick={deleteUser}
+              onClick={() =>
+                window.confirm(
+                  "Are you sure you want to delete your account? This action is irreversible."
+                )
+                  ? deleteUser
+                  : {}
+              }
             >
               Delete your profile
             </Button>

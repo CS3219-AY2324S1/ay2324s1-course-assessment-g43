@@ -1,5 +1,5 @@
 const Pool = require("pg").Pool;
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const host = process.env.PSQL_HOST;
 const password = process.env.PSQL_PASSWORD;

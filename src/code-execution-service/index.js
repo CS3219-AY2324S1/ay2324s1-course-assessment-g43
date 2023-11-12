@@ -33,5 +33,6 @@ const codeExecutionRouter = require("./src/routes/code-execution-routes");
 app.use("/api", codeExecutionRouter);
 
 app.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`Code execution is running on port ${port}`);
 });

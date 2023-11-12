@@ -1,6 +1,6 @@
 const axios = require("axios");
 const jwtDecode = require("jwt-decode");
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const basePath = process.env.USER_BASE_PATH || "http://localhost:8000/api";
 

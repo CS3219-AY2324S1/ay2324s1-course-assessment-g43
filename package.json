@@ -20,7 +20,7 @@
     "dev:collaboration-service": "cd ./src/collaboration-service && npm run dev",
     "dev:code-execution-service": "cd ./src/code-execution-service && npm run dev",
     "dev:history-service": "cd ./src/history-service && npm run dev",
-    "dev-all": "concurrently -c \"red,green,yellow,blue,magenta,cyan,gray\" \"npm:dev:*\""
+    "dev-all": "concurrently -c \"red,green,yellow,blue,magenta,cyan,gray\" \"PEERPREP_ENV=$PEERPREP_ENV\" \"npm:dev:*\""
   },
   "repository": {
     "type": "git",

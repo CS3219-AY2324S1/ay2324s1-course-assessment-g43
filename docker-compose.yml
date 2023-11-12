@@ -5,6 +5,10 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "5173:5173"
     volumes:
@@ -16,6 +20,10 @@ services:
     build:
       context: ./src/question-service
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "3000:3000"
     volumes:
@@ -26,6 +34,10 @@ services:
     build:
       context: ./src/user-service
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "8000:8000"
     volumes:
@@ -35,6 +47,10 @@ services:
     build:
       context: ./src/matching-service
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "5001:5001"
     volumes:
@@ -43,6 +59,10 @@ services:
     build:
       context: ./src/history-service
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "3001:3001"
     volumes:
@@ -51,6 +71,10 @@ services:
     build:
       context: ./src/code-execution-service
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "5002:5002"
     volumes:
@@ -59,6 +83,10 @@ services:
     build:
       context: ./src/collaboration-service
       dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
     ports:
       - "8001:8001"
       - "8002:8002"

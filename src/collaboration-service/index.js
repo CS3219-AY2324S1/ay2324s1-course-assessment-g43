@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const cors = require("cors");
 const express = require("express");
@@ -126,6 +126,7 @@ mongoose.connect(databaseUrl, {
 app.use("/api", require("./routes/session-routes"));
 
 server.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`Listening on port ${port}`);
 });
 server.on("error", console.error);

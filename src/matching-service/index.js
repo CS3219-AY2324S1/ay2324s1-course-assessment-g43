@@ -12,7 +12,7 @@ const {
 } = require("./constants.js");
 const { getQueue, listenToQueue, listenToReplies } = require("./matching.js");
 
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -128,6 +128,7 @@ const init = async () => {
   listenToReplies(channel, io);
 
   server.listen(port, () => {
+    console.log(`Environment: ${process.env.PEERPREP_ENV}`);
     console.log(`listening on port ${port}`);
   });
 };

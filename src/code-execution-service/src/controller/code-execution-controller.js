@@ -1,5 +1,5 @@
-const axios = require('axios');
-require('dotenv').config();
+const axios = require("axios");
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const baseURL = process.env.REACT_APP_RAPID_API_URL;
 const host = process.env.REACT_APP_RAPID_API_HOST;
@@ -7,12 +7,12 @@ const key = process.env.REACT_APP_RAPID_API_KEY;
 
 exports.getLanguages = async (req, res) => {
   const options = {
-    method: 'GET',
+    method: "GET",
     url: baseURL + "/languages",
     headers: {
-      'X-RapidAPI-Key': key,
-      'X-RapidAPI-Host': host
-    }
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": host,
+    },
   };
 
   try {
@@ -20,8 +20,8 @@ exports.getLanguages = async (req, res) => {
     console.log(response.data);
     return res.status(200).json({
       message: "Languages retrieved",
-      data: { languages : response.data}
-    })
+      data: { languages: response.data },
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send({
@@ -29,27 +29,27 @@ exports.getLanguages = async (req, res) => {
       data: {},
     });
   }
-}
+};
 
 exports.getLanguage = async (req, res) => {
   const id = parseInt(req.params.id);
 
   const options = {
-    method: 'GET',
-    url:  baseURL + '/languages/' + id,
+    method: "GET",
+    url: baseURL + "/languages/" + id,
     headers: {
-      'X-RapidAPI-Key': key,
-      'X-RapidAPI-Host': host
-    }
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": host,
+    },
   };
-  
+
   try {
     const response = await axios.request(options);
     console.log(response.data);
     return res.status(200).json({
       message: "Language retrieved",
-      data: { language : response.data}
-    })
+      data: { language: response.data },
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send({
@@ -57,25 +57,25 @@ exports.getLanguage = async (req, res) => {
       data: {},
     });
   }
-}
+};
 
 exports.getStatuses = async (req, res) => {
   const options = {
-    method: 'GET',
+    method: "GET",
     url: baseURL + "/statuses",
     headers: {
-      'X-RapidAPI-Key': key,
-      'X-RapidAPI-Host': host
-    }
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": host,
+    },
   };
-  
+
   try {
     const response = await axios.request(options);
     console.log(response.data);
     return res.status(200).json({
       message: "Statuses retrieved",
-      data: { Statuses : response.data}
-    })
+      data: { Statuses: response.data },
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send({
@@ -83,48 +83,47 @@ exports.getStatuses = async (req, res) => {
       data: {},
     });
   }
-}
+};
 
 exports.createSubmission = async (req, res) => {
-  const {language_id, source_code} = req.body;
+  const { language_id, source_code } = req.body;
 
   // if (!language_id || !source_code || !stdin) {
   if (!language_id || !source_code) {
     return res.status(400).json({
-      message:
-        "Language ID and source code are necessary for a submission.",
+      message: "Language ID and source code are necessary for a submission.",
       data: {},
     });
   }
 
   // Encode the source code as a base64 string
-  const base64SourceCode = Buffer.from(source_code).toString('base64');
+  const base64SourceCode = Buffer.from(source_code).toString("base64");
 
   const options = {
-    method: 'POST',
+    method: "POST",
     url: baseURL + "/submissions",
     params: {
-      base64_encoded: 'true',
-      fields: '*'
+      base64_encoded: "true",
+      fields: "*",
     },
     headers: {
-      'content-type': 'application/json',
-      'Content-Type': 'application/json',
-      'X-RapidAPI-Key': key,
-      'X-RapidAPI-Host': host,
+      "content-type": "application/json",
+      "Content-Type": "application/json",
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": host,
     },
     data: {
-      "source_code": base64SourceCode,
-      "language_id": language_id,
-    }
+      source_code: base64SourceCode,
+      language_id: language_id,
+    },
   };
 
   try {
     const response = await axios.request(options);
     console.log(response.data);
     return res.status(200).json({
-      message: 'Successful submission',
-      data: {token : response.data.token},
+      message: "Successful submission",
+      data: { token: response.data.token },
     });
   } catch (error) {
     console.error(error);
@@ -133,31 +132,30 @@ exports.createSubmission = async (req, res) => {
       data: {},
     });
   }
-}
+};
 
 exports.getSubmissionResult = async (req, res) => {
   const token = req.params.token;
   console.log(token);
   if (!token) {
     return res.status(400).json({
-      message:
-        "A submission token is required to retrieve results.",
+      message: "A submission token is required to retrieve results.",
       data: {},
     });
   }
   const options = {
-    method: 'GET',
+    method: "GET",
     url: baseURL + "/submissions/" + token,
     params: {
-      base64_encoded: 'true',
-      fields: '*'
+      base64_encoded: "true",
+      fields: "*",
     },
     headers: {
-      'X-RapidAPI-Key': key,
-      'X-RapidAPI-Host': host
-    }
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": host,
+    },
   };
-  
+
   try {
     const response = await axios.request(options);
     console.log(response.data);
@@ -171,11 +169,11 @@ exports.getSubmissionResult = async (req, res) => {
     }
     const status = response.data.status;
     return res.status(200).json({
-      message: 'Successful retrieval of submission',
-      data: { 
+      message: "Successful retrieval of submission",
+      data: {
         stdout,
         stderr,
-        status
+        status,
       },
     });
   } catch (error) {
@@ -185,4 +183,4 @@ exports.getSubmissionResult = async (req, res) => {
       data: {},
     });
   }
-}
+};

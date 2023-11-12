@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 const cors = require("cors");
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
@@ -49,5 +49,6 @@ mongoose.connect(databaseUrl, {
 app.use("/api", require("./src/routes/question-routes"));
 
 app.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`Question service listening on port ${port}`);
 });

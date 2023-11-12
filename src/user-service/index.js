@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 
@@ -35,4 +35,11 @@ app.use(express.json());
 //Routes
 app.use("/api", userRouter);
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.get("/api/hello", (req, res) => {
+  res.send("Hello world");
+});
+
+app.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
+  console.log(`Listening on port ${port}`);
+});

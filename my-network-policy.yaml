@@ -10,4 +10,4 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: my-nginx-controller-ingress-nginx-controller-68c8d6798c-wvjft # This label should match the Nginx Ingress Controller pod's label.
+              app: my-nginx-controller-ingress-nginx-controller-68c8d6798c-5g5n9 # This label should match the Nginx Ingress Controller pod's label.

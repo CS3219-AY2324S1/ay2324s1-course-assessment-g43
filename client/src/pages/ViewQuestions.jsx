@@ -323,7 +323,9 @@ const CreateQuestionModalBody = observer(() => {
             }}
             onKeyPress={(e) => {
               if (e.key == "Enter") {
-                createQuestionStore.addCategory();
+                createQuestionStore.hasCategory()
+                  ? alert("Duplicated categories not allowed!")
+                  : createQuestionStore.addCategory();
               }
             }}
           />
@@ -335,7 +337,11 @@ const CreateQuestionModalBody = observer(() => {
               _hover={{
                 bg: "#DEE2F5",
               }}
-              onClick={() => createQuestionStore.addCategory()}
+              onClick={() =>
+                createQuestionStore.hasCategory()
+                  ? alert("Duplicated categories not allowed!")
+                  : createQuestionStore.addCategory()
+              }
             />
           </InputRightElement>
         </InputGroup>

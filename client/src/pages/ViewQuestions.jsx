@@ -32,7 +32,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon, ViewIcon } from "@chakra-ui/icons";
-import { observer } from "mobx-react";
+import { PropTypes, observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -125,7 +125,7 @@ export const ViewQuestions = observer(() => {
     modalComponentStore.openModal(
       createQuestionModalTitle,
       <CreateQuestionModalBody />,
-      <CreateQuestionModalFooter />,
+      <CreateQuestionModalFooter createQuestion={createQuestion} />,
       createQuestion,
       () => createQuestionStore.resetState()
     );
@@ -358,7 +358,7 @@ const CreateQuestionModalBody = observer(() => {
   );
 });
 
-const CreateQuestionModalFooter = () => {
+const CreateQuestionModalFooter = (props) => {
   return (
     <Button
       bg={"#706CCC"}
@@ -367,11 +367,15 @@ const CreateQuestionModalFooter = () => {
       }}
       color={"white"}
       mr={3}
-      type="submit"
+      onClick={props.createQuestion}
     >
       Create Question
     </Button>
   );
+};
+
+CreateQuestionModalFooter.propTypes = {
+  createQuestion: PropTypes.func,
 };
 
 const ViewQuestionDetailsModalTitle = observer(() => {

@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt");
 const authFunctions = require("../utils/auth-functions.js");
 
 exports.createUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  let { username, email, password } = req.body;
+  username = username?.trim();
+  email = email?.trim();
 
   if (!username || !email || !password) {
     return res.status(400).json({
@@ -93,12 +95,13 @@ exports.getUser = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email?.trim();
   const BLANK_USERNAME = "";
 
   if (!email || !password) {
     return res.status(400).json({
-      message: "Email and password are necessary to register an account.",
+      message: "Email and password are necessary to login.",
       data: {},
     });
   }
@@ -160,7 +163,15 @@ exports.updateProfile = async (req, res) => {
   if (id !== decodedToken.uid) {
     return res.status(403).end();
   }
-  const { username, email } = req.body;
+  let { username, email } = req.body;
+  username = username?.trim();
+  email = email?.trim();
+  if (!username || !email) {
+    return res.status(400).json({
+      message: "Username and email cannot be blank.",
+      data: {},
+    });
+  }
 
   try {
     const usersOtherThanId = await pool.query(

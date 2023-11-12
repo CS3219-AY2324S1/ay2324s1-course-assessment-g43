@@ -30,7 +30,7 @@ spec:
             - name: VITE_HISTORY_BASE_PATH
               value: /history-service/api
             - name: VITE_CODE_EXECUTION_BASE_PATH
-              value: /code-execution-service
+              value: /code-execution-service/api
             - name: VITE_COLLABORATION_BASE_PATH
               value: /collaboration-service
             - name: VITE_COLLABORATION_WS_ORIGIN
@@ -255,12 +255,12 @@ spec:
         - name: code-execution-service
           image: gcr.io/ay2324s1-cs3219-g43/code-execution-service:6.0-SNAPSHOT
           ports:
-            - containerPort: 5001
+            - containerPort: 5002
           env:
             - name: PEERPREP_ENV
               value: production
             - name: PORT
-              value: "5001"
+              value: "5002"
             - name: USER_BASE_PATH
               value: http://user-service:8000/api
             - name: REACT_APP_RAPID_API_HOST
@@ -288,8 +288,8 @@ spec:
     app: code-execution-service
   ports:
     - protocol: TCP
-      port: 5001
-      targetPort: 5001
+      port: 5002
+      targetPort: 5002
 ---
 apiVersion: apps/v1
 kind: Deployment

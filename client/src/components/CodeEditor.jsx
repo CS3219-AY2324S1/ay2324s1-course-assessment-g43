@@ -59,6 +59,13 @@ export const CodeEditor = observer(
     const [isRunLoading, setRunLoading] = useState(false);
     const [isPressed, setPressed] = useState(false);
 
+    const getCodeEditorValue = () => { // fail
+      if (editorRef.current) {
+        return editorRef.current.getCodeEditorValue();
+      }
+      return "failed to retrieve";
+    }; 
+
     useEffect(() => {
       // This changes when USER changes language
       // console.log("userLanguage changed to: ", userLanguage);

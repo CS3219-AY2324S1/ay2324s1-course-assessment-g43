@@ -92,6 +92,10 @@ export const ViewSession = observer(() => {
       description: store.state.description,
       category: store.state.category,
       complexity: store.state.complexity,
+      attemptDetails: {
+        code: "need to get updated code from CodeEditor Component", //CodeEditor.getCodeEditorValue
+        language: store.state.language,
+      }
     };
     console.log(attempt);
     await historyStore.createAttempt(attempt);

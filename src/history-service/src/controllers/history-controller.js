@@ -1,7 +1,7 @@
 const Attempt = require("../models/attempt-model");
 
 exports.createAttempt = async (req, res) => {
-  const { currentUserId, title, description, category, complexity } = req.body;
+  const { currentUserId, title, description, category, complexity, attemptDetails } = req.body;
   try {
     const attempt = new Attempt({
       currentUserId,
@@ -9,6 +9,7 @@ exports.createAttempt = async (req, res) => {
       description,
       category,
       complexity,
+      attemptDetails
     });
     await attempt.validate();
     await attempt.save();

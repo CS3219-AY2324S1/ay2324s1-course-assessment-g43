@@ -67,7 +67,7 @@ exports.createSession = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
     return res.status(400).json({ message: "Error creating session" });
   }
@@ -105,7 +105,7 @@ exports.getLanguage = async (req, res) => {
       .json({ language: currentLanguage, code: currentCode });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: "Error fetching session" });
+    return res.status(500).json({ message: "Error getting language" });
   }
 };
 
@@ -133,9 +133,9 @@ exports.editLanguage = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
-    return res.status(500).json({ message: "Error fetching session" });
+    return res.status(500).json({ message: "Error resetting language" });
   }
 };
 
@@ -163,9 +163,9 @@ exports.resetCode = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
-    return res.status(500).json({ message: "Error fetching session" });
+    return res.status(500).json({ message: "Error resetting code" });
   }
 };
 
@@ -202,7 +202,7 @@ exports.editSession = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
     return res.status(500).json({ message: "Error editing session details" });
   }

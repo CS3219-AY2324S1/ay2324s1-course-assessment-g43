@@ -12,10 +12,10 @@ exports.getDefaultAttempt = (questionTitle) => {
   const functionName = formatted;
 
   const defaultAttempt = {
-    "cpp": `#include <iostream>\n\n//the following is a sample function template\n//change your function type below if necessary\nvoid ${functionName}(/*define your params here*/) {\n\t//your function implementation goes here\t\n};\n\nint main() {\n\t//print your output here to check. e.g:\n\t//std::cout << YOUR-OUTPUT-HERE << std::endl;\n}`,
-    "java": `//the following is a sample function template\nclass Main {\n\t//change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t//your function implementation goes here\t\n\t};\n\n\tpublic static void main(String[] args) {\n\t//print your output here to check. e.g:\n\t//System.out.println(YOUR-OUTPUT-HERE);\n\t}\n}`,
-    "python": `#the following is a sample function template\n#define your params here\ndef ${functionName}():\n\t#your function implementation goes here\n\n#print your output here to check. e.g below:\n#print(YOUR-OUTPUT-HERE)`,
-    "javascript": `//the following is a sample function template\nconst ${functionName} = (/*define your params here*/) => {\n\t//your function implementation goes here\n}\n\n//print your output here to check. e.g:\n//console.log(YOUR-OUTPUT-HERE);`,
+    "cpp": `#include <iostream>\n\n//the following is only a sample function template, you may not have to use it\n//change your function type below if necessary\nvoid ${functionName}(/*define your params here*/) {\n\t//your function implementation goes here\t\n};\n\nint main() {\n\t//print your output here to check. e.g:\n\t//std::cout << YOUR-OUTPUT-HERE << std::endl;\n}`,
+    "java": `//the following is only a sample function template, you may not have to use it\nclass Main {\n\t//change your function type below if necessary\n\tpublic static void ${functionName}(/*define your params here*/) {\n\t\t//your function implementation goes here\t\n\t};\n\n\tpublic static void main(String[] args) {\n\t//print your output here to check. e.g:\n\t//System.out.println(YOUR-OUTPUT-HERE);\n\t}\n}`,
+    "python": `#the following is only a sample function template, you may not have to use it\n#define your params here\ndef ${functionName}():\n\t#your function implementation goes here\n\n#print your output here to check. e.g below:\n#print(YOUR-OUTPUT-HERE)`,
+    "javascript": `//the following is only a sample function template, you may not have to use it\nconst ${functionName} = (/*define your params here*/) => {\n\t//your function implementation goes here\n}\n\n//print your output here to check. e.g:\n//console.log(YOUR-OUTPUT-HERE);`,
   };
 
   return defaultAttempt;

@@ -120,6 +120,28 @@ export const History = observer(() => {
   const ViewAttemptCodeModalBody = observer(() => {
     const sampleCode = "print(Here is some code.)";
     const sampleLanguage = "python";
+
+    const options = {
+      autoIndent: "full",
+      contextmenu: true,
+      fontFamily: "monospace",
+      fontSize: 15,
+      lineHeight: 22,
+      hideCursorInOverviewRuler: false,
+      matchBrackets: "always",
+      minimap: {
+        enabled: true,
+      },
+      scrollbar: {
+        horizontalSliderSize: 4,
+        verticalSliderSize: 18,
+      },
+      selectOnLineNumbers: true,
+      roundedSelection: false,
+      readOnly: true,
+      cursorStyle: "line",
+      automaticLayout: true,
+    };
     return (
       <Editor
         height={"50vh"}
@@ -127,6 +149,7 @@ export const History = observer(() => {
         theme={"vs-dark"}
         value={sampleCode}
         language={sampleLanguage}
+        options={options}
       />
     );
   });

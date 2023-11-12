@@ -9,6 +9,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { WebSocketServer } = require("ws");
 const setupWSConnection = require("y-websocket/bin/utils").setupWSConnection;
+const auth = require("./middleware/auth.js");
 
 const app = express();
 const port = process.env.PORT || 8001;
@@ -123,19 +124,19 @@ mongoose.connect(databaseUrl, {
   useUnifiedTopology: true,
 });
 
-app.post("/api/session", sessionController.createSession);
-app.get("/api/session/:roomId", sessionController.getSession);
+app.post("/api/session", auth.authenticate, sessionController.createSession);
+app.get("/api/session/:roomId", auth.authenticate, sessionController.getSession);
 
-app.get("/api/session/:roomId/language", sessionController.getLanguage);
+app.get("/api/session/:roomId/language", auth.authenticate, sessionController.getLanguage);
 
-app.put("/api/session/:roomId", sessionController.editSession);
+app.put("/api/session/:roomId", auth.authenticate, sessionController.editSession);
 
-app.put("/api/session/:roomId/language", sessionController.editLanguage);
+app.put("/api/session/:roomId/language", auth.authenticate, sessionController.editLanguage);
 
-app.put("/api/session/:roomId/resetCode", sessionController.resetCode);
+app.put("/api/session/:roomId/resetCode", auth.authenticate, sessionController.resetCode);
 
-app.delete("/api/session/:roomId", sessionController.deleteSession);
-app.get("/api/session/findWithUid/:uid", sessionController.findSessionWithUid);
+app.delete("/api/session/:roomId", auth.authenticate, sessionController.deleteSession);
+app.get("/api/session/findWithUid/:uid", auth.authenticate, sessionController.findSessionWithUid);
 
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);

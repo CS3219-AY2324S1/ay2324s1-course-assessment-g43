@@ -23,7 +23,7 @@ exports.createQuestion = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error creating question" });
+      return res.status(400).json({ message: err.message });
     }
     // MongoServerError: E11000 duplicate key error
     if (err.code === 11000) {
@@ -82,7 +82,7 @@ exports.updateQuestion = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error updating question" });
+      return res.status(400).json({ message: err.message });
     }
     // MongoServerError: E11000 duplicate key error
     if (err.code === 11000) {

@@ -25,6 +25,10 @@ exports.createQuestion = async (req, res) => {
     if (err.name === "ValidationError") {
       return res.status(400).json({ message: "Error creating question" });
     }
+    // MongoServerError: E11000 duplicate key error
+    if (err.code === 11000) {
+      return res.status(409).json({ message: "Question already exists" });
+    }
     return res.status(500).json({ message: "Error creating question" });
   }
 };
@@ -79,6 +83,10 @@ exports.updateQuestion = async (req, res) => {
     console.log(err);
     if (err.name === "ValidationError") {
       return res.status(400).json({ message: "Error updating question" });
+    }
+    // MongoServerError: E11000 duplicate key error
+    if (err.code === 11000) {
+      return res.status(409).json({ message: "Question already exists" });
     }
     return res.status(500).json({ message: "Error updating question" });
   }

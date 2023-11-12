@@ -118,9 +118,6 @@ export const History = observer(() => {
   });
 
   const ViewAttemptCodeModalBody = observer(() => {
-    const sampleCode = "print(Here is some code.)";
-    const sampleLanguage = "python";
-
     const options = {
       autoIndent: "full",
       contextmenu: true,
@@ -147,8 +144,8 @@ export const History = observer(() => {
         height={"50vh"}
         width={"100%"}
         theme={"vs-dark"}
-        value={sampleCode}
-        language={sampleLanguage}
+        value={state.selectedAttempt.attemptDetails.code}
+        language={state.selectedAttempt.attemptDetails.language}
         options={options}
       />
     );

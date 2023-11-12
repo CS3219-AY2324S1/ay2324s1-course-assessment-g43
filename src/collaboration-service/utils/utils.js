@@ -2,6 +2,10 @@ exports.getDefaultAttempt = (questionTitle) => {
   const words = questionTitle.split(" ");
   let formatted = "";
   words.forEach((word, index) => {
+    if (word.length === 0) {
+      return;
+    }
+    
     if (index > 0) {
       formatted += word[0].toUpperCase() + word.slice(1).toLowerCase();
     } else {

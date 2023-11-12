@@ -48,6 +48,10 @@ mongoose.connect(databaseUrl, {
 
 app.use("/api", require("./src/routes/question-routes"));
 
+app.get("/api/hello", (req, res) => {
+  res.send("Hello world");
+});
+
 app.listen(port, () => {
   console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`Question service listening on port ${port}`);

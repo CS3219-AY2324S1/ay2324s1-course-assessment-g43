@@ -121,6 +121,16 @@ export const ViewQuestions = observer(() => {
     );
   };
 
+  const handleOpenCreateModal = () => {
+    modalComponentStore.openModal(
+      createQuestionModalTitle,
+      <CreateQuestionModalBody />,
+      <CreateQuestionModalFooter />,
+      createQuestion,
+      () => createQuestionStore.resetState()
+    );
+  };
+
   useEffect(() => {
     store.getAllQuestions();
   }, []);
@@ -172,15 +182,7 @@ export const ViewQuestions = observer(() => {
               _hover={{
                 bg: "#BBC2E2",
               }}
-              onClick={() =>
-                modalComponentStore.openModal(
-                  createQuestionModalTitle,
-                  <CreateQuestionModalBody />,
-                  <CreateQuestionModalFooter />,
-                  createQuestion,
-                  () => createQuestionStore.resetState()
-                )
-              }
+              onClick={() => handleOpenCreateModal()}
             />
           </HStack>
         </Flex>

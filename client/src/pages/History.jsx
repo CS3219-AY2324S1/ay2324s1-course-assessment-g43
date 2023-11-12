@@ -31,8 +31,9 @@ import { PageContainer } from "../components/PageContainer";
 import { viewHistoryStore } from "../stores/viewHistoryStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { useEffect } from "react";
-import { SearchIcon, ViewIcon } from "@chakra-ui/icons";
+import { EditIcon, SearchIcon, ViewIcon } from "@chakra-ui/icons";
 import { getColorFromComplexity } from "../utils/stylingUtils";
+import { Editor } from "@monaco-editor/react";
 
 export const History = observer(() => {
   const store = viewHistoryStore;
@@ -44,7 +45,7 @@ export const History = observer(() => {
 
   const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
 
-  const handleOpenModal = (attempt) => {
+  const handleOpenDetailsModal = (attempt) => {
     store.setSelectedAttempt(attempt);
     modalComponentStore.openModal(
       <ViewAttemptDetailsModalTitle />,
@@ -103,6 +104,56 @@ export const History = observer(() => {
     );
   });
 
+  const handleOpenCodeModal = (attempt) => {
+    store.setSelectedAttempt(attempt);
+    modalComponentStore.openModal(
+      <ViewAttemptCodeModalTitle />,
+      <ViewAttemptCodeModalBody />,
+      () => store.setSelectedAttempt({})
+    );
+  };
+
+  const ViewAttemptCodeModalTitle = observer(() => {
+    return <div>{state.selectedAttempt.title}</div>;
+  });
+
+  const ViewAttemptCodeModalBody = observer(() => {
+    const sampleCode = "print(Here is some code.)";
+    const sampleLanguage = "python";
+
+    const options = {
+      autoIndent: "full",
+      contextmenu: true,
+      fontFamily: "monospace",
+      fontSize: 15,
+      lineHeight: 22,
+      hideCursorInOverviewRuler: false,
+      matchBrackets: "always",
+      minimap: {
+        enabled: true,
+      },
+      scrollbar: {
+        horizontalSliderSize: 4,
+        verticalSliderSize: 18,
+      },
+      selectOnLineNumbers: true,
+      roundedSelection: false,
+      readOnly: true,
+      cursorStyle: "line",
+      automaticLayout: true,
+    };
+    return (
+      <Editor
+        height={"50vh"}
+        width={"100%"}
+        theme={"vs-dark"}
+        value={sampleCode}
+        language={sampleLanguage}
+        options={options}
+      />
+    );
+  });
+
   const tableHeaders = [
     {
       key: "datetime",
@@ -119,6 +170,10 @@ export const History = observer(() => {
     {
       key: "details",
       label: "Details",
+    },
+    {
+      key: "code",
+      label: "Code",
     },
   ];
 
@@ -175,12 +230,17 @@ export const History = observer(() => {
         <TableContainer w={"100%"}>
           <Table variant="simple">
             <TableCaption>
-            -
-            {attempts?.length !== 0
-              ? "End of attempted questions"
-              : "No questions attempted"}
-            -
-          </TableCaption>
+              -
+              {attempts?.length !== 0
+                ? "End of attempted questions"
+                : "No questions attempted"}
+              -
+            </TableCaption>
+            <Thead>
+              <Th display={{ base: "flex", md: "none" }}>
+                Scroll right for more
+              </Th>
+            </Thead>
             <Thead>
               <Tr>
                 {tableHeaders.map((header) => (
@@ -202,8 +262,12 @@ export const History = observer(() => {
                 )
                 .map((attempt, index) => (
                   <Tr key={index}>
-                    <Td key="datetime">{attempt["datetime"]}</Td>
-                    <Td key="title">{attempt["title"]}</Td>
+                    <Td key="datetime" textOverflow={"ellipsis"}>
+                      {attempt["datetime"]}
+                    </Td>
+                    <Td key="title" textOverflow={"ellipsis"}>
+                      {attempt["title"]}
+                    </Td>
                     <Td key="complexity">
                       <Badge bg={getColorFromComplexity(attempt["complexity"])}>
                         {attempt["complexity"]}
@@ -215,8 +279,8 @@ export const History = observer(() => {
                         _hover={{
                           bg: "#DEE2F5",
                         }}
-                        onClick={() => handleOpenModal(attempt)}
-                        display={{ base: "flex", md: "none" }}
+                        onClick={() => handleOpenDetailsModal(attempt)}
+                        display={{ base: "flex", lg: "none" }}
                         icon={<ViewIcon />}
                         //dunno what icon to put
                       />
@@ -225,10 +289,31 @@ export const History = observer(() => {
                         _hover={{
                           bg: "#DEE2F5",
                         }}
-                        onClick={() => handleOpenModal(attempt)}
-                        display={{ base: "none", md: "flex" }}
+                        onClick={() => handleOpenDetailsModal(attempt)}
+                        display={{ base: "none", lg: "flex" }}
                       >
                         View Details
+                      </Button>
+                    </Td>
+                    <Td>
+                      <IconButton
+                        bg={"#BBC2E2"}
+                        _hover={{
+                          bg: "#DEE2F5",
+                        }}
+                        onClick={() => handleOpenCodeModal(attempt)}
+                        display={{ base: "flex", lg: "none" }}
+                        icon={<EditIcon />}
+                      />
+                      <Button
+                        bg={"#BBC2E2"}
+                        _hover={{
+                          bg: "#DEE2F5",
+                        }}
+                        onClick={() => handleOpenCodeModal(attempt)}
+                        display={{ base: "none", lg: "flex" }}
+                      >
+                        View Code
                       </Button>
                     </Td>
                   </Tr>

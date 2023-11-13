@@ -22,7 +22,14 @@ exports.createQuestion = async (req, res) => {
     return res.status(201).json(question);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ message: "Error creating question" });
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: err.message });
+    }
+    // MongoServerError: E11000 duplicate key error
+    if (err.code === 11000) {
+      return res.status(409).json({ message: "Question already exists" });
+    }
+    return res.status(500).json({ message: "Error creating question" });
   }
 };
 
@@ -30,9 +37,7 @@ exports.getQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
     const question = await Question.findOne({ questionId });
-    return question
-      ? res.status(200).json(question)
-      : res.status(404).json({ message: "Question not found" });
+    return res.status(200).json(question);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Error fetching question" });
@@ -57,29 +62,33 @@ exports.updateQuestion = async (req, res) => {
     const questionId = req.params.id;
     const question = await Question.findOne({ questionId });
 
-    if (!question) {
-      return res.status(404).json({ message: "Question not found" });
+    if (question) {
+      if (title) {
+        question.title = title;
+      }
+      if (description) {
+        question.description = description;
+      }
+      if (category) {
+        question.category = category;
+      }
+      if (complexity) {
+        question.complexity = complexity;
+      }
+      await question.validate();
+      await question.save();
     }
-
-    if (title) {
-      question.title = title;
-    }
-    if (description) {
-      question.description = description;
-    }
-    if (category) {
-      question.category = category;
-    }
-    if (complexity) {
-      question.complexity = complexity;
-    }
-
-    await question.validate();
-    await question.save();
     return res.status(200).json(question);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ message: "Error updating question" });
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: err.message });
+    }
+    // MongoServerError: E11000 duplicate key error
+    if (err.code === 11000) {
+      return res.status(409).json({ message: "Question already exists" });
+    }
+    return res.status(500).json({ message: "Error updating question" });
   }
 };
 
@@ -87,11 +96,9 @@ exports.deleteQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
     const deletedDoc = await Question.findOneAndDelete({ questionId });
-    return deletedDoc
-      ? res.status(200).json(deletedDoc)
-      : res.status(404).json({ message: "Question not found" });
+    return res.status(200).json(deletedDoc);
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ message: "Error deleting question" });
+    return res.status(500).json({ message: "Error deleting question" });
   }
 };

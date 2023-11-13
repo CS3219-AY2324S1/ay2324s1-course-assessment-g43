@@ -63,18 +63,10 @@ exports.updateQuestion = async (req, res) => {
     const question = await Question.findOne({ questionId });
 
     if (question) {
-      if (title) {
-        question.title = title;
-      }
-      if (description) {
-        question.description = description;
-      }
-      if (category) {
-        question.category = category;
-      }
-      if (complexity) {
-        question.complexity = complexity;
-      }
+      question.title = title;
+      question.description = description;
+      question.category = category;
+      question.complexity = complexity;
       await question.validate();
       await question.save();
     }

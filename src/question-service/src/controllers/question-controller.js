@@ -46,7 +46,7 @@ exports.getQuestion = async (req, res) => {
 
 exports.getAllQuestions = async (req, res) => {
   try {
-    const questions = await Question.find();
+    const questions = await Question.find().sort({ questionId: "asc" });
     return questions
       ? res.status(200).json(questions)
       : res.status(200).json([]);

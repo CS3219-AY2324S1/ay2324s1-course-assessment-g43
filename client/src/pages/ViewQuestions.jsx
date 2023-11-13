@@ -39,6 +39,8 @@ import { useEffect } from "react";
 import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 
+import jwt from "jwt-decode";
+
 export const ViewQuestions = observer(() => {
   const navigate = useNavigate();
 
@@ -57,6 +59,17 @@ export const ViewQuestions = observer(() => {
     onOpen: onCreateOpen,
     onClose: onCreateClose,
   } = useDisclosure();
+
+  let userRole = "";
+  try {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      const decodedToken = jwt(token);
+      userRole = decodedToken.usertype;
+    }
+  } catch (error) {
+    console.log("Error: Failed to get/decode jwt. ", error);
+  }
 
   const createQuestion = (e) => {
     e.preventDefault();
@@ -134,221 +147,231 @@ export const ViewQuestions = observer(() => {
 
   return (
     <PageContainer w={"100%"}>
-      <Stack spacing={4} w={"100%"}>
-        <HStack justifyContent={"space-between"}>
-          <Text fontSize="40px" align={"start"}>
-            Questions
-          </Text>
-          <HStack>
-            <Input variant="outline" placeholder="Search" width="400px" />
+      {userRole === "admin" ? (
+        <Stack spacing={4} w={"100%"}>
+          <HStack justifyContent={"space-between"}>
+            <Text fontSize="40px" align={"start"}>
+              Questions
+            </Text>
+            <HStack>
+              <Input variant="outline" placeholder="Search" width="400px" />
+              <IconButton
+                aria-label="Search database"
+                icon={<SearchIcon />}
+                variant={"outline"}
+              />
+            </HStack>
+          </HStack>
+          <HStack justify={"right"}>
+            <Text>Create new question</Text>
             <IconButton
-              aria-label="Search database"
-              icon={<SearchIcon />}
+              aria-label="Create question"
+              icon={<AddIcon />}
               variant={"outline"}
+              onClick={() => onCreateOpen()}
             />
-          </HStack>
-        </HStack>
-        <HStack justify={"right"}>
-          <Text>Create new question</Text>
-          <IconButton
-            aria-label="Create question"
-            icon={<AddIcon />}
-            variant={"outline"}
-            onClick={() => onCreateOpen()}
-          />
-          <Modal
-            isOpen={isCreateOpen}
-            onClose={onCreateClose}
-            isCentered
-            size={"xl"}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Create New Question</ModalHeader>
-              <ModalCloseButton />
-              <form onSubmit={createQuestion}>
-                <ModalBody>
-                  <FormControl id="title" isRequired>
-                    <FormLabel>Title</FormLabel>
-                    <Input
-                      placeholder="Question Title"
-                      _placeholder={{ color: "gray.500" }}
-                      type="text"
-                      value={state.title}
-                      onChange={(e) => createStore.setTitle(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormControl id="description" isRequired>
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                      placeholder="Question description"
-                      _placeholder={{ color: "gray.500" }}
-                      value={state.description}
-                      onChange={(e) => {
-                        createStore.setDescription(e.target.value);
-                      }}
-                    />
-                  </FormControl>
-                  <FormControl id="category">
-                    <FormLabel>Category</FormLabel>
-                    <HStack spacing={4} paddingBottom={1}>
-                      {createState.category.map((category) => (
-                        <Tag key={category} borderRadius="full" variant="solid">
-                          <TagLabel>{category}</TagLabel>
-                          <TagCloseButton
-                            onClick={() => createStore.removeCategory(category)}
-                          />
-                        </Tag>
-                      ))}
-                    </HStack>
-                    <InputGroup>
-                      <Input
-                        placeholder="Enter new category"
-                        _placeholder={{ color: "gray.500" }}
-                        value={createState.creatingCat}
-                        onChange={(e) => {
-                          createStore.setCreatingCat(e.target.value);
-                        }}
-                      />
-                      <InputRightElement width="4.5rem" justify="right">
-                        <IconButton
-                          aria-label="Create category"
-                          icon={<AddIcon />}
-                          variant={"unstyled"}
-                          onClick={() => createStore.addCategory()}
-                        />
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-                  <FormControl id="complexity" isRequired>
-                    <FormLabel>Complexity</FormLabel>
-                    <Select
-                      placeholder="Select complexity"
-                      value={state.complexity}
-                      onChange={(e) => {
-                        createStore.setComplexity(e.target.value);
-                      }}
-                    >
-                      <option>Easy</option>
-                      <option>Medium</option>
-                      <option>Hard</option>
-                    </Select>
-                  </FormControl>
-                </ModalBody>
-
-                <ModalFooter>
-                  <Button colorScheme="green" mr={3} type="submit">
-                    Create Question
-                  </Button>
-                </ModalFooter>
-              </form>
-            </ModalContent>
-          </Modal>
-        </HStack>
-        <Flex justifyContent={"space-between"} px={6}>
-          <HStack>
-            <Text fontWeight="bold">ID</Text>
-            <Text fontWeight="bold">Question Title</Text>
-          </HStack>
-          <Text fontWeight="bold">Actions</Text>
-        </Flex>
-        {!!state.questions ? (
-          state.questions.map((question, index) => {
-            return (
-              <Card key={index}>
-                <CardBody>
-                  <Flex justifyContent={"space-between"}>
-                    <HStack>
-                      <Text>{question.questionId}.</Text>
-                      <Text textOverflow={"ellipsis"} maxW={"inherit"}>
-                        {question.title}
-                      </Text>
-                    </HStack>
-                    <Button onClick={() => handleOpenModal(question)}>
-                      View Details
-                    </Button>
-                  </Flex>
-                </CardBody>
-              </Card>
-            );
-          })
-        ) : (
-          <Card>
-            <CardBody>
-              {/* eslint-disable-next-line react/no-unescaped-entities*/}
-              <Text>Can't seem to find any questions.</Text>
-            </CardBody>
-          </Card>
-        )}
-        {!!state.selectedQuestion ? (
-          <>
             <Modal
-              isOpen={isViewOpen}
-              onClose={onViewClose}
+              isOpen={isCreateOpen}
+              onClose={onCreateClose}
               isCentered
               size={"xl"}
             >
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>{state.selectedQuestion.title}</ModalHeader>
+                <ModalHeader>Create New Question</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody>
-                  <Badge
-                    colorScheme={
-                      state.selectedQuestion.complexity == "Easy"
-                        ? "green"
-                        : state.selectedQuestion.complexity == "Medium"
-                        ? "yellow"
-                        : "red"
-                    }
-                  >
-                    {state.selectedQuestion.complexity}
-                  </Badge>
-                  <HStack spacing={2} paddingBlock={3}>
-                    {state.selectedQuestion.category?.map((category) => (
-                      <Tag key={category} borderRadius="full" variant="solid">
-                        <TagLabel>{category}</TagLabel>
-                      </Tag>
-                    ))}
-                  </HStack>
-                  <Box position="relative" padding="3">
-                    <Divider />
-                    <AbsoluteCenter bg="white" px="4">
-                      Task Discription
-                    </AbsoluteCenter>
-                  </Box>
-                  <Text paddingTop={"3"}>
-                    {state.selectedQuestion.description}
-                  </Text>
-                </ModalBody>
+                <form onSubmit={createQuestion}>
+                  <ModalBody>
+                    <FormControl id="title" isRequired>
+                      <FormLabel>Title</FormLabel>
+                      <Input
+                        placeholder="Question Title"
+                        _placeholder={{ color: "gray.500" }}
+                        type="text"
+                        value={state.title}
+                        onChange={(e) => createStore.setTitle(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormControl id="description" isRequired>
+                      <FormLabel>Description</FormLabel>
+                      <Textarea
+                        placeholder="Question description"
+                        _placeholder={{ color: "gray.500" }}
+                        value={state.description}
+                        onChange={(e) => {
+                          createStore.setDescription(e.target.value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormControl id="category">
+                      <FormLabel>Category</FormLabel>
+                      <HStack spacing={4} paddingBottom={1}>
+                        {createState.category.map((category) => (
+                          <Tag
+                            key={category}
+                            borderRadius="full"
+                            variant="solid"
+                          >
+                            <TagLabel>{category}</TagLabel>
+                            <TagCloseButton
+                              onClick={() =>
+                                createStore.removeCategory(category)
+                              }
+                            />
+                          </Tag>
+                        ))}
+                      </HStack>
+                      <InputGroup>
+                        <Input
+                          placeholder="Enter new category"
+                          _placeholder={{ color: "gray.500" }}
+                          value={createState.creatingCat}
+                          onChange={(e) => {
+                            createStore.setCreatingCat(e.target.value);
+                          }}
+                        />
+                        <InputRightElement width="4.5rem" justify="right">
+                          <IconButton
+                            aria-label="Create category"
+                            icon={<AddIcon />}
+                            variant={"unstyled"}
+                            onClick={() => createStore.addCategory()}
+                          />
+                        </InputRightElement>
+                      </InputGroup>
+                    </FormControl>
+                    <FormControl id="complexity" isRequired>
+                      <FormLabel>Complexity</FormLabel>
+                      <Select
+                        placeholder="Select complexity"
+                        value={state.complexity}
+                        onChange={(e) => {
+                          createStore.setComplexity(e.target.value);
+                        }}
+                      >
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                      </Select>
+                    </FormControl>
+                  </ModalBody>
 
-                <ModalFooter>
-                  <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={() =>
-                      redirectToUpdateQuestionPage(state.selectedQuestion)
-                    }
-                  >
-                    Update Question
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={() =>
-                      deleteQuestion(state.selectedQuestion.questionId)
-                    }
-                  >
-                    Delete Question
-                  </Button>
-                </ModalFooter>
+                  <ModalFooter>
+                    <Button colorScheme="green" mr={3} type="submit">
+                      Create Question
+                    </Button>
+                  </ModalFooter>
+                </form>
               </ModalContent>
             </Modal>
-          </>
-        ) : (
-          <></>
-        )}
-      </Stack>
+          </HStack>
+          <Flex justifyContent={"space-between"} px={6}>
+            <HStack>
+              <Text fontWeight="bold">ID</Text>
+              <Text fontWeight="bold">Question Title</Text>
+            </HStack>
+            <Text fontWeight="bold">Actions</Text>
+          </Flex>
+          {!!state.questions ? (
+            state.questions.map((question, index) => {
+              return (
+                <Card key={index}>
+                  <CardBody>
+                    <Flex justifyContent={"space-between"}>
+                      <HStack>
+                        <Text>{question.questionId}.</Text>
+                        <Text textOverflow={"ellipsis"} maxW={"inherit"}>
+                          {question.title}
+                        </Text>
+                      </HStack>
+                      <Button onClick={() => handleOpenModal(question)}>
+                        View Details
+                      </Button>
+                    </Flex>
+                  </CardBody>
+                </Card>
+              );
+            })
+          ) : (
+            <Card>
+              <CardBody>
+                {/* eslint-disable-next-line react/no-unescaped-entities*/}
+                <Text>Can't seem to find any questions.</Text>
+              </CardBody>
+            </Card>
+          )}
+          {!!state.selectedQuestion ? (
+            <>
+              <Modal
+                isOpen={isViewOpen}
+                onClose={onViewClose}
+                isCentered
+                size={"xl"}
+              >
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>{state.selectedQuestion.title}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Badge
+                      colorScheme={
+                        state.selectedQuestion.complexity == "Easy"
+                          ? "green"
+                          : state.selectedQuestion.complexity == "Medium"
+                          ? "yellow"
+                          : "red"
+                      }
+                    >
+                      {state.selectedQuestion.complexity}
+                    </Badge>
+                    <HStack spacing={2} paddingBlock={3}>
+                      {state.selectedQuestion.category?.map((category) => (
+                        <Tag key={category} borderRadius="full" variant="solid">
+                          <TagLabel>{category}</TagLabel>
+                        </Tag>
+                      ))}
+                    </HStack>
+                    <Box position="relative" padding="3">
+                      <Divider />
+                      <AbsoluteCenter bg="white" px="4">
+                        Task Discription
+                      </AbsoluteCenter>
+                    </Box>
+                    <Text paddingTop={"3"}>
+                      {state.selectedQuestion.description}
+                    </Text>
+                  </ModalBody>
+
+                  <ModalFooter>
+                    <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={() =>
+                        redirectToUpdateQuestionPage(state.selectedQuestion)
+                      }
+                    >
+                      Update Question
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      colorScheme="red"
+                      onClick={() =>
+                        deleteQuestion(state.selectedQuestion.questionId)
+                      }
+                    >
+                      Delete Question
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </>
+          ) : (
+            <></>
+          )}
+        </Stack>
+      ) : (
+        <></>
+      )}
     </PageContainer>
   );
 });

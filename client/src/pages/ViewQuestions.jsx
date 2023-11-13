@@ -148,7 +148,7 @@ export const ViewQuestions = observer(() => {
     store.getAllQuestions();
   }, []);
 
-  return userRole === "admin" ? (
+  return (
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"}>
         <Stack justifyContent={"space-between"} direction={["column", "row"]}>
@@ -275,36 +275,6 @@ export const ViewQuestions = observer(() => {
           </Table>
         </TableContainer>
       </Stack>
-    </PageContainer>
-  ) : (
-    <PageContainer>
-      <Box textAlign="center" py={10} px={6}>
-        <Heading
-          display="inline-block"
-          as="h2"
-          size="2xl"
-          bgGradient="linear(to-r, red.500, red.500)"
-          backgroundClip="text"
-        >
-          403
-        </Heading>
-        <Text fontSize="18px" mt={3} mb={2}>
-          Forbidden
-        </Text>
-        <Text color={"gray.500"} mb={6}>
-          {/*eslint-disable-next-line react/no-unescaped-entities*/}
-          You don't have permission to access this resource.
-        </Text>
-
-        <Button
-          variant="solid"
-          onClick={() => {
-            window.location.replace("/");
-          }}
-        >
-          Back to Home
-        </Button>
-      </Box>
     </PageContainer>
   );
 });

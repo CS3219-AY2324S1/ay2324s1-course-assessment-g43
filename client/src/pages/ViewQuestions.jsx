@@ -94,7 +94,6 @@ export const ViewQuestions = observer(() => {
   };
 
   const deleteQuestion = (id) => {
-    window.confirm("Delete this question? This action is irreversible.");
     toast.promise(store.deleteQuestion(id), {
       success: () => {
         onViewClose();
@@ -334,7 +333,11 @@ export const ViewQuestions = observer(() => {
                     variant="ghost"
                     colorScheme="red"
                     onClick={() =>
-                      deleteQuestion(state.selectedQuestion.questionId)
+                      window.confirm(
+                        "Delete this question? This action is irreversible."
+                      )
+                        ? deleteQuestion(state.selectedQuestion.questionId)
+                        : {}
                     }
                   >
                     Delete Question

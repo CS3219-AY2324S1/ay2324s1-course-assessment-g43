@@ -21,7 +21,7 @@ const ModalComponent = observer(() => {
       closeOnOverlayClick={modalComponentStore.isClosable}
       isCentered
       scrollBehavior="inside"
-      size={"3xl"}
+      size={"2xl"}
     >
       <ModalOverlay />
       <form onSubmit={modalComponentStore.onSubmit}>

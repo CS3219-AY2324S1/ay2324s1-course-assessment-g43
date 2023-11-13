@@ -146,7 +146,7 @@ export const ViewQuestionsUser = observer(() => {
                     mr={3}
                     onClick={() => onViewClose()}
                   >
-                    Save Question
+                    Close
                     {/*to update with future functionality*/}
                   </Button>
                 </ModalFooter>

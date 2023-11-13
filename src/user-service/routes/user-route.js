@@ -51,11 +51,11 @@ const userController = require("../controller/user-controller.js");
  */
 
 /**
- * POST /api/register
+ * POST /api/users
  * @summary Registers a new user
  * @param {UserPayload} request.body.required - The user's info
  * @return {MessageUserDocument} 201 - success response - application/json
- * @return {ErrorResponse} 401 - unauthorized response - application/json
+ * @return {ErrorResponse} 400 - error response - application/json
  * @return {ErrorResponse} 500 - error response - application/json
  * @example request - example payload
  * {
@@ -74,7 +74,7 @@ const userController = require("../controller/user-controller.js");
  *		}
  *	}
  *}
- * @example response - 401 - example 401 response
+ * @example response - 400 - example 400 response
 {
 	"message": "Username or email already exists",
 	"data": {}
@@ -85,7 +85,7 @@ const userController = require("../controller/user-controller.js");
 	"data": {}
 }
  */
-router.post("/register", userController.createUser);
+router.post("/users", userController.createUser);
 
 /**
  * A Login Payload for POST requests
@@ -95,11 +95,11 @@ router.post("/register", userController.createUser);
  */
 
 /**
- * POST /api/login
+ * POST /api/users/login
  * @summary Logs the user in.
  * @param {LoginPayload} request.body.required - The user's login info
  * @return {MessageUserDocument} 200 - success response - application/json
- * @return {ErrorResponse} 401 - unauthorized response - application/json
+ * @return {ErrorResponse} 400 - error response - application/json
  * @return {ErrorResponse} 500 - error response - aplication/json
  * @example request - example payload
  * {
@@ -117,7 +117,7 @@ router.post("/register", userController.createUser);
 		}
 	}
 }
- * @example response - 401 - example 401 response
+ * @example response - 400 - example 400 response
 {
 	"message": "Password is wrong",
 	"data": {}
@@ -128,12 +128,44 @@ router.post("/register", userController.createUser);
 	"data": {}
 }
  */
-router.post("/login", userController.userLogin);
+router.post("/users/login", userController.userLogin);
 
 router.post("/logout", userController.userLogout);
 
 /**
- * GET /api/getUsers
+ * GET /api/users/{id}
+ * @summary Gets a single user
+ * @param {integer} id.path.required - The user's id
+ * @return {MessageUserDocument} 200 - success response - application/json
+ * @return {ErrorResponse} 400 - error response - application/json
+ * @return {ErrorResponse} 500 - error response - aplication/json
+ * @example response - 200 - example 200 response
+{
+	"message": "User retrieved",
+	"data": {
+		"user": {
+			"uid": 12,
+			"username": "jing",
+			"email": "jing@email.com"
+		}
+	}
+}
+ * @example response - 400 - example 400 response
+{
+	"message": "User does not exist",
+	"data": {}
+}
+ * @example response - 500 - example 500 response
+{
+	"message": "Server errorconnect ETIMEDOUT 18.166.86.175:5432",
+	"data": {}
+}
+ */
+
+router.get("/users/:id", userController.getUser);
+
+/**
+ * GET /api/users
  * @summary Gets a list of all users
  * @return {MessageUsersDocument} 200 - success response - application/json
  * @return {ErrorResponse} 500 - error response - aplication/json
@@ -182,47 +214,15 @@ router.post("/logout", userController.userLogout);
 }
  */
 
-router.get("/getUsers", userController.getUsers);
+router.get("/users", userController.getUsers);
 
 /**
- * GET /api/getUsers/{id}
- * @summary Gets a single user
- * @param {integer} id.path.required - The user's id
- * @return {MessageUserDocument} 200 - success response - application/json
- * @return {ErrorResponse} 401 - unauthorized response - application/json
- * @return {ErrorResponse} 500 - error response - aplication/json
- * @example response - 200 - example 200 response
-{
-	"message": "User retrieved",
-	"data": {
-		"user": {
-			"uid": 12,
-			"username": "jing",
-			"email": "jing@email.com"
-		}
-	}
-}
- * @example response - 401 - example 401 response
-{
-	"message": "User does not exist",
-	"data": {}
-}
- * @example response - 500 - example 500 response
-{
-	"message": "Server errorconnect ETIMEDOUT 18.166.86.175:5432",
-	"data": {}
-}
- */
-
-router.get("/getUsers/:id", userController.getUser);
-
-/**
- * PUT /api/update/{id}
+ * PUT /api/users/{id}
  * @summary Updates details for a single user
  * @param {integer} id.path.required - The user's id
  * @param {UserPutPayload} request.body.required - The user's update
  * @return {MessageUserDocument} 200 - success response - application/json
- * @return {ErrorResponse} 401 - unauthorized response - application/json
+ * @return {ErrorResponse} 400 - error response - application/json
  * @return {ErrorResponse} 500 - error response - aplication/json
  * @example response - 200 - example 200 response
 {
@@ -235,7 +235,7 @@ router.get("/getUsers/:id", userController.getUser);
 		}
 	}
 }
- * @example response - 401 - example 401 response
+ * @example response - 400 - example 400 response
 {
 	"message": "User does not exist",
 	"data": {}
@@ -246,14 +246,14 @@ router.get("/getUsers/:id", userController.getUser);
 	"data": {}
 }
  */
-router.put("/update/:id", userController.updateProfile);
+router.put("/users/:id", userController.updateProfile);
 
 /**
- * DELETE /api/update/{id}
+ * DELETE /api/users/{id}
  * @summary Deletes a single user
  * @param {integer} id.path.required - The user's id
  * @return {MessageUserDocument} 200 - success response - application/json
- * @return {ErrorResponse} 401 - unauthorized response - application/json
+ * @return {ErrorResponse} 400 - error response - application/json
  * @return {ErrorResponse} 500 - error response - aplication/json
  * @example response - 200 - example 200 response
 {
@@ -267,7 +267,7 @@ router.put("/update/:id", userController.updateProfile);
 		}
 	}
 }
- * @example response - 401 - example 401 response
+ * @example response - 400 - example 400 response
 {
 	"message": "User does not exist",
 	"data": {}
@@ -279,6 +279,6 @@ router.put("/update/:id", userController.updateProfile);
 }
  */
 
-router.delete("/delete/:id", userController.deleteProfile);
+router.delete("/users/:id", userController.deleteProfile);
 
 module.exports = router;

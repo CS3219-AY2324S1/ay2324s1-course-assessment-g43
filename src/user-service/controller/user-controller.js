@@ -2,9 +2,19 @@ const pool = require("../db.js");
 const validator = require("../utils/validator.js");
 
 exports.createUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  let { username, email, password } = req.body;
+  username = username?.trim();
+  email = email?.trim();
 
-  if (!username || !email || !password) {
+  if (!validator.isValidPassword(password)) {
+    return res.status(401).json({
+      message:
+        "Password cannot contain spaces and must be longer than 8 characters.",
+      data: {},
+    });
+  }
+
+  if (!username || !email) {
     return res.status(401).json({
       message:
         "Username, email, and password are necessary to register an account.",
@@ -91,12 +101,13 @@ exports.getUser = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email?.trim();
   const BLANK_USERNAME = "";
 
   if (!email || !password) {
     return res.status(401).json({
-      message: "Email and password are necessary to register an account.",
+      message: "Email and password are necessary to login.",
       data: {},
     });
   }
@@ -154,7 +165,15 @@ exports.userLogout = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { username, email } = req.body;
+  let { username, email } = req.body;
+  username = username?.trim();
+  email = email?.trim();
+  if (!username || !email) {
+    return res.status(401).json({
+      message: "Username and email cannot be blank.",
+      data: {},
+    });
+  }
 
   try {
     const usersOtherThanId = await pool.query(

@@ -26,30 +26,35 @@ export const ViewUser = observer(() => {
   };
 
   const deleteUser = () => {
-    toast.promise(store.deleteUser(userId), {
-      success: () => {
-        localStorage.removeItem("user");
-        navigate("/");
-        return {
-          title: "Successfully deleted account.",
-          description: "You've successfully deleted your account!",
-          duration: 3000,
-          isClosable: true,
-        };
-      },
-      error: (error) => ({
-        title: "An error occurred.",
-        description: error.response.data.message || "Unknown error occurred.",
-        duration: 3000,
-        isClosable: true,
-      }),
-      loading: {
-        title: "Deleting Account.",
-        description: "Please give us some time to delete your account.",
-        duration: 3000,
-        isClosable: true,
-      },
-    });
+    window.confirm(
+      "Are you sure you want to delete your account? This action is irreversible."
+    )
+      ? toast.promise(store.deleteUser(userId), {
+          success: () => {
+            localStorage.removeItem("user");
+            navigate("/");
+            return {
+              title: "Successfully deleted account.",
+              description: "You've successfully deleted your account!",
+              duration: 3000,
+              isClosable: true,
+            };
+          },
+          error: (error) => ({
+            title: "An error occurred.",
+            description:
+              error.response.data.message || "Unknown error occurred.",
+            duration: 3000,
+            isClosable: true,
+          }),
+          loading: {
+            title: "Deleting Account.",
+            description: "Please give us some time to delete your account.",
+            duration: 3000,
+            isClosable: true,
+          },
+        })
+      : {};
   };
 
   useEffect(() => {
@@ -85,13 +90,7 @@ export const ViewUser = observer(() => {
             _hover={{
               bg: "red.500",
             }}
-            onClick={
-              window.confirm(
-                "Are you sure you want to delete your account? This action is irreversible."
-              )
-                ? deleteUser
-                : {}
-            }
+            onClick={deleteUser}
           >
             Delete your profile
           </Button>

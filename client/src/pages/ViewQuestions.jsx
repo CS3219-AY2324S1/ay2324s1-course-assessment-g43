@@ -94,30 +94,33 @@ export const ViewQuestions = observer(() => {
   };
 
   const deleteQuestion = (id) => {
-    toast.promise(store.deleteQuestion(id), {
-      success: () => {
-        onViewClose();
-        store.getAllQuestions();
-        return {
-          title: "Successfully deleted question.",
-          description: "You've successfully deleted this question!",
-          duration: 3000,
-          isClosable: true,
-        };
-      },
-      error: (error) => ({
-        title: "An error occurred.",
-        description: error.response.data.message || "Unknown error occurred.",
-        duration: 3000,
-        isClosable: true,
-      }),
-      loading: {
-        title: "Deleting Question.",
-        description: "Please give us some time to delete this question.",
-        duration: 3000,
-        isClosable: true,
-      },
-    });
+    window.confirm("Delete this question? This action is irreversible.")
+      ? toast.promise(store.deleteQuestion(id), {
+          success: () => {
+            onViewClose();
+            store.getAllQuestions();
+            return {
+              title: "Successfully deleted question.",
+              description: "You've successfully deleted this question!",
+              duration: 3000,
+              isClosable: true,
+            };
+          },
+          error: (error) => ({
+            title: "An error occurred.",
+            description:
+              error.response.data.message || "Unknown error occurred.",
+            duration: 3000,
+            isClosable: true,
+          }),
+          loading: {
+            title: "Deleting Question.",
+            description: "Please give us some time to delete this question.",
+            duration: 3000,
+            isClosable: true,
+          },
+        })
+      : {};
   };
 
   const handleOpenModal = (question) => {
@@ -333,11 +336,7 @@ export const ViewQuestions = observer(() => {
                     variant="ghost"
                     colorScheme="red"
                     onClick={() =>
-                      window.confirm(
-                        "Delete this question? This action is irreversible."
-                      )
-                        ? deleteQuestion(state.selectedQuestion.questionId)
-                        : {}
+                      deleteQuestion(state.selectedQuestion.questionId)
                     }
                   >
                     Delete Question

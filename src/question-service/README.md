@@ -1,7 +1,7 @@
-# Questions Service
+# Question Service
 
 ## Getting Started
-1. Ensure `.env` file is present in the root directory of the project. The .env file should contain the following variables:
+1. Ensure the `.env` file is present in the root directory of the project. The .env file should contain the following variables:
     ```
     PORT=
     DATABASE_URL=

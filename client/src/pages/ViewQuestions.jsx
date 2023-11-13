@@ -30,6 +30,7 @@ import {
   Tbody,
   Td,
   Flex,
+  Heading,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { PropTypes, observer } from "mobx-react";
@@ -40,12 +41,24 @@ import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { getColorFromComplexity } from "../utils/stylingUtils";
+import jwt from "jwt-decode";
 
 export const ViewQuestions = observer(() => {
   const modalComponentStore = useModalComponentStore();
   const toast = useToast();
   const store = viewQuestionsStore;
   const state = store.state;
+
+  let userRole = "";
+  try {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      const decodedToken = jwt(token);
+      userRole = decodedToken.usertype;
+    }
+  } catch (error) {
+    console.log("Error: Failed to get/decode jwt. ", error);
+  }
 
   const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
 
@@ -135,7 +148,7 @@ export const ViewQuestions = observer(() => {
     store.getAllQuestions();
   }, []);
 
-  return (
+  return userRole === "admin" ? (
     <PageContainer w={"100%"}>
       <Stack spacing={4} w={"100%"}>
         <Stack justifyContent={"space-between"} direction={["column", "row"]}>
@@ -262,6 +275,36 @@ export const ViewQuestions = observer(() => {
           </Table>
         </TableContainer>
       </Stack>
+    </PageContainer>
+  ) : (
+    <PageContainer>
+      <Box textAlign="center" py={10} px={6}>
+        <Heading
+          display="inline-block"
+          as="h2"
+          size="2xl"
+          bgGradient="linear(to-r, red.500, red.500)"
+          backgroundClip="text"
+        >
+          403
+        </Heading>
+        <Text fontSize="18px" mt={3} mb={2}>
+          Forbidden
+        </Text>
+        <Text color={"gray.500"} mb={6}>
+          {/*eslint-disable-next-line react/no-unescaped-entities*/}
+          You don't have permission to access this resource.
+        </Text>
+
+        <Button
+          variant="solid"
+          onClick={() => {
+            window.location.replace("/");
+          }}
+        >
+          Back to Home
+        </Button>
+      </Box>
     </PageContainer>
   );
 });

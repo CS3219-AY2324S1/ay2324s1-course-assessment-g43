@@ -28,6 +28,7 @@ services:
       - "3000:3000"
     volumes:
       - ./src/question-service:/app
+      - /app/node_modules
     depends_on:
       - user-service
   user-service:
@@ -55,6 +56,7 @@ services:
       - "5001:5001"
     volumes:
       - ./src/matching-service:/app
+      - /app/node_modules
   history-service:
     build:
       context: ./src/history-service
@@ -67,6 +69,7 @@ services:
       - "3001:3001"
     volumes:
       - ./src/history-service:/app
+      - /app/node_modules
   code-execution-service:
     build:
       context: ./src/code-execution-service
@@ -79,6 +82,7 @@ services:
       - "5002:5002"
     volumes:
       - ./src/code-execution-service:/app
+      - /app/node_modules
   collaboration-service:
     build:
       context: ./src/collaboration-service
@@ -92,3 +96,4 @@ services:
       - "8002:8002"
     volumes:
       - ./src/collaboration-service:/app
+      - /app/node_modules

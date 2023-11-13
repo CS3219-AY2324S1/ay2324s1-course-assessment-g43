@@ -7,7 +7,7 @@ exports.createUser = async (req, res) => {
   email = email?.trim();
 
   if (!validator.isValidPassword(password)) {
-    return res.status(401).json({
+    return res.status(400).json({
       message:
         "Password cannot contain spaces and must be longer than 8 characters.",
       data: {},
@@ -15,7 +15,7 @@ exports.createUser = async (req, res) => {
   }
 
   if (!username || !email) {
-    return res.status(401).json({
+    return res.status(400).json({
       message:
         "Username, email, and password are necessary to register an account.",
       data: {},
@@ -29,7 +29,7 @@ exports.createUser = async (req, res) => {
     );
 
     if (userExists) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Username or email already exists",
         data: {},
       });
@@ -82,7 +82,7 @@ exports.getUser = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "User does not exist",
         data: {},
       });
@@ -106,7 +106,7 @@ exports.userLogin = async (req, res) => {
   const BLANK_USERNAME = "";
 
   if (!email || !password) {
-    return res.status(401).json({
+    return res.status(400).json({
       message: "Email and password are necessary to login.",
       data: {},
     });
@@ -119,7 +119,7 @@ exports.userLogin = async (req, res) => {
     );
 
     if (!emailExists) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Email does not exist",
         data: {},
       });
@@ -132,7 +132,7 @@ exports.userLogin = async (req, res) => {
     const validPassword = result.rows[0].password === password;
 
     if (!validPassword) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Password is wrong",
         data: {},
       });
@@ -169,7 +169,7 @@ exports.updateProfile = async (req, res) => {
   username = username?.trim();
   email = email?.trim();
   if (!username || !email) {
-    return res.status(401).json({
+    return res.status(400).json({
       message: "Username and email cannot be blank.",
       data: {},
     });
@@ -182,7 +182,7 @@ exports.updateProfile = async (req, res) => {
     );
 
     if (usersOtherThanId.rows.length > 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Username or email already exists",
         data: {},
       });
@@ -191,7 +191,7 @@ exports.updateProfile = async (req, res) => {
     const result = await pool.query("SELECT * FROM Users WHERE uid = $1", [id]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: `User with ID: ${id} does not exist`,
         data: {},
       });
@@ -221,7 +221,7 @@ exports.deleteProfile = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM Users WHERE uid = $1", [id]);
     if (result.rows.length === 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: `User with ID: ${id} does not exist`,
         data: {},
       });

@@ -199,7 +199,7 @@ export const ViewQuestions = observer(() => {
             />
           </HStack>
         </Flex>
-        <TableContainer w={"100%"}>
+        <TableContainer w={"100%"} maxH={"65vh"} overflowY={"scroll"}>
           <Table variant="simple">
             <TableCaption>
               -

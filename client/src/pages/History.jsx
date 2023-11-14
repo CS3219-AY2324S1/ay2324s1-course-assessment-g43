@@ -229,7 +229,7 @@ export const History = observer(() => {
             </HStack>
           </Stack>
         </Flex>
-        <TableContainer w={"100%"}>
+        <TableContainer w={"100%"} maxH={"70vh"} overflowY={"scroll"}>
           <Table variant="simple">
             <TableCaption>
               -

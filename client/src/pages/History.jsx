@@ -118,9 +118,6 @@ export const History = observer(() => {
   });
 
   const ViewAttemptCodeModalBody = observer(() => {
-    const sampleCode = "print(Here is some code.)";
-    const sampleLanguage = "python";
-
     const options = {
       autoIndent: "full",
       contextmenu: true,
@@ -147,8 +144,8 @@ export const History = observer(() => {
         height={"50vh"}
         width={"100%"}
         theme={"vs-dark"}
-        value={sampleCode}
-        language={sampleLanguage}
+        value={state.selectedAttempt.attemptDetails.code}
+        language={state.selectedAttempt.attemptDetails.language}
         options={options}
       />
     );
@@ -187,14 +184,19 @@ export const History = observer(() => {
     <PageContainer w={"100%"}>
       <Stack align={"center"} w={"100%"}>
         <Flex justifyContent={"space-between"} w={"100%"}>
-          <Heading
-            color={"#0A050E"}
-            lineHeight={1.1}
-            fontSize={{ base: "2xl", sm: "3xl" }}
-            fontWeight={"semibold"}
-          >
-            Attempt History
-          </Heading>
+          <Stack>
+            <Heading
+              color={"#0A050E"}
+              lineHeight={1.1}
+              fontSize={{ base: "2xl", sm: "3xl" }}
+              fontWeight={"semibold"}
+            >
+              Attempt History
+            </Heading>
+            <Text display={{ base: "flex", md: "none" }} color={"#847979"}>
+              Scroll right for more
+            </Text>
+          </Stack>
           <Stack w={"45%"}>
             <InputGroup maxW={"100%"}>
               <InputLeftElement pointerEvents="none">
@@ -236,11 +238,6 @@ export const History = observer(() => {
                 : "No questions attempted"}
               -
             </TableCaption>
-            <Thead>
-              <Th display={{ base: "flex", md: "none" }}>
-                Scroll right for more
-              </Th>
-            </Thead>
             <Thead>
               <Tr>
                 {tableHeaders.map((header) => (

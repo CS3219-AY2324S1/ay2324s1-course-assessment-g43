@@ -40,6 +40,7 @@ export const CodeEditor = observer(
     language,
     otherUsername,
     initialTemplate,
+    code,
     onLanguageChange,
     isGetNextQuestionLoading,
   }) => {
@@ -48,7 +49,7 @@ export const CodeEditor = observer(
     const decorationsRef = useRef(null);
 
     const [userLanguage, setUserLanguage] = useState(language);
-    const [code, setCode] = useState("");
+
     const {
       isOpen: isConsoleOpen,
       onOpen: onConsoleOpen,
@@ -77,7 +78,7 @@ export const CodeEditor = observer(
         .then((res) => {
           const newCode = res.data.code;
 
-          setCode(newCode);
+          viewSessionStore.setCode(newCode);
 
           onLanguageChange(userLanguage); // Notify peer
         })
@@ -150,13 +151,13 @@ export const CodeEditor = observer(
         const res = await viewSessionStore.resetCode(roomId);
         const newCode = res.data.code;
 
-        setCode(newCode);
+        viewSessionStore.setCode(newCode);
       }
     };
 
     const handleEditorChange = (currContent) => {
       if (!currContent) return;
-      setCode(currContent);
+      viewSessionStore.setCode(currContent);
     };
 
     async function getEditorValue() {
@@ -211,7 +212,7 @@ export const CodeEditor = observer(
       provider.once("synced", () => {
         const userId = JSON.parse(localStorage.getItem("user"))["uid"];
         if (roomId.split("-")[1] == userId && !yMap.get('templateInitialized')) {
-          setCode(initialTemplate[language]);
+          viewSessionStore.setCode(initialTemplate[language]);
           yMap.set('templateInitialized', true);
         }
       });

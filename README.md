@@ -1,4 +1,4 @@
-# ASSIGNMENT-4 Instructions
+# ASSIGNMENT-5 Instructions
 This file contains instructions on how to build and run the question microservice application as well as the user microservice application. Do follow the instructions strictly to ensure that the applications are started successfully.
 
 We will be using Docker to containerise our applications.
@@ -19,84 +19,20 @@ If you don't already have Docker installed, [download](https://www.docker.com/pr
 
 After you have successfully downloaded and installed Docker, run the Docker Desktop application.
 
-# 1. Navigate into the application folder
+## Using Docker
 
-Assuming that you have just pulled from our master branch and you are currently in our project folder in Terminal, navigate to the folder containing the user service application by doing
+Ensure you have all the right ENV files in the right folders
 
-```
-cd src/user-service
-```
+Open Docker and after the Docker Engine is up and running, from the `ay2324s1-course-assessment-g43` folder, run `docker compose up`. You should see all the microservices running in their individual containers on the Docker Desktop and you are good to go!
 
-# 2. Build the Docker image
+## Using NPM
 
-Now, build the docker image for user service by running
+Do the same checks for the URLs mentioned above. This time, everything supposed to be set to using localhost.
 
-```
-docker build -t user-service .
-```
+Run `npm i concurrently` if you don't have Concurrently installed.
 
-# 3. Run the Docker container
+Run `npm run install-all` which will run `npm i` in each individual microservice.
 
-Run the Docker container called `user-service` using the image that you created in the previous step.
+Run `npm run dev-all` which will run `npm run dev` in each individual microservice.
 
-```
-docker run -p 8000:8000 -e PEERPREP_ENV=docker --name user-service user-service
-```
-
-> Note:
-> Please make sure to pass in the `PEERPREP_ENV=docker` argument when running this function. This argument determines which environment file to use.
-
-# Repeat for other application
-
-Repeat Steps 1 to 3 for the question service. The question service application folder is in the `src` folder and you can switch to that folder by running:
-
-```
-cd ../question-service
-```
-
-After switching to that folder, you can run the same commands in Steps 1 to 3 but **replace all occurrences of `user-service` with `question-service`**. Also, question service used port 3000, so change `8000:8000` to `3000:3000`. It should look something like this to run the Docker container
-
-```
-docker run -p 3000:3000 -e PEERPREP_ENV=docker --name question-service question-service
-```
-
-# 4. Create a Docker network
-
-Now we will create a Docker network so that the applications can communicate with one another for the automatic DNS resolution feature provided by user-defined bridges.
-
-Run:
-
-```
-docker network create peerprep-network
-```
-
-# 5. Connect the containers to the network
-
-To connect the containers to the network, run
-
-```
-docker network connect peerprep-network user-service
-docker network connect peerprep-network question-service
-```
-
-Up to this point, if you have managed to run all these commands without errors, you have successfully build, run and connected the 2 applications. Time to move on to testing these applications!
-
-# Testing via Shell access
-
-If you have third party applications like Postman, you can test using those applications as well by doing a `GET` request to `/api/hello` for both endpoints. They should return a `"Hello world"` string in response.
-
-But if you don't have those third party applications installed, fret not, we got you covered. In your terminal, run:
-
-```
-docker exec -it <container_name> /bin/bash
-```
-
-Replace `<container_name>` with the either `user-service` or `question-service`.
-That command basically allows you to access the Shell of that application.
-Run the command bellow to make a request to the path `/api/hello` which prints `Hello world` to your terminal.
-
-```
-curl http://localhost:<port_number>/api/hello
-```
-
-Replace `<port_number>` with `8000` if you are in `user-service` or `3000` if you are in `question-service`.
+That's it! Happy coding!

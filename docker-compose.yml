@@ -1,0 +1,99 @@
+version: "3.7"
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - user-service
+  question-service:
+    build:
+      context: ./src/question-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/question-service:/app
+      - /app/node_modules
+    depends_on:
+      - user-service
+  user-service:
+    build:
+      context: ./src/user-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/user-service:/app
+      - /app/node_modules
+  matching-service:
+    build:
+      context: ./src/matching-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./src/matching-service:/app
+      - /app/node_modules
+  history-service:
+    build:
+      context: ./src/history-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./src/history-service:/app
+      - /app/node_modules
+  code-execution-service:
+    build:
+      context: ./src/code-execution-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./src/code-execution-service:/app
+      - /app/node_modules
+  collaboration-service:
+    build:
+      context: ./src/collaboration-service
+      dockerfile: Dockerfile
+      args:
+        - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    environment:
+      - PEERPREP_ENV=${PEERPREP_ENV:-docker}
+    ports:
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./src/collaboration-service:/app
+      - /app/node_modules

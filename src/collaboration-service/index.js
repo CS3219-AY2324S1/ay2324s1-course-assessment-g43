@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const cors = require("cors");
 const express = require("express");
@@ -12,13 +12,14 @@ const setupWSConnection = require("y-websocket/bin/utils").setupWSConnection;
 const app = express();
 const port = process.env.PORT || 8001;
 const wssPort = 8002;
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.COLLABORATION_DATABASE_URL;
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
+  path: "/collaboration-socket",
 });
 
 // <socket IDs, room IDs> mapping
@@ -125,6 +126,7 @@ mongoose.connect(databaseUrl, {
 app.use("/api", require("./routes/session-routes"));
 
 server.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`Listening on port ${port}`);
 });
 server.on("error", console.error);

@@ -1,7 +1,9 @@
 import axios from "axios";
 import socketIOClient from "socket.io-client";
 
-const basePath = "http://localhost:8001";
+const basePath =
+  import.meta.env.VITE_COLLABORATION_BASE_PATH || "http://localhost:8001";
+const NAMESPACE = "/collaboration-socket";
 
 // HTTP requests
 export const createSession = async (req) => {
@@ -54,7 +56,7 @@ export const updateSessionWithNewQuestion = async (roomId, question) => {
     },
   });
   return res;
-}
+};
 
 export const saveAndChangeCode = async (roomId, newLanguage, code) => {
   const token = localStorage.getItem("jwt");
@@ -141,9 +143,11 @@ export const initCollaborationSocket = (
   onSocketDisconnect,
   receiveRequestCallback,
   changeQuestionCallback,
-  rejectRequestCallback,
+  rejectRequestCallback
 ) => {
-  const socket = socketIOClient(basePath);
+  const socket = socketIOClient(basePath, {
+    path: NAMESPACE,
+  });
 
   socket.on("connect", () => {
     console.log("Collab Service socket connected");
@@ -167,7 +171,7 @@ export const initCollaborationSocket = (
     receiveRequestCallback?.();
   });
 
-  socket.on("retrieve-next-question", () => { 
+  socket.on("retrieve-next-question", () => {
     changeQuestionCallback?.();
   });
 

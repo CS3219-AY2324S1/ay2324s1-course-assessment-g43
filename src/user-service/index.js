@@ -1,11 +1,12 @@
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 const express = require("express");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 const cors = require("cors");
 
-const userRouter = require("../user-service/routes/user-route.js");
+const userRouter = require("./routes/user-route.js");
 
 const options = {
   info: {
@@ -34,4 +35,11 @@ app.use(express.json());
 //Routes
 app.use("/api", userRouter);
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.get("/api/hello", (req, res) => {
+  res.send("Hello world");
+});
+
+app.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
+  console.log(`Listening on port ${port}`);
+});

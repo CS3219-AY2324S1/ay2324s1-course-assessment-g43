@@ -1,0 +1,340 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+  labels:
+    app: client
+spec:
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: gcr.io/ay2324s1-cs3219-g43/client:6.0-SNAPSHOT
+          ports:
+            - containerPort: 5173
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: VITE_USER_BASE_PATH
+              value: /user-service/api
+            - name: VITE_QUESTION_BASE_PATH
+              value: /question-service/api/questions
+            - name: VITE_MATCHING_ENDPOINT
+              value: http://35.240.192.6
+            - name: VITE_HISTORY_BASE_PATH
+              value: /history-service/api
+            - name: VITE_CODE_EXECUTION_BASE_PATH
+              value: /code-execution-service/api
+            - name: VITE_COLLABORATION_BASE_PATH
+              value: /collaboration-service
+            - name: VITE_COLLABORATION_WS_ORIGIN
+              value: ws://35.240.192.6/collaboration-wss
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+spec:
+  selector:
+    app: client
+  ports:
+    - protocol: TCP
+      port: 5173
+      targetPort: 5173
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: gcr.io/ay2324s1-cs3219-g43/user-service:6.0-SNAPSHOT
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: PORT
+              value: "8000"
+            - name: PSQL_HOST
+              value: rain.db.elephantsql.com
+            - name: PSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: PSQL_PASSWORD
+            - name: PSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: PSQL_DATABASE
+            - name: PSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: PSQL_USER
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: ACCESS_TOKEN_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: question-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: question-service
+  template:
+    metadata:
+      labels:
+        app: question-service
+    spec:
+      containers:
+        - name: question-service
+          image: gcr.io/ay2324s1-cs3219-g43/question-service:6.0-SNAPSHOT
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: QUESTION_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: QUESTION_DATABASE_URL
+            - name: USER_BASE_PATH
+              value: http://user-service:8000/api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: question-service
+spec:
+  selector:
+    app: question-service
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+        - name: matching-service
+          image: gcr.io/ay2324s1-cs3219-g43/matching-service:6.0-SNAPSHOT
+          ports:
+            - containerPort: 5001
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: PORT
+              value: "5001"
+            - name: AMPQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: AMPQ_HOST
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matching-service
+spec:
+  selector:
+    app: matching-service
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: history-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: history-service
+  template:
+    metadata:
+      labels:
+        app: history-service
+    spec:
+      containers:
+        - name: history-service
+          image: gcr.io/ay2324s1-cs3219-g43/history-service:6.0-SNAPSHOT
+          ports:
+            - containerPort: 3001
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: PORT
+              value: "3001"
+            - name: USER_BASE_PATH
+              value: http://user-service:8000/api
+            - name: HISTORY_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: HISTORY_DATABASE_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: history-service
+spec:
+  selector:
+    app: history-service
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-execution-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: code-execution-service
+  template:
+    metadata:
+      labels:
+        app: code-execution-service
+    spec:
+      containers:
+        - name: code-execution-service
+          image: gcr.io/ay2324s1-cs3219-g43/code-execution-service:6.0-SNAPSHOT
+          ports:
+            - containerPort: 5002
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: PORT
+              value: "5002"
+            - name: USER_BASE_PATH
+              value: http://user-service:8000/api
+            - name: REACT_APP_RAPID_API_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: REACT_APP_RAPID_API_HOST
+            - name: REACT_APP_RAPID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: REACT_APP_RAPID_API_KEY
+            - name: REACT_APP_RAPID_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: REACT_APP_RAPID_API_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-execution-service
+spec:
+  selector:
+    app: code-execution-service
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaboration-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collaboration-service
+  template:
+    metadata:
+      labels:
+        app: collaboration-service
+    spec:
+      containers:
+        - name: collaboration-service
+          image: gcr.io/ay2324s1-cs3219-g43/collaboration-service:6.0-SNAPSHOT
+          ports:
+            - containerPort: 8001
+            - containerPort: 8002
+          env:
+            - name: PEERPREP_ENV
+              value: production
+            - name: PORT
+              value: "8001"
+            - name: COLLABORATION_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: peerprep-secrets
+                  key: COLLABORATION_DATABASE_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: collaboration-service
+spec:
+  selector:
+    app: collaboration-service
+  ports:
+    - name: socket
+      protocol: TCP
+      port: 8001
+      targetPort: 8001
+    - name: wss
+      protocol: TCP
+      port: 8002
+      targetPort: 8002

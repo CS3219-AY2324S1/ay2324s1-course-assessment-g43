@@ -9,7 +9,7 @@ exports.createUser = async (req, res) => {
   email = email?.trim();
 
   if (!validator.isValidPassword(password)) {
-    return res.status(401).json({
+    return res.status(400).json({
       message:
         "Password cannot contain spaces and must be longer than 8 characters.",
       data: {},
@@ -17,7 +17,7 @@ exports.createUser = async (req, res) => {
   }
 
   if (!username || !email) {
-    return res.status(401).json({
+    return res.status(400).json({
       message:
         "Username, email, and password are necessary to register an account.",
       data: {},

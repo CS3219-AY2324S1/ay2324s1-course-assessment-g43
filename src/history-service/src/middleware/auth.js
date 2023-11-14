@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const basePath = "http://localhost:8000/api";
+const basePath = process.env.USER_BASE_PATH || "http://localhost:8000/api";
 
 const verifyToken = async (token) => {
   const res = await axios.get(`${basePath}/verifyToken`, {

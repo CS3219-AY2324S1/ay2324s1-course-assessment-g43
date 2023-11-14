@@ -13,13 +13,13 @@
     "install:code-execution-service": "cd ./src/code-execution-service && npm install",
     "install:history-service": "cd ./src/history-service && npm install",
     "install-all": "concurrently -c \"red,green,yellow,blue,magenta,cyan,gray\" \"npm:install:*\"",
-    "dev:client": "cd ./client && npm run dev",
-    "dev:user-service": "cd ./src/user-service && npm run dev",
-    "dev:question-service": "cd ./src/question-service && npm run dev",
-    "dev:matching-service": "cd ./src/matching-service && npm run dev",
-    "dev:collaboration-service": "cd ./src/collaboration-service && npm run dev",
-    "dev:code-execution-service": "cd ./src/code-execution-service && npm run dev",
-    "dev:history-service": "cd ./src/history-service && npm run dev",
+    "dev:client": "cd ./client && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
+    "dev:user-service": "cd ./src/user-service && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
+    "dev:question-service": "cd ./src/question-service && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
+    "dev:matching-service": "cd ./src/matching-service && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
+    "dev:collaboration-service": "cd ./src/collaboration-service && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
+    "dev:code-execution-service": "cd ./src/code-execution-service && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
+    "dev:history-service": "cd ./src/history-service && cross-env PEERPREP_ENV=$PEERPREP_ENV npm run dev",
     "dev-all": "concurrently -c \"red,green,yellow,blue,magenta,cyan,gray\" \"npm:dev:*\""
   },
   "repository": {
@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g43#readme",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
   }
 }

@@ -1,10 +1,9 @@
-
 const express = require("express");
 const cors = require("cors");
 const expressJSDocSwagger = require("express-jsdoc-swagger");
 const app = express();
 const port = 5002;
- 
+
 app.use(cors());
 app.use(express.json());
 
@@ -27,7 +26,6 @@ const options = {
   notRequiredAsNullable: false,
 };
 
-
 expressJSDocSwagger(app)(options);
 
 const codeExecutionRouter = require("./src/routes/code-execution-routes");
@@ -35,5 +33,6 @@ const codeExecutionRouter = require("./src/routes/code-execution-routes");
 app.use("/api", codeExecutionRouter);
 
 app.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`Code execution is running on port ${port}`);
 });

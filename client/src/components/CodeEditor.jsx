@@ -44,7 +44,8 @@ export const CodeEditor = observer(
     onLanguageChange,
     isGetNextQuestionLoading,
   }) => {
-    const WS_SERVER_URL = "ws://localhost:8002";
+    const WS_SERVER_URL =
+      import.meta.env.VITE_COLLABORATION_WS_ORIGIN || "ws://localhost:8002";
     const editorRef = useRef(null);
     const decorationsRef = useRef(null);
 

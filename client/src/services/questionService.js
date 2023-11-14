@@ -1,14 +1,16 @@
 import axios from "axios";
 
-const basePath = "http://localhost:3000/api/questions";
+const basePath =
+  import.meta.env.VITE_QUESTION_BASE_PATH ||
+  "http://question-service:3000/api/questions";
 
 export const createQuestion = async (req) => {
   try {
     const token = localStorage.getItem("jwt");
     const res = await axios.post(`${basePath}`, req, {
       headers: {
-        authorization:`Bearer ${token}`,
-      }
+        authorization: `Bearer ${token}`,
+      },
     });
     console.log(res);
     return res;
@@ -22,8 +24,8 @@ export const getAllQuestions = async () => {
   const token = localStorage.getItem("jwt");
   const res = await axios.get(`${basePath}`, {
     headers: {
-      authorization:`Bearer ${token}`,
-    }
+      authorization: `Bearer ${token}`,
+    },
   });
   console.log(res);
   return res;
@@ -34,8 +36,8 @@ export const getQuestionById = async (id) => {
     const token = localStorage.getItem("jwt");
     const res = await axios.get(`${basePath}/${id}`, {
       headers: {
-        authorization:`Bearer ${token}`,
-      }
+        authorization: `Bearer ${token}`,
+      },
     });
     console.log(res);
     return res;
@@ -57,7 +59,7 @@ export const getRandomQuestionByComplexity = async (complexity) => {
     console.log("Error getting questionId:", error.message);
     return null;
   }
-}
+};
 
 export const getFreshRandomQuestionByComplexity = async (complexity, currentId) => {
   try {
@@ -78,8 +80,8 @@ export const updateQuestionById = async (id, req) => {
   const token = localStorage.getItem("jwt");
   const res = await axios.put(`${basePath}/${id}`, req, {
     headers: {
-      authorization:`Bearer ${token}`,
-    }
+      authorization: `Bearer ${token}`,
+    },
   });
   console.log(res);
   return res;
@@ -87,10 +89,10 @@ export const updateQuestionById = async (id, req) => {
 
 export const deleteQuestionById = async (id) => {
   const token = localStorage.getItem("jwt");
-  const res = await axios.delete(`${basePath}/${id}`,{
+  const res = await axios.delete(`${basePath}/${id}`, {
     headers: {
-      authorization:`Bearer ${token}`,
-    }
+      authorization: `Bearer ${token}`,
+    },
   });
   console.log(res);
   return res;

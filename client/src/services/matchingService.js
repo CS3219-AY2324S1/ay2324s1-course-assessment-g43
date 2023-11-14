@@ -1,8 +1,9 @@
 import socketIOClient from "socket.io-client";
 import { getRandomQuestionByComplexity } from "../services/questionService";
-import { createSession} from "./collaborationService";
+import { createSession } from "./collaborationService";
 
-const ENDPOINT = "http://localhost:5001";
+const ENDPOINT =
+  import.meta.env.VITE_MATCHING_ENDPOINT || "http://localhost:5001";
 
 /**
  * Sets up a socket connection to the matching service server.
@@ -13,8 +14,14 @@ const ENDPOINT = "http://localhost:5001";
  * @param {Function} onSocketDisconnect - callback function for socket disconnect
  * @returns {Socket} socket created
  */
-const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisconnect) => {
-  const socket = socketIOClient(ENDPOINT);
+const setupSocket = (
+  onMatchSuccess,
+  onMatchFailure,
+  onMatchCancel,
+  onSocketDisconnect
+) => {
+  console.log(ENDPOINT);
+  const socket = socketIOClient(ENDPOINT, { path: "/matching-service" });
 
   socket.on("connect", () => {
     console.log("socket connected");
@@ -38,11 +45,17 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
   });
 
   socket.on("create-session", async (sessionCreationRequest, callback) => {
-
-    const { roomId, firstUserId, firstUserName, secondUserId, secondUserName, complexity } = sessionCreationRequest;
+    const {
+      roomId,
+      firstUserId,
+      firstUserName,
+      secondUserId,
+      secondUserName,
+      complexity,
+    } = sessionCreationRequest;
 
     const question = await getRandomQuestionByComplexity(complexity);
-    
+
     const sessionDetails = {
       roomId,
       firstUserId,
@@ -54,13 +67,13 @@ const setupSocket = (onMatchSuccess, onMatchFailure, onMatchCancel, onSocketDisc
 
     const session = await createSession(sessionDetails);
 
-    console.log("session")
-    console.log(session)
-    console.log(question)
-    console.log(sessionDetails)
-    
+    console.log("session");
+    console.log(session);
+    console.log(question);
+    console.log(sessionDetails);
+
     callback(session?.data);
-  })
+  });
 
   return socket;
 };

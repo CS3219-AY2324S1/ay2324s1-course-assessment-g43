@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: `.env.${process.env.PEERPREP_ENV}` });
 
 const cors = require("cors");
 const express = require("express");
@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(cors());
 const port = process.env.PORT;
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.HISTORY_DATABASE_URL;
 
 const options = {
   info: {
@@ -50,5 +50,6 @@ mongoose.connect(databaseUrl, {
 app.use("/api", require("./src/routes/history-routes"));
 
 app.listen(port, () => {
+  console.log(`Environment: ${process.env.PEERPREP_ENV}`);
   console.log(`History service listening on port ${port}`);
 });

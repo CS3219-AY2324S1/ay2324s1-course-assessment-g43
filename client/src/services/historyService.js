@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const basePath = "http://localhost:3001/api";
+const basePath =
+  import.meta.env.VITE_HISTORY_BASE_PATH || "http://localhost:3001/api";
 
 export const createAttempt = async (req) => {
   try {

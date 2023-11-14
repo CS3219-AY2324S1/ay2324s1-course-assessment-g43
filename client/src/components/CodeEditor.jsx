@@ -206,14 +206,21 @@ export const CodeEditor = observer(
       const provider = new WebsocketProvider(WS_SERVER_URL, roomId, doc);
 
       const type = doc.getText("monaco");
+      const yMap = doc.getMap();
 
       // // Ensures that you initialise the default template once
       provider.once("synced", () => {
         const userId = JSON.parse(localStorage.getItem("user"))["uid"];
-        if (roomId.split("-")[1] == userId) {
+        if (roomId.split("-")[1] == userId && !yMap.get('templateInitialized')) {
           viewSessionStore.setCode(initialTemplate[language]);
+          yMap.set('templateInitialized', true);
         }
       });
+
+      async function resetTemplateInitialized() {
+        yMap.set('templateInitialized', false);
+      }
+      viewSessionStore.setResetTemplateCallback(resetTemplateInitialized);
 
       // Bind YJS to monaco
       // eslint-disable-next-line no-unused-vars

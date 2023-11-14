@@ -31,6 +31,7 @@ class ViewSessionStore {
     isGetNextQuestionLoading: false,
     code: "",
     attempt: new Map(),
+    resetTemplateCallback: () => {},
 
     /*
     Array of objects with the following structure:
@@ -87,6 +88,10 @@ class ViewSessionStore {
     console.log(isLoading);
 
     this.state.isGetNextQuestionLoading = isLoading;
+  }
+
+  setResetTemplateCallback(callback) {
+    this.state.resetTemplateCallback = callback;
   }
 
   setChat(jsonStringChat) {
@@ -187,6 +192,7 @@ class ViewSessionStore {
         this.state.complexity,
         this.state.questionId
       );
+      await this.state.resetTemplateCallback();
       await updateSessionWithNewQuestion(this.state.roomId, newQuestion);
       acceptNextQuestionRequest(this.socket);
       changeQuestionCallback();
@@ -212,6 +218,7 @@ class ViewSessionStore {
       code: "",
       attempt: new Map(),
       isGetNextQuestionLoading: false,
+      resetTemplateCallback: () => {},
       chat: [],
       isPeerConnected: false,
     };

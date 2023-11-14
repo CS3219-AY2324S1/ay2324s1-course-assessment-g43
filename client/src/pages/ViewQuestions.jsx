@@ -30,6 +30,7 @@ import {
   Tbody,
   Td,
   Flex,
+  Heading,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { PropTypes, observer } from "mobx-react";
@@ -40,12 +41,24 @@ import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { getColorFromComplexity } from "../utils/stylingUtils";
+import jwt from "jwt-decode";
 
 export const ViewQuestions = observer(() => {
   const modalComponentStore = useModalComponentStore();
   const toast = useToast();
   const store = viewQuestionsStore;
   const state = store.state;
+
+  let userRole = "";
+  try {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      const decodedToken = jwt(token);
+      userRole = decodedToken.usertype;
+    }
+  } catch (error) {
+    console.log("Error: Failed to get/decode jwt. ", error);
+  }
 
   const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
 

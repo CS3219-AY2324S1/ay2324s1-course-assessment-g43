@@ -81,7 +81,6 @@ export const History = observer(() => {
                 variant="solid"
                 bg={"#B7B5E4"}
                 color={"white"}
-                maxW={"20%"}
               >
                 <TagLabel>{category}</TagLabel>
               </Tag>

@@ -305,7 +305,6 @@ const CreateQuestionModalBody = observer(() => {
                 variant="solid"
                 bg={"#B7B5E4"}
                 color={"white"}
-                maxW={"20%"}
               >
                 <TagLabel>{category}</TagLabel>
                 <TagCloseButton
@@ -409,7 +408,6 @@ const ViewQuestionDetailsModalBody = observer(() => {
               variant="solid"
               bg={"#B7B5E4"}
               color={"white"}
-              maxW={"20%"}
             >
               <TagLabel>{category}</TagLabel>
             </Tag>

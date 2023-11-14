@@ -43,6 +43,13 @@ class CreateQuestionStore {
     }
   }
 
+  hasCategory() {
+    if (this.state.category.indexOf(this.state.creatingCat) !== -1) {
+      console.log(true);
+      return true;
+    }
+  }
+
   removeCategory(category) {
     const index = this.state.category.indexOf(category);
     this.state.category.splice(index, 1);

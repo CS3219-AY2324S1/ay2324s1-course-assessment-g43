@@ -211,14 +211,17 @@ export const CodeEditor = observer(
       // // Ensures that you initialise the default template once
       provider.once("synced", () => {
         const userId = JSON.parse(localStorage.getItem("user"))["uid"];
-        if (roomId.split("-")[1] == userId && !yMap.get('templateInitialized')) {
+        if (
+          roomId.split("-")[1] == userId &&
+          !yMap.get("templateInitialized")
+        ) {
           viewSessionStore.setCode(initialTemplate[language]);
-          yMap.set('templateInitialized', true);
+          yMap.set("templateInitialized", true);
         }
       });
 
       async function resetTemplateInitialized() {
-        yMap.set('templateInitialized', false);
+        yMap.set("templateInitialized", false);
       }
       viewSessionStore.setResetTemplateCallback(resetTemplateInitialized);
 
@@ -333,8 +336,7 @@ export const CodeEditor = observer(
           <Tooltip
             label="Select your preferred language."
             hasArrow
-            bg="gray.300"
-            color="black"
+            bg="#706CCC"
           >
             <Select
               // placeholder="Whiteboard"

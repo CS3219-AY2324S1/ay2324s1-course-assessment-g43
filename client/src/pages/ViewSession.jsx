@@ -92,6 +92,10 @@ export const ViewSession = observer(() => {
       description: store.state.description,
       category: store.state.category,
       complexity: store.state.complexity,
+      attemptDetails: {
+        code: store.state.code,
+        language: store.state.language,
+      }
     };
     console.log(attempt);
     await historyStore.createAttempt(attempt);
@@ -269,6 +273,7 @@ export const ViewSession = observer(() => {
                 otherUsername={state.otherUserName}
                 onLanguageChange={(newLang) => store.setLanguage(newLang)}
                 initialTemplate={state.attempt}
+                code={state.code}
                 isGetNextQuestionLoading={state.isGetNextQuestionLoading}
               />
             )}{" "}

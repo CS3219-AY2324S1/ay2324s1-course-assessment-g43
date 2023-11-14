@@ -1,7 +1,14 @@
 const Attempt = require("../models/attempt-model");
 
 exports.createAttempt = async (req, res) => {
-  const { currentUserId, title, description, category, complexity } = req.body;
+  const {
+    currentUserId,
+    title,
+    description,
+    category,
+    complexity,
+    attemptDetails,
+  } = req.body;
   if (currentUserId !== req.decodedToken?.uid) {
     return res.status(403).end();
   }
@@ -12,6 +19,7 @@ exports.createAttempt = async (req, res) => {
       description,
       category,
       complexity,
+      attemptDetails
     });
     await attempt.validate();
     await attempt.save();

@@ -186,11 +186,12 @@ exports.deleteSession = async (req, res) => {
 exports.editSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
-    const { title, description, category } = req.body;
+    const { questionId, title, description, category  } = req.body;
 
     const session = await Session.findOne({ roomId });
     if (session) {
       const defaultAttempt = getDefaultAttempt(title);
+      session.questionId = questionId;
       session.title = title;
       session.description = description;
       session.category = category;

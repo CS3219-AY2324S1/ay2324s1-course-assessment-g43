@@ -29,7 +29,9 @@ class ViewSessionStore {
     language: "",
     otherUserName: "",
     isGetNextQuestionLoading: false,
+    code: "",
     attempt: new Map(),
+    resetTemplateCallback: () => {},
 
     /*
     Array of objects with the following structure:
@@ -76,12 +78,20 @@ class ViewSessionStore {
     this.state.language = language;
     notifyPeerLanguageChange(this.socket, language.toLowerCase());
   }
+  
+  setCode(code) {
+    this.state.code = code;
+  }
 
   setIsGetQuestionLoading(isLoading) {
     console.log("i am inside qn loading");
     console.log(isLoading);
 
     this.state.isGetNextQuestionLoading = isLoading;
+  }
+
+  setResetTemplateCallback(callback) {
+    this.state.resetTemplateCallback = callback;
   }
 
   setChat(jsonStringChat) {
@@ -182,6 +192,7 @@ class ViewSessionStore {
         this.state.complexity,
         this.state.questionId
       );
+      await this.state.resetTemplateCallback();
       await updateSessionWithNewQuestion(this.state.roomId, newQuestion);
       acceptNextQuestionRequest(this.socket);
       changeQuestionCallback();
@@ -204,8 +215,10 @@ class ViewSessionStore {
       roomId: "",
       language: "",
       otherUserName: "",
+      code: "",
       attempt: new Map(),
       isGetNextQuestionLoading: false,
+      resetTemplateCallback: () => {},
       chat: [],
       isPeerConnected: false,
     };

@@ -30,9 +30,10 @@ import {
   Tbody,
   Td,
   Flex,
+  Heading,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon, ViewIcon } from "@chakra-ui/icons";
-import { observer } from "mobx-react";
+import { PropTypes, observer } from "mobx-react";
 import { PageContainer } from "../components/PageContainer";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -40,6 +41,7 @@ import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { getColorFromComplexity } from "../utils/stylingUtils";
+import jwt from "jwt-decode";
 
 export const ViewQuestions = observer(() => {
   const modalComponentStore = useModalComponentStore();
@@ -121,6 +123,16 @@ export const ViewQuestions = observer(() => {
     );
   };
 
+  const handleOpenCreateModal = () => {
+    modalComponentStore.openModal(
+      createQuestionModalTitle,
+      <CreateQuestionModalBody />,
+      <CreateQuestionModalFooter createQuestion={createQuestion} />,
+      createQuestion,
+      () => createQuestionStore.resetState()
+    );
+  };
+
   useEffect(() => {
     store.getAllQuestions();
   }, []);
@@ -172,15 +184,7 @@ export const ViewQuestions = observer(() => {
               _hover={{
                 bg: "#BBC2E2",
               }}
-              onClick={() =>
-                modalComponentStore.openModal(
-                  createQuestionModalTitle,
-                  <CreateQuestionModalBody />,
-                  <CreateQuestionModalFooter />,
-                  createQuestion,
-                  () => createQuestionStore.resetState()
-                )
-              }
+              onClick={() => handleOpenCreateModal()}
             />
           </HStack>
         </Flex>
@@ -321,7 +325,9 @@ const CreateQuestionModalBody = observer(() => {
             }}
             onKeyPress={(e) => {
               if (e.key == "Enter") {
-                createQuestionStore.addCategory();
+                createQuestionStore.hasCategory()
+                  ? alert("Duplicated categories not allowed!")
+                  : createQuestionStore.addCategory();
               }
             }}
           />
@@ -333,7 +339,11 @@ const CreateQuestionModalBody = observer(() => {
               _hover={{
                 bg: "#DEE2F5",
               }}
-              onClick={() => createQuestionStore.addCategory()}
+              onClick={() =>
+                createQuestionStore.hasCategory()
+                  ? alert("Duplicated categories not allowed!")
+                  : createQuestionStore.addCategory()
+              }
             />
           </InputRightElement>
         </InputGroup>
@@ -356,7 +366,7 @@ const CreateQuestionModalBody = observer(() => {
   );
 });
 
-const CreateQuestionModalFooter = () => {
+const CreateQuestionModalFooter = (props) => {
   return (
     <Button
       bg={"#706CCC"}
@@ -365,11 +375,15 @@ const CreateQuestionModalFooter = () => {
       }}
       color={"white"}
       mr={3}
-      type="submit"
+      onClick={props.createQuestion}
     >
       Create Question
     </Button>
   );
+};
+
+CreateQuestionModalFooter.propTypes = {
+  createQuestion: PropTypes.func,
 };
 
 const ViewQuestionDetailsModalTitle = observer(() => {

@@ -11,7 +11,6 @@ export const createAttempt = async (req) => {
         authorization: `Bearer ${token}`,
       },
     });
-    console.log(res);
     return res;
   } catch (err) {
     console.log(err);
@@ -27,7 +26,6 @@ export const getAttemptsByUserId = async (id) => {
         authorization: `Bearer ${token}`,
       },
     });
-    console.log(res);
     return res;
   } catch (err) {
     console.log(err);

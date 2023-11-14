@@ -14,7 +14,6 @@ export const createSession = async (req) => {
         authorization: `Bearer ${token}`,
       },
     });
-    console.log(res);
     return res;
   } catch (err) {
     console.log(err);

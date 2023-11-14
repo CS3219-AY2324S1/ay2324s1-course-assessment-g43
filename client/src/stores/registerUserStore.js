@@ -32,7 +32,6 @@ class RegisterUserStore {
   async register() {
     try {
       const res = await register(this.state);
-      console.log(res);
       return res;
     } catch (err) {
       console.log(err);

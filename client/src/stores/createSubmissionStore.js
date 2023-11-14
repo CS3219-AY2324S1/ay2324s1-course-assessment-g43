@@ -22,7 +22,6 @@ class CreateSubmissionStore {
   async createSubmission() {
     try {
       const res = await createSubmission(JSON.stringify(this.state));
-      console.log(res.data.data.token)
       return res.data.data.token;
     } catch (err) {
       console.log(err);

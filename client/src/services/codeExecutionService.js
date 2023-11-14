@@ -5,7 +5,6 @@ const basePath =
 
 export const createSubmission = async (req) => {
   try {
-    console.log(req);
     const jwt = localStorage.getItem("jwt");
     const res = await axios.post(`${basePath}/createSubmission`, req, {
       headers: {
@@ -13,7 +12,6 @@ export const createSubmission = async (req) => {
         Authorization: `Bearer ${jwt}`,
       },
     });
-    console.log(res);
     return res;
   } catch (err) {
     console.error(err);

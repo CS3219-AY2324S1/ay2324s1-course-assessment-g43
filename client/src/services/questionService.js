@@ -12,7 +12,6 @@ export const createQuestion = async (req) => {
         authorization: `Bearer ${token}`,
       },
     });
-    console.log(res);
     return res;
   } catch (err) {
     console.log(err);
@@ -27,7 +26,6 @@ export const getAllQuestions = async () => {
       authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
   return res;
 };
 
@@ -83,7 +81,6 @@ export const updateQuestionById = async (id, req) => {
       authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
   return res;
 };
 
@@ -94,6 +91,5 @@ export const deleteQuestionById = async (id) => {
       authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
   return res;
 };

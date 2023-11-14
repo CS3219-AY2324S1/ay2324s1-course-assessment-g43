@@ -19,7 +19,6 @@ class ViewQuestionsStore {
   async getAllQuestions() {
     try {
       const res = await getAllQuestions();
-      console.log(res);
       this.setQuestions(res.data);
       return res;
     } catch (err) {
@@ -49,7 +48,6 @@ class ViewQuestionsStore {
   async deleteQuestion(id) {
     try {
       const res = deleteQuestionById(id);
-      console.log(res);
     } catch (err) {
       console.log(err);
       throw err;

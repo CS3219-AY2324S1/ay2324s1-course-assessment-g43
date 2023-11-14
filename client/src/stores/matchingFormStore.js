@@ -87,7 +87,6 @@ class MatchingFormStore {
   ) {
     this.socket = setupSocket(
       (data) => {
-        console.log(data);
         this.setLoading(false);
         onMatchSuccess?.(data);
       },
@@ -107,14 +106,11 @@ class MatchingFormStore {
       }
     );
 
-    console.log(`sendMatchRequest() with args ${this.uid}, ${this.complexity}`);
     const message = JSON.stringify({
       uid: this.uid,
       name: this.userName,
       complexity: this.complexity,
     });
-    console.log("yay sending match request");
-    console.log(this.userName);
 
     this.socket.emit("match-request", message);
   }

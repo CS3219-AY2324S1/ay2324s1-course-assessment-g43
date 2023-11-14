@@ -153,8 +153,6 @@ exports.listenToQueue = async (channel) => {
           return;
         }
 
-        // console.log(message)
-
         const { isCancelRequest, userId, userName, socketId } = JSON.parse(
           message.content.toString()
         );

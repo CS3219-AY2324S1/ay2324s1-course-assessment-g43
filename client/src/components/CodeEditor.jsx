@@ -63,7 +63,6 @@ export const CodeEditor = observer(
 
     useEffect(() => {
       // This changes when USER changes language
-      // console.log("userLanguage changed to: ", userLanguage);
       if (!userLanguage || userLanguage === language) return;
 
       async function changeLanguage(roomId, userLanguage, code) {
@@ -91,7 +90,6 @@ export const CodeEditor = observer(
 
     useEffect(() => {
       // This changes when PEER changes language
-      // console.log("PEER changed language changed to: ", language);
       if (language === userLanguage) return;
       setUserLanguage(language);
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,18 +160,14 @@ export const CodeEditor = observer(
     };
 
     async function getEditorValue() {
-      console.log(editorRef.current.getValue());
-
       try {
         const token = await store.createSubmission();
-        console.log(token);
         resultStore.setToken(token);
         await new Promise((resolve) => {
           setTimeout(resolve, 2000); // 2000 milliseconds (2 seconds)
         });
 
         const result = await resultStore.getSubmissionResult();
-        console.log(result);
       } catch (error) {
         console.error(error);
       }
@@ -256,7 +250,6 @@ export const CodeEditor = observer(
                 start.column == end.column
               ) {
                 // Simple cursor
-                // console.log("simple cursor");
                 decorationsRef.current.set([
                   {
                     range: new monaco.Range(
@@ -274,7 +267,6 @@ export const CodeEditor = observer(
                 ]);
               } else {
                 // Highlight event
-                // console.log("highlight event");
                 decorationsRef.current.set([
                   {
                     range: new monaco.Range(

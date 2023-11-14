@@ -54,7 +54,6 @@ class UpdateQuestionStore {
   async updateQuestionById() {
     try {
       const res = await updateQuestionById(this.state.questionId, this.state);
-      console.log(res);
       return res;
     } catch (err) {
       console.log(err);

@@ -84,9 +84,6 @@ class ViewSessionStore {
   }
 
   setIsGetQuestionLoading(isLoading) {
-    console.log("i am inside qn loading");
-    console.log(isLoading);
-
     this.state.isGetNextQuestionLoading = isLoading;
   }
 
@@ -157,8 +154,6 @@ class ViewSessionStore {
       JSON.parse(localStorage.getItem("user")).username
         ? session.secondUserName
         : session.firstUserName;
-
-    console.log(session);
 
     this.state = {
       ...this.state,

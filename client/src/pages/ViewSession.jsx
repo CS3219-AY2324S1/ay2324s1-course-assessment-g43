@@ -40,10 +40,6 @@ export const ViewSession = observer(() => {
     store
       .fetchSession(roomId)
       .then((session) => {
-        //TODO can we refactor this to the case below?
-        console.log("fetched session");
-        console.log(session);
-
         store.setRoomId(roomId);
         store.initiateSessionState(session);
         store.initSocket(
@@ -83,9 +79,6 @@ export const ViewSession = observer(() => {
     const uid = userObject.uid;
     const qid = store.state.questionId;
 
-    console.log("hiii");
-    console.log(qid);
-
     const attempt = {
       currentUserId: uid,
       title: store.state.title,
@@ -97,7 +90,7 @@ export const ViewSession = observer(() => {
         language: store.state.language,
       }
     };
-    console.log(attempt);
+    
     await historyStore.createAttempt(attempt);
   };
 

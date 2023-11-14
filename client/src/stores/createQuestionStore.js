@@ -45,7 +45,6 @@ class CreateQuestionStore {
 
   hasCategory() {
     if (this.state.category.indexOf(this.state.creatingCat) !== -1) {
-      console.log(true);
       return true;
     }
   }
@@ -62,7 +61,6 @@ class CreateQuestionStore {
   async createQuestion() {
     try {
       const res = await createQuestion(this.state);
-      console.log(res);
       return res;
     } catch (err) {
       console.log(err);

@@ -33,7 +33,6 @@ class ViewUserStore {
   async deleteUser(id) {
     try {
       const res = await deleteUser(id);
-      console.log(res);
     } catch (err) {
       console.log(err);
       throw err;

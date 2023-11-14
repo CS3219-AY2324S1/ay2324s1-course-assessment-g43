@@ -51,7 +51,6 @@ class ViewHistoryStore {
   async getAttemptsByUserId(id) {
     try {
       const res = await getAttemptsByUserId(id);
-      console.log(res);
       this.reformatDatetime(res.data);
       this.setAttempts(res.data);
       return res;
@@ -63,7 +62,6 @@ class ViewHistoryStore {
   async createAttempt(attempt) {
     try {
       const res = await createAttempt(attempt);
-      console.log(res);
       return res;
     } catch (err) {
       console.log(err);

@@ -17,7 +17,7 @@ exports.getLanguages = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+
     return res.status(200).json({
       message: "Languages retrieved",
       data: { languages: response.data },
@@ -45,7 +45,7 @@ exports.getLanguage = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+
     return res.status(200).json({
       message: "Language retrieved",
       data: { language: response.data },
@@ -71,7 +71,7 @@ exports.getStatuses = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+
     return res.status(200).json({
       message: "Statuses retrieved",
       data: { Statuses: response.data },
@@ -120,7 +120,7 @@ exports.createSubmission = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+
     return res.status(200).json({
       message: "Successful submission",
       data: { token: response.data.token },
@@ -136,7 +136,7 @@ exports.createSubmission = async (req, res) => {
 
 exports.getSubmissionResult = async (req, res) => {
   const token = req.params.token;
-  console.log(token);
+
   if (!token) {
     return res.status(400).json({
       message: "A submission token is required to retrieve results.",
@@ -158,7 +158,7 @@ exports.getSubmissionResult = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+
     let stdout = response.data.stdout;
     if (stdout) {
       stdout = Buffer.from(stdout, "base64").toString("utf-8");

@@ -20,25 +20,21 @@ export const getAllUsers = async () => {
       authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
   return res;
 };
 
 export const register = async (req) => {
   const res = await axios.post(`${basePath}/register`, req);
-  console.log(res);
   return res;
 };
 
 export const login = async (req) => {
   const res = await axios.post(`${basePath}/login`, req);
-  console.log(res);
   return res.data;
 };
 
 export const logout = async (req) => {
   const res = await axios.post(`${basePath}/logout`, req);
-  console.log(res);
   return res;
 };
 
@@ -49,7 +45,6 @@ export const updateUser = async (id, req) => {
       authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
   return res;
 };
 
@@ -60,7 +55,6 @@ export const deleteUser = async (id) => {
       authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
   localStorage.removeItem("jwt");
   return res;
 };

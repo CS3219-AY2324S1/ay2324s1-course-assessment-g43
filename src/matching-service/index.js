@@ -78,9 +78,6 @@ const init = async () => {
         socketId: socket.id,
       };
 
-      console.log("send request message to queue:");
-      console.log(messageMatchRequest);
-
       channel.sendToQueue(
         queueName,
         Buffer.from(JSON.stringify(messageMatchRequest))
@@ -117,8 +114,8 @@ const init = async () => {
     });
 
     socket.on("disconnect", () => {
+      console.log("disconnected");
       clearTimeout(timeoutId);
-      console.log("User has left");
     });
   });
 

@@ -20,7 +20,6 @@ const setupSocket = (
   onMatchCancel,
   onSocketDisconnect
 ) => {
-  console.log(ENDPOINT);
   const socket = socketIOClient(ENDPOINT, { path: "/matching-service" });
 
   socket.on("connect", () => {
@@ -66,11 +65,6 @@ const setupSocket = (
     };
 
     const session = await createSession(sessionDetails);
-
-    console.log("session");
-    console.log(session);
-    console.log(question);
-    console.log(sessionDetails);
 
     callback(session?.data);
   });

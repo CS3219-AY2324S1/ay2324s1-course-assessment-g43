@@ -37,7 +37,6 @@ class GetSubmissionResultStore {
   async getSubmissionResult() {
     try {
       const res = await getSubmissionResult(this.state.token);
-      console.log(res.data);
       this.setStdout(res.data.data.stdout);
       this.setStderr(res.data.data.stderr);
       this.setStatus(res.data.data.status.id, res.data.data.status.description);

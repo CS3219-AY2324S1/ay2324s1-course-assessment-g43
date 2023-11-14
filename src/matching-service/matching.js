@@ -69,7 +69,7 @@ const handleSaveMatchRequest = async (
   pendingUserNames,
   pendingTimeouts
 ) => {
-  console.log("save match request");
+  console.log("saved first match request");
 
   const messageTimeout = setTimeout(() => {
     pendingSocketRequests[index] = null;
@@ -92,7 +92,7 @@ const handleSuccessMatchRequest = async (
   pendingUserNames,
   pendingTimeouts
 ) => {
-  console.log("success match request");
+  console.log("successfully matched request");
 
   await channel.assertQueue(MATCH_REPLY_QUEUE, {
     durable: false,
@@ -267,8 +267,6 @@ exports.listenToReplies = async (channel, io) => {
           }
 
           const firstSession = session;
-
-          console.log("i go session");
 
           io.to(firstUserSocketId).emit("match-success", firstSession);
           io.to(secondUserSocketId).emit("match-success", firstSession);

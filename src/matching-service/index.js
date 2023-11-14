@@ -78,7 +78,8 @@ const init = async () => {
         socketId: socket.id,
       };
 
-      console.log("send request message to queue");
+      console.log("send request message to queue:");
+      console.log(messageMatchRequest);
 
       channel.sendToQueue(
         queueName,

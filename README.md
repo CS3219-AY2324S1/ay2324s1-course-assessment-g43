@@ -1,184 +1,101 @@
-# PeerPrep
+This file contains instructions on how to build and run the question microservice application as well as the user microservice application. Do follow the instructions strictly to ensure that the applications are started successfully.
 
-## Getting Started
+We will be using Docker to containerise our applications.
 
-### Prerequisites
-- Node.js and npm
-- Docker (optional)
+To briefly walk you through what would be done, we will be:
 
-#### Ensure that you have the right env files
+1. Navigating into the relevant application folders
+2. Building the individual Docker images
+3. Running the individual Docker containers
+4. Creating a network on Docker and connecting the containers to the network
+5. Testing to see if our applications are successfully containerised
 
-Make sure you have the right `.env.*` files and they are
+# Download Docker
 
-1. In the right folder
-2. Have the correct file name
-3. Have the correct content in them
+If you don't already have Docker installed, [download](https://www.docker.com/products/docker-desktop/) the right version of Docker corresponding to the machine you are using and complete the Docker installation.
 
-For example, `/client`, and each `/src/<service>` folder should contain `.env.local`, `.env.docker` and `.env.production` files.
+# Run Docker Desktop
 
-### Installation
+After you have successfully downloaded and installed Docker, run the Docker Desktop application.
 
-1. Clone the repo
-   ```sh
-   git clone git@github.com:CS3219-AY2324S1/ay2324s1-course-assessment-g43.git
-   ```
+# 1. Navigate into the application folder
 
-2. Install dependencies
-   ```sh
-   cd ay2324s1-course-assessment-g43
-   npm run install
-   npm run install-all  # Installs all dependencies of client and all microservices
-   ```
-
-There are 2 ways of running the project locally.
-1. Running from source code
-2. Running with Docker
-  
-### How to start local development from source code
-
-Note: The paths which the microservices use to identify one another only work with `PEERPREP_ENV` set to `local`.
-
-On Unix:
-```sh
-PEERPREP_ENV=local npm run dev-all
-```
-
-On Windows (powershell):
-```sh
-$env:PEERPREP_ENV="local"; npm run dev-all
-```
-
-### How to start local development using Docker
-
-#### Run docker compose file
-
-Run the `docker-compose.yml` file from the main folder. This does 2 things.
-
-1. runs an `npm install`
-2. runs the app by doing either `npm run dev` (development) or `npm run start` (production)
-
-Kind of like how you would run `npm run install-all` and then `npm run dev-all`
-
-This is the command:
-
-On Unix:
-```sh
-PEERPREP_ENV=docker docker compose up
-```
-
-On Windows (powershell):
-```sh
-$env:PEERPREP_ENV="docker"; docker compose up
-```
-
-> [!NOTE]  
-> If you want to start a local environment that mimics production, you can run
-> `PEERPREP_ENV=production docker compose up`
-
-## How to deploy to GCP
-
-#### Install Google Cloud SDK
-
-Follow the [official documentation](https://cloud.google.com/sdk/docs/install) for the installation instructions.
-
-Ignore the `gcloud init` instruction.
-
-#### Authenticate Google Cloud and select project
-
-Go into the `ay2324s1-course-assessment-g43` folder, our main folder containing all the microservices, and run
+Assuming that you have just pulled from our master branch and you are currently in our project folder in Terminal, navigate to the folder containing the user service application by doing
 
 ```
-gcloud init
+cd src/user-service
 ```
 
-This should open a browser window where you can sign in with your Google account and select the project that you should have already been added into.
+# 2. Build the Docker image
 
-#### Deploying each microservice to GCP
-
-1. `cd` into each microservice
-2. run the `gcloud` command to run the `Dockerfile` and deploy to GCP
+Now, build the docker image for user service by running
 
 ```
-cd client
-gcloud builds submit --tag gcr.io/ay2324s1-cs3219-g43/client:1.0-SNAPSHOT
-
-cd ../src/question-service
-gcloud builds submit --tag gcr.io/ay2324s1-cs3219-g43/question-service:1.0-SNAPSHOT
-
-cd ../user-service
-gcloud builds submit --tag gcr.io/ay2324s1-cs3219-g43/user-service:1.0-SNAPSHOT
-
-cd ../matching-service
-gcloud builds submit --tag gcr.io/ay2324s1-cs3219-g43/matching-service:1.0-SNAPSHOT
+docker build -t user-service .
 ```
 
-#### Deploy secrets to the cluster
+# 3. Run the Docker container
 
-Get the `secrets.yaml` file and put it in the folder that contains the `kubernetes.yaml` file
-
-Make sure you are in the folder that contains the `secrets.yaml` file and run
+Run the Docker container called `user-service` using the image that you created in the previous step.
 
 ```
-kubectl apply -f secrets.yaml
+docker run -p 8000:8000 -e PEERPREP_ENV=docker --name user-service user-service
 ```
 
-#### Install ingress controller to google cloud using helm
+> Note:
+> Please make sure to pass in the `PEERPREP_ENV=docker` argument when running this function. This argument determines which environment file to use.
 
-Install ingress controller to google cloud with this command. You might have to install helm to your machine if you don't already have it.
+# Repeat for other application
 
-```
-helm install my-nginx-controller ingress-nginx/ingress-nginx
-```
-
-You might get an error message saying that an ingress controller called `my-nginx-controller` is already installed. If that is the case, you can skip this step.
-
-However, if for whatever reason you feel uncertain, you can run `helm uninstall my-nginx-controller` to uninstall the controller and then run the command above to reinstall it.
-
-#### Deploy network policy and ingress resources
-
-Deploy the network policy and ingress resources to google cloud by applying their yaml files.
+Repeat Steps 1 to 3 for the question service. The question service application folder is in the `src` folder and you can switch to that folder by running:
 
 ```
-kubectl apply -f my-network-policy.yaml
-kubectl apply -f my-ingress.yaml
-kubectl apply -f my-client-ingress.yaml
+cd ../question-service
 ```
 
-#### Deploy containers to the cluster
-
-We are basically applying the `kubernetes.yaml` onto the cluster. This essentially puts those containers that we created above into our cluster on GKE.
-
-Make sure you are in the folder that contains the `kubernetes.yaml` file and run
+After switching to that folder, you can run the same commands in Steps 1 to 3 but **replace all occurrences of `user-service` with `question-service`**. Also, question service used port 3000, so change `8000:8000` to `3000:3000`. It should look something like this to run the Docker container
 
 ```
-kubectl apply -f kubernetes.yaml
+docker run -p 3000:3000 -e PEERPREP_ENV=docker --name question-service question-service
 ```
 
-#### Verify that you have gotten everything right
+# 4. Create a Docker network
 
-Run `kubectl get pods` and you should see this (the alphanumeric stuff behind might not be the same)
+Now we will create a Docker network so that the applications can communicate with one another for the automatic DNS resolution feature provided by user-defined bridges.
 
-```
-NAME                                                            READY   STATUS    RESTARTS   AGE
-client-f8c5dd688-lzkmp                                          1/1     Running   0          12s
-matching-service-6d5f485dc8-9dncc                               1/1     Running   0          11s
-matching-service-6d5f485dc8-b7stq                               1/1     Running   0          11s
-my-nginx-controller-ingress-nginx-controller-68c8d6798c-4rfss   1/1     Running   0          20m
-question-service-cf5f46679-7jtl9                                1/1     Running   0          11s
-question-service-cf5f46679-gj7vq                                1/1     Running   0          11s
-user-service-89c7b8b79-j692n                                    1/1     Running   0          11s
-user-service-89c7b8b79-vgs5g                                    1/1     Running   0          11s
-```
-
-Run `kubectl get svc` and you should see this (the alphanumeric stuff behind might not be the same)
+Run:
 
 ```
-NAME                                                     TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-client                                                   ClusterIP      XX.XX.XX.XX     <none>          5173/TCP                     20s
-kubernetes                                               ClusterIP      XX.XX.XX.XX      <none>          443/TCP                      4h40m
-matching-service                                         ClusterIP      XX.XX.XX.XX   <none>          5001/TCP                     19s
-my-nginx-controller-ingress-nginx-controller             LoadBalancer   XX.XX.XX.XX   34.126.73.169   80:31475/TCP,443:31126/TCP   20m
-my-nginx-controller-ingress-nginx-controller-admission   ClusterIP      XX.XX.XX.XX   <none>          443/TCP                      20m
-question-service                                         ClusterIP      XX.XX.XX.XX    <none>          3000/TCP                     19s
-user-service                                             ClusterIP      XX.XX.XX.XX     <none>          8000/TCP                     19s
+docker network create peerprep-network
 ```
+
+# 5. Connect the containers to the network
+
+To connect the containers to the network, run
+
+```
+docker network connect peerprep-network user-service
+docker network connect peerprep-network question-service
+```
+
+Up to this point, if you have managed to run all these commands without errors, you have successfully build, run and connected the 2 applications. Time to move on to testing these applications!
+
+# Testing via Shell access
+
+If you have third party applications like Postman, you can test using those applications as well by doing a `GET` request to `/api/hello` for both endpoints. They should return a `"Hello world"` string in response.
+
+But if you don't have those third party applications installed, fret not, we got you covered. In your terminal, run:
+
+```
+docker exec -it <container_name> /bin/bash
+```
+
+Replace `<container_name>` with the either `user-service` or `question-service`.
+That command basically allows you to access the Shell of that application.
+Run the command bellow to make a request to the path `/api/hello` which prints `Hello world` to your terminal.
+
+```
+curl http://localhost:<port_number>/api/hello
+```
+
+Replace `<port_number>` with `8000` if you are in `user-service` or `3000` if you are in `question-service`.

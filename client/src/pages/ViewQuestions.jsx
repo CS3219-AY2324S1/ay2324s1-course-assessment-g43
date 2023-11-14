@@ -30,7 +30,6 @@ import {
   Tbody,
   Td,
   Flex,
-  Heading,
 } from "@chakra-ui/react";
 import { SearchIcon, AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { PropTypes, observer } from "mobx-react";
@@ -41,7 +40,6 @@ import { viewQuestionsStore } from "../stores/viewQuestionsStore";
 import { createQuestionStore } from "../stores/createQuestionStore";
 import { useModalComponentStore } from "../contextProviders/modalContext";
 import { getColorFromComplexity } from "../utils/stylingUtils";
-import jwt from "jwt-decode";
 
 export const ViewQuestions = observer(() => {
   const modalComponentStore = useModalComponentStore();

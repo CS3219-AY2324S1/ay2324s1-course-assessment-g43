@@ -16,6 +16,10 @@ exports.createSession = async (req, res) => {
   } = req.body;
 
   try {
+    const requestorUid = req.decodedToken?.uid;
+    if (firstUserId !== requestorUid && secondUserId !== requestorUid) {
+      return res.status(403).end();
+    }
     if (firstUserId === secondUserId) {
       return res.status(400).json({ message: "Two users cannot be identical" });
     }
@@ -63,13 +67,12 @@ exports.createSession = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
     return res.status(400).json({ message: "Error creating session" });
   }
 };
 
-// TODO: Return 403 on unauthorized access -- check that userId is in roomId too
 exports.getSession = async (req, res) => {
   try {
     const roomId = req.params.roomId;
@@ -102,7 +105,7 @@ exports.getLanguage = async (req, res) => {
       .json({ language: currentLanguage, code: currentCode });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: "Error fetching session" });
+    return res.status(500).json({ message: "Error getting language" });
   }
 };
 
@@ -130,9 +133,9 @@ exports.editLanguage = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
-    return res.status(500).json({ message: "Error fetching session" });
+    return res.status(500).json({ message: "Error resetting language" });
   }
 };
 
@@ -160,9 +163,9 @@ exports.resetCode = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
-    return res.status(500).json({ message: "Error fetching session" });
+    return res.status(500).json({ message: "Error resetting code" });
   }
 };
 
@@ -200,7 +203,7 @@ exports.editSession = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error editing session details" });
+      return res.status(400).json({ message: err.message });
     }
     return res.status(500).json({ message: "Error editing session details" });
   }

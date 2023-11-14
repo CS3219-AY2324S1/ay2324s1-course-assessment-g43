@@ -49,17 +49,6 @@ export const ViewQuestions = observer(() => {
   const store = viewQuestionsStore;
   const state = store.state;
 
-  let userRole = "";
-  try {
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      const decodedToken = jwt(token);
-      userRole = decodedToken.usertype;
-    }
-  } catch (error) {
-    console.log("Error: Failed to get/decode jwt. ", error);
-  }
-
   const COMPLEXITY_LEVELS = ["Easy", "Medium", "Hard"];
 
   const createQuestion = (e) => {

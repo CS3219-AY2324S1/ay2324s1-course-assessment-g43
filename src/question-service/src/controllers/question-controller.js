@@ -23,7 +23,11 @@ exports.createQuestion = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error creating question" });
+      return res.status(400).json({ message: err.message });
+    }
+    // MongoServerError: E11000 duplicate key error
+    if (err.code === 11000) {
+      return res.status(409).json({ message: "Question already exists" });
     }
     return res.status(500).json({ message: "Error creating question" });
   }
@@ -42,7 +46,7 @@ exports.getQuestion = async (req, res) => {
 
 exports.getAllQuestions = async (req, res) => {
   try {
-    const questions = await Question.find();
+    const questions = await Question.find().sort({ questionId: "asc" });
     return questions
       ? res.status(200).json(questions)
       : res.status(200).json([]);
@@ -59,18 +63,10 @@ exports.updateQuestion = async (req, res) => {
     const question = await Question.findOne({ questionId });
 
     if (question) {
-      if (title) {
-        question.title = title;
-      }
-      if (description) {
-        question.description = description;
-      }
-      if (category) {
-        question.category = category;
-      }
-      if (complexity) {
-        question.complexity = complexity;
-      }
+      question.title = title;
+      question.description = description;
+      question.category = category;
+      question.complexity = complexity;
       await question.validate();
       await question.save();
     }
@@ -78,7 +74,11 @@ exports.updateQuestion = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: "Error updating question" });
+      return res.status(400).json({ message: err.message });
+    }
+    // MongoServerError: E11000 duplicate key error
+    if (err.code === 11000) {
+      return res.status(409).json({ message: "Question already exists" });
     }
     return res.status(500).json({ message: "Error updating question" });
   }

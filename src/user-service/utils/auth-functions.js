@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const maxAge = 3 * 24 * 60 * 60; //value in SECONDS
+const maxAge = 1 * 24 * 60 * 60; //value in SECONDS
 
 exports.createToken = (uid, usertype) => {
   let token;

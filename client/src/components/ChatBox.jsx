@@ -31,12 +31,6 @@ export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendM
     setInputMessage("");
   };
 
-  const AlwaysScrollToBottom = () => {
-    const elementRef = useRef();
-    useEffect(() => elementRef.current.scrollIntoView());
-    return <div ref={elementRef} />;
-  };
-
   return (
     <Stack w={"100%"} h={"100%"}>
       <Flex w="100%">
@@ -84,7 +78,6 @@ export const ChatBox = observer(({ chat, otherUserName, isPeerConnected, onSendM
               );
             }
           })}
-          <AlwaysScrollToBottom />
         </div>
         <Divider />
         <Flex w="100%" mt="5">

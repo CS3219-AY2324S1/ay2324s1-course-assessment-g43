@@ -90,7 +90,7 @@ exports.createSubmission = async (req, res) => {
 
   // if (!language_id || !source_code || !stdin) {
   if (!language_id || !source_code) {
-    return res.status(401).json({
+    return res.status(400).json({
       message:
         "Language ID and source code are necessary for a submission.",
       data: {},
@@ -139,7 +139,7 @@ exports.getSubmissionResult = async (req, res) => {
   const token = req.params.token;
   console.log(token);
   if (!token) {
-    return res.status(401).json({
+    return res.status(400).json({
       message:
         "A submission token is required to retrieve results.",
       data: {},

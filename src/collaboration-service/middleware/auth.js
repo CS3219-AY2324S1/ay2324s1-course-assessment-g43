@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { getUserIdsFromRoomId } = require("../utils/utils");
 
 const basePath = "http://localhost:8000/api";
 
@@ -44,4 +45,15 @@ exports.authenticate = async (req, res, next) => {
           data: {},
         });
   }
+};
+
+// * Note: Only use this if roomId is a param in the route
+exports.checkAuthorization = (req, res, next) => {
+  const roomId = req.params.roomId;
+  const requestorUid = req.decodedToken?.uid;
+  const roomParticipantsUids = getUserIdsFromRoomId(roomId);
+  if (!roomParticipantsUids.includes(requestorUid)) {
+    return res.status(403).end();
+  }
+  next();
 };

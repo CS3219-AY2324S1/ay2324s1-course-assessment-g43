@@ -4,7 +4,6 @@ const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const sessionController = require("./controllers/session-controller.js");
 const http = require("http");
 const { Server } = require("socket.io");
 const { WebSocketServer } = require("ws");
@@ -34,7 +33,7 @@ const roomToActiveSockets = new Map();
 function updateMappingsOnConnection(socket, roomId) {
   socketRooms.set(socket.id, roomId);
   if (roomToActiveSockets.has(roomId)) {
-    roomToActiveSockets.get(roomId).add(socket.id);
+    roomToActiveSockets.get(roomId)?.add(socket.id);
     io.to(socket.id).emit("peer-connected");
   } else {
     roomToActiveSockets.set(roomId, new Set([socket.id]));
@@ -47,8 +46,8 @@ function updateMappingsOnConnection(socket, roomId) {
 function updateMappingsOnDisconnection(socket) {
   const roomdId = socketRooms.get(socket.id);
   socketRooms.delete(socket.id);
-  roomToActiveSockets.get(roomdId).delete(socket.id);
-  if (roomToActiveSockets.get(roomdId).size === 0) {
+  roomToActiveSockets.get(roomdId)?.delete(socket.id);
+  if (roomToActiveSockets.get(roomdId)?.size === 0) {
     roomToActiveSockets.delete(roomdId);
   }
 }
@@ -123,19 +122,7 @@ mongoose.connect(databaseUrl, {
   useUnifiedTopology: true,
 });
 
-app.post("/api/session", sessionController.createSession);
-app.get("/api/session/:roomId", sessionController.getSession);
-
-app.get("/api/session/:roomId/language", sessionController.getLanguage);
-
-app.put("/api/session/:roomId", sessionController.editSession);
-
-app.put("/api/session/:roomId/language", sessionController.editLanguage);
-
-app.put("/api/session/:roomId/resetCode", sessionController.resetCode);
-
-app.delete("/api/session/:roomId", sessionController.deleteSession);
-app.get("/api/session/findWithUid/:uid", sessionController.findSessionWithUid);
+app.use("/api", require("./routes/session-routes"));
 
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);

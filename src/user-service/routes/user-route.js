@@ -131,8 +131,6 @@ router.post("/register", userController.createUser);
  */
 router.post("/login", userController.userLogin);
 
-router.post("/logout", authFunctions.authenticateRequest, userController.userLogout);
-
 /**
  * GET /api/getUsers
  * @summary Gets a list of all users

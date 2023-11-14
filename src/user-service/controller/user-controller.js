@@ -4,9 +4,19 @@ const bcrypt = require("bcrypt");
 const authFunctions = require("../utils/auth-functions.js");
 
 exports.createUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  let { username, email, password } = req.body;
+  username = username?.trim();
+  email = email?.trim();
 
-  if (!username || !email || !password) {
+  if (!validator.isValidPassword(password)) {
+    return res.status(401).json({
+      message:
+        "Password cannot contain spaces and must be longer than 8 characters.",
+      data: {},
+    });
+  }
+
+  if (!username || !email) {
     return res.status(401).json({
       message:
         "Username, email, and password are necessary to register an account.",
@@ -21,7 +31,7 @@ exports.createUser = async (req, res) => {
     );
 
     if (userExists) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Username or email already exists",
         data: {},
       });
@@ -66,14 +76,6 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.getUser = async (req, res) => {
-  if (req.params.id === "undefined") {
-    return res.status(403).send({
-      message:
-        "Forbidden: user ID cannot be undefined, please login to access this content",
-      data: {},
-    });
-  }
-
   const id = parseInt(req.params.id);
 
   try {
@@ -82,7 +84,7 @@ exports.getUser = async (req, res) => {
       [id]
     );
     if (result.rows.length === 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "User does not exist",
         data: {},
       });
@@ -101,12 +103,13 @@ exports.getUser = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email?.trim();
   const BLANK_USERNAME = "";
 
   if (!email || !password) {
-    return res.status(401).json({
-      message: "Email and password are necessary to register an account.",
+    return res.status(400).json({
+      message: "Email and password are necessary to login.",
       data: {},
     });
   }
@@ -118,7 +121,7 @@ exports.userLogin = async (req, res) => {
     );
 
     if (!emailExists) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Invalid email or password",
         data: {},
       });
@@ -134,7 +137,7 @@ exports.userLogin = async (req, res) => {
     );
 
     if (!validPassword) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Invalid email or password",
         data: {},
       });
@@ -162,17 +165,21 @@ exports.userLogin = async (req, res) => {
   }
 };
 
-exports.userLogout = async (req, res) => {
-  try {
-    console.log(req);
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
 exports.updateProfile = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { username, email } = req.body;
+  const decodedToken = req.decodedToken;
+  if (id !== decodedToken.uid) {
+    return res.status(403).end();
+  }
+  let { username, email } = req.body;
+  username = username?.trim();
+  email = email?.trim();
+  if (!username || !email) {
+    return res.status(400).json({
+      message: "Username and email cannot be blank.",
+      data: {},
+    });
+  }
 
   try {
     const usersOtherThanId = await pool.query(
@@ -181,7 +188,7 @@ exports.updateProfile = async (req, res) => {
     );
 
     if (usersOtherThanId.rows.length > 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "Username or email already exists",
         data: {},
       });
@@ -190,7 +197,7 @@ exports.updateProfile = async (req, res) => {
     const result = await pool.query("SELECT * FROM Users WHERE uid = $1", [id]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: `User with ID: ${id} does not exist`,
         data: {},
       });
@@ -216,11 +223,15 @@ exports.updateProfile = async (req, res) => {
 
 exports.deleteProfile = async (req, res) => {
   const id = parseInt(req.params.id);
+  const decodedToken = req.decodedToken;
+  if (id !== decodedToken.uid) {
+    return res.status(403).end();
+  }
 
   try {
     const result = await pool.query("SELECT * FROM Users WHERE uid = $1", [id]);
     if (result.rows.length === 0) {
-      return res.status(401).json({
+      return res.status(400).json({
         message: `User with ID: ${id} does not exist`,
         data: {},
       });

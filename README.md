@@ -168,6 +168,6 @@ Do the same checks for the URLs mentioned above. This time, everything supposed 
 
     - Windows (Powershell): `$env:PEERPREP_ENV="local"; npm run dev-all`.
 
-    - Unix: `PEERPREP_ENV=local; npm run dev-all`
+    - Unix: `PEERPREP_ENV=local npm run dev-all`
 
 That's it! Happy coding!

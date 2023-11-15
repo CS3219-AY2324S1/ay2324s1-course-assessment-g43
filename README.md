@@ -13,6 +13,10 @@ The system allows registered users to interact with a question repository. The f
    - Designated maintainer role.
    - Able to CRUD on the question repository.
 
+To test functionality of admin, you can use the following account:
+Email: admin1@email.com
+Password: admin1password
+
 2. **Participant (Normal User):**
    - Can only READ from the question repository.
 

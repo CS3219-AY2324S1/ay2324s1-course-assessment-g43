@@ -1,3 +1,5 @@
+# Assignment 4 Instructions
+
 This file contains instructions on how to build and run the question microservice application as well as the user microservice application. Do follow the instructions strictly to ensure that the applications are started successfully.
 
 We will be using Docker to containerise our applications.
@@ -9,6 +11,11 @@ To briefly walk you through what would be done, we will be:
 3. Running the individual Docker containers
 4. Creating a network on Docker and connecting the containers to the network
 5. Testing to see if our applications are successfully containerised
+
+# Ensure you have the right env files
+
+Paste the contents of `Assignment4-user-service.txt` into an `.env.docker` file in `src/user-service`
+Paste the contents of `Assignment4-question-service.txt` into an `.env.docker` file in `src/question-service`
 
 # Download Docker
 

@@ -149,11 +149,10 @@ USER_BASE_PATH=http://user-service:8000/api
 2. Ensure that you are in the root folder of our application.
 
 3. Run the commands below depending on your OS. You should see all the microservices running in their individual containers on the Docker Desktop and you are good to go!
+
     - Windows (Powershell): `$env:PEERPREP_ENV="docker"; docker compose up`.
 
     - Unix: `PEERPREP_ENV=docker docker compose up`
-
-
 
 #### Using NPM
 
@@ -167,7 +166,7 @@ Do the same checks for the URLs mentioned above. This time, everything supposed 
 
 4. Run the commands below depending on your OS, which will run `npm run dev` in each individual microservice.
 
-    - Windows (Powershell): `$env:PEERPREP_ENV="local; npm run dev-all`.
+    - Windows (Powershell): `$env:PEERPREP_ENV="local"; npm run dev-all`.
 
     - Unix: `PEERPREP_ENV=local; npm run dev-all`
 
